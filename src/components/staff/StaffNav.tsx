@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { LayoutDashboard, Calendar, List, Users, LogOut } from 'lucide-react'
+import { LayoutDashboard, List, Users, LogOut, Clock, BarChart3 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 
 const StaffNav = () => {
@@ -9,7 +9,8 @@ const StaffNav = () => {
 
   const navItems = [
     { path: '/staff/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/staff/today', label: 'Today', icon: Calendar },
+    { path: '/staff/schedule', label: 'Schedule', icon: Clock },
+    { path: '/staff/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/staff/bookings', label: 'Bookings', icon: List },
     { path: '/staff/patients', label: 'Patients', icon: Users },
   ]

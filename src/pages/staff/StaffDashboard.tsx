@@ -1,10 +1,20 @@
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Calendar, DollarSign, CreditCard, TrendingDown, Clock, User, Plus } from 'lucide-react'
 import { DayPicker } from 'react-day-picker'
-import { format } from 'date-fns'
+import { format, isSameDay, parseISO } from 'date-fns'
 import CreateBookingModal from '../../components/staff/CreateBookingModal'
 import 'react-day-picker/dist/style.css'
+
+interface Booking {
+  id: string
+  patient: string
+  service: string
+  time: string
+  dentist: string
+  status: 'confirmed' | 'pending'
+  date?: string
+}
 
 const StaffDashboard = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
@@ -18,7 +28,8 @@ const StaffDashboard = () => {
     noShowsSaved: 5,
   }
 
-  const initialAppointments = [
+  // Extended bookings with dates for calendar visualization
+  const [allBookings, setAllBookings] = useState<Booking[]>([
     {
       id: '1',
       patient: 'Sarah Mitchell',
@@ -26,6 +37,7 @@ const StaffDashboard = () => {
       time: '09:00',
       dentist: 'Dr. Sarah Johnson',
       status: 'confirmed',
+      date: format(new Date(), 'yyyy-MM-dd'),
     },
     {
       id: '2',
@@ -34,6 +46,7 @@ const StaffDashboard = () => {
       time: '10:30',
       dentist: 'Dr. Michael Chen',
       status: 'confirmed',
+      date: format(new Date(), 'yyyy-MM-dd'),
     },
     {
       id: '3',
@@ -42,6 +55,7 @@ const StaffDashboard = () => {
       time: '14:00',
       dentist: 'Dr. Emily Williams',
       status: 'pending',
+      date: format(new Date(), 'yyyy-MM-dd'),
     },
     {
       id: '4',
@@ -50,6 +64,7 @@ const StaffDashboard = () => {
       time: '15:30',
       dentist: 'Dr. Sarah Johnson',
       status: 'confirmed',
+      date: format(new Date(), 'yyyy-MM-dd'),
     },
     {
       id: '5',
@@ -58,21 +73,89 @@ const StaffDashboard = () => {
       time: '16:00',
       dentist: 'Dr. Michael Chen',
       status: 'confirmed',
+      date: format(new Date(), 'yyyy-MM-dd'),
     },
-  ]
+    // Add more bookings for different dates
+    {
+      id: '6',
+      patient: 'John Doe',
+      service: 'Checkup',
+      time: '10:00',
+      dentist: 'Dr. Sarah Johnson',
+      status: 'confirmed',
+      date: format(new Date(Date.now() + 86400000), 'yyyy-MM-dd'), // Tomorrow
+    },
+    {
+      id: '7',
+      patient: 'Jane Smith',
+      service: 'Cleaning',
+      time: '14:30',
+      dentist: 'Dr. Emily Williams',
+      status: 'confirmed',
+      date: format(new Date(Date.now() + 86400000), 'yyyy-MM-dd'),
+    },
+    {
+      id: '8',
+      patient: 'Bob Wilson',
+      service: 'Extraction',
+      time: '11:00',
+      dentist: 'Dr. Michael Chen',
+      status: 'pending',
+      date: format(new Date(Date.now() + 2 * 86400000), 'yyyy-MM-dd'), // Day after tomorrow
+    },
+  ])
 
-  const [bookings, setBookings] = useState(initialAppointments)
+  const [bookings, setBookings] = useState<Booking[]>([])
+  
+  // Update today's bookings when allBookings changes
+  useEffect(() => {
+    const todayBookings = allBookings.filter(b => {
+      if (!b.date) return false
+      try {
+        return isSameDay(parseISO(b.date), new Date())
+      } catch {
+        return false
+      }
+    })
+    setBookings(todayBookings.slice(0, 5))
+  }, [allBookings])
+
+  // Get dates that have bookings
+  const datesWithBookings = useMemo(() => {
+    const dates = new Set<string>()
+    allBookings.forEach((booking) => {
+      if (booking.date) {
+        dates.add(booking.date)
+      }
+    })
+    return dates
+  }, [allBookings])
+
+  // Get booking count for a specific date
+  const getBookingCountForDate = (date: Date): number => {
+    const dateStr = format(date, 'yyyy-MM-dd')
+    return allBookings.filter((b) => b.date === dateStr).length
+  }
+
+  // Check if date has bookings
+  const hasBookings = (date: Date): boolean => {
+    return datesWithBookings.has(format(date, 'yyyy-MM-dd'))
+  }
 
   const handleCreateBooking = (newBooking: any) => {
-    const appointment = {
+    const appointment: Booking = {
       id: newBooking.id,
       patient: newBooking.patient,
       service: newBooking.service,
       time: newBooking.time,
       dentist: newBooking.dentist,
       status: newBooking.status as 'confirmed' | 'pending',
+      date: newBooking.date || format(new Date(), 'yyyy-MM-dd'),
     }
-    setBookings((prev) => [appointment, ...prev].slice(0, 5))
+    setAllBookings((prev) => [...prev, appointment])
+    if (isSameDay(parseISO(appointment.date || format(new Date(), 'yyyy-MM-dd')), new Date())) {
+      setBookings((prev) => [appointment, ...prev].slice(0, 5))
+    }
   }
 
 
@@ -200,7 +283,7 @@ const StaffDashboard = () => {
             </motion.div>
           </div>
 
-          {/* Mini Calendar */}
+          {/* Enhanced Calendar */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -210,19 +293,79 @@ const StaffDashboard = () => {
             <h2 className="text-2xl font-display font-bold text-gray-800 mb-6">
               Calendar
             </h2>
-            <DayPicker
-              mode="single"
-              selected={selectedDate}
-              onSelect={(date) => date && setSelectedDate(date)}
-              modifiersClassNames={{
-                selected: 'bg-gray-800 text-white rounded-full',
-              }}
-              className="mx-auto"
-            />
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600">
-                Selected: <span className="font-semibold text-gray-800">{format(selectedDate, 'MMMM d, yyyy')}</span>
-              </p>
+            <div className="relative">
+              <DayPicker
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => date && setSelectedDate(date)}
+                modifiers={{
+                  hasBookings: (date) => hasBookings(date),
+                  manyBookings: (date) => getBookingCountForDate(date) >= 5,
+                  mediumBookings: (date) => {
+                    const count = getBookingCountForDate(date)
+                    return count >= 3 && count < 5
+                  },
+                  fewBookings: (date) => {
+                    const count = getBookingCountForDate(date)
+                    return count > 0 && count < 3
+                  },
+                }}
+                modifiersClassNames={{
+                  selected: 'bg-gray-800 text-white rounded-full font-semibold',
+                  manyBookings: 'bg-red-50 hover:bg-red-100 border-red-200',
+                  mediumBookings: 'bg-orange-50 hover:bg-orange-100 border-orange-200',
+                  fewBookings: 'bg-green-50 hover:bg-green-100 border-green-200',
+                }}
+                className="mx-auto"
+              />
+              <style>{`
+                .rdp-day.hasBookings:not(.selected)::after {
+                  content: '';
+                  position: absolute;
+                  bottom: 2px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  width: 4px;
+                  height: 4px;
+                  border-radius: 50%;
+                  background-color: currentColor;
+                }
+                .rdp-day.manyBookings:not(.selected)::after {
+                  background-color: #ef4444;
+                }
+                .rdp-day.mediumBookings:not(.selected)::after {
+                  background-color: #f97316;
+                }
+                .rdp-day.fewBookings:not(.selected)::after {
+                  background-color: #22c55e;
+                }
+              `}</style>
+            </div>
+            <div className="mt-6 space-y-3">
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600 mb-2">
+                  Selected: <span className="font-semibold text-gray-800">{format(selectedDate, 'MMMM d, yyyy')}</span>
+                </p>
+                {hasBookings(selectedDate) && (
+                  <p className="text-sm font-medium text-gray-800">
+                    {getBookingCountForDate(selectedDate)} {getBookingCountForDate(selectedDate) === 1 ? 'appointment' : 'appointments'} scheduled
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-3 text-xs">
+                <div className="flex items-center space-x-1.5">
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  <span className="text-gray-600">1-2 bookings</span>
+                </div>
+                <div className="flex items-center space-x-1.5">
+                  <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                  <span className="text-gray-600">3-4 bookings</span>
+                </div>
+                <div className="flex items-center space-x-1.5">
+                  <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                  <span className="text-gray-600">5+ bookings</span>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
