@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { Calendar, Shield, Clock, CheckCircle, ArrowRight } from 'lucide-react'
+import { Shield, Clock, CheckCircle } from 'lucide-react'
 import { DEPOSIT_AMOUNT } from '../utils/constants'
+import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
 
 const CTA = () => {
   return (
@@ -73,39 +74,13 @@ const CTA = () => {
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            <Link
-              to="/booking"
-              className="inline-flex items-center space-x-3 bg-white text-gray-800 font-semibold py-4 px-8 rounded-lg shadow-lg tracking-wide relative overflow-hidden group"
-            >
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-gray-100 to-gray-50"
-                initial={{ x: "-100%" }}
-                whileHover={{ x: "100%" }}
-                transition={{ duration: 0.6 }}
+            <Link to="/booking" className="inline-block">
+              <InteractiveHoverButton 
+                text="Book Your Appointment Now" 
+                variant="secondary"
+                className="px-8 py-4 w-auto min-w-[280px] bg-white text-gray-800 border-white"
+                as="div"
               />
-              <motion.div
-                className="relative z-10"
-                animate={{ 
-                  rotate: [0, 5, -5, 0],
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{ 
-                  duration: 2, 
-                  repeat: Infinity, 
-                  repeatDelay: 2,
-                  ease: "easeInOut"
-                }}
-              >
-                <Calendar className="w-5 h-5" />
-              </motion.div>
-              <span className="relative z-10">Book Your Appointment Now</span>
-              <motion.div
-                className="relative z-10"
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1.5 }}
-              >
-                <ArrowRight className="w-5 h-5" />
-              </motion.div>
             </Link>
           </motion.div>
 

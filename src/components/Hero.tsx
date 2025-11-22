@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { Calendar, ArrowRight, Shield, Clock, Star } from 'lucide-react'
+import { Shield, Clock, Star } from 'lucide-react'
 import { DEPOSIT_AMOUNT } from '../utils/constants'
+import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
 
 const Hero = () => {
   return (
@@ -57,30 +58,13 @@ const Hero = () => {
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              <Link 
-                to="/booking" 
-                className="btn-primary text-lg px-8 py-4 flex items-center space-x-2 relative overflow-hidden group"
-              >
-                <motion.div
-                  className="absolute inset-0 bg-white/20"
-                  initial={{ x: "-100%" }}
-                  whileHover={{ x: "100%" }}
-                  transition={{ duration: 0.6 }}
+              <Link to="/booking" className="inline-block">
+                <InteractiveHoverButton 
+                  text="Book Appointment" 
+                  variant="primary"
+                  className="text-lg px-8 py-4 w-auto min-w-[200px]"
+                  as="div"
                 />
-                <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                >
-                  <Calendar className="w-5 h-5 relative z-10" />
-                </motion.div>
-                <span className="relative z-10">Book Appointment</span>
-                <motion.div
-                  className="relative z-10"
-                  animate={{ x: [0, 4, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
-                >
-                  <ArrowRight className="w-5 h-5" />
-                </motion.div>
               </Link>
             </motion.div>
             <motion.div

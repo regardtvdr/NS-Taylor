@@ -11,6 +11,7 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Location from './pages/Location'
 import PrivacyPolicy from './pages/PrivacyPolicy'
+import Team from './pages/Team'
 import Login from './pages/staff/Login'
 import StaffDashboard from './pages/staff/StaffDashboard'
 import Today from './pages/staff/Today'
@@ -63,6 +64,7 @@ function App() {
           <Route path="/booking/confirm" element={<BookingConfirmation />} />
           <Route path="/booking/:token" element={<CancellationPortal />} />
           <Route path="/about" element={<About />} />
+          <Route path="/team" element={<Team />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/location" element={<Location />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />

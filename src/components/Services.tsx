@@ -12,6 +12,7 @@ import {
   ArrowRight 
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
 
 const iconMap: Record<string, any> = {
   stethoscope: Stethoscope,
@@ -89,24 +90,13 @@ const Services = () => {
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            <Link 
-              to="/booking" 
-              className="btn-primary inline-flex items-center space-x-2 relative overflow-hidden group"
-            >
-              <motion.div
-                className="absolute inset-0 bg-white/10"
-                initial={{ scale: 0, opacity: 0 }}
-                whileHover={{ scale: 1.5, opacity: 1 }}
-                transition={{ duration: 0.4 }}
+            <Link to="/booking" className="inline-block">
+              <InteractiveHoverButton 
+                text="View All Services & Book" 
+                variant="primary"
+                className="px-8 py-4 w-auto min-w-[240px]"
+                as="div"
               />
-              <span className="relative z-10">View All Services & Book</span>
-              <motion.div
-                className="relative z-10"
-                animate={{ x: [0, 4, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
-              >
-                <ArrowRight className="w-5 h-5" />
-              </motion.div>
             </Link>
           </motion.div>
         </motion.div>

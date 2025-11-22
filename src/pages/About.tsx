@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import { Award, Users, Heart, Shield } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { InteractiveHoverButton } from '../components/ui/InteractiveHoverButton'
 
 const About = () => {
   const { ref, isInView } = useScrollAnimation()
@@ -134,8 +135,13 @@ const About = () => {
             <p className="text-xl mb-8 text-gray-100">
               Book your appointment today and join thousands of satisfied patients
             </p>
-            <Link to="/booking" className="btn-primary bg-white text-gray-800 hover:bg-gray-100 inline-flex items-center space-x-2">
-              <span>Book Appointment</span>
+            <Link to="/booking" className="inline-block">
+              <InteractiveHoverButton 
+                text="Book Appointment" 
+                variant="secondary"
+                className="px-8 py-4 w-auto min-w-[200px]"
+                as="div"
+              />
             </Link>
           </motion.div>
         </div>

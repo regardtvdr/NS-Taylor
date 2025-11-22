@@ -1,0 +1,205 @@
+import { motion } from 'framer-motion'
+import { Star, Award, Clock, GraduationCap } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { DENTISTS } from '../utils/constants'
+import { AnimatedTestimonials } from '../components/ui/AnimatedTestimonials'
+import { InteractiveHoverButton } from '../components/ui/InteractiveHoverButton'
+
+const Team = () => {
+  // Convert dentists to testimonials format for the animated component
+  const dentistTestimonials = DENTISTS.map((dentist) => ({
+    quote: dentist.bio || `With over ${dentist.experience} years of experience in ${dentist.specialization}, ${dentist.name.split(' ')[1]} is dedicated to providing exceptional dental care.`,
+    name: dentist.name,
+    designation: `${dentist.specialization} • ${dentist.qualifications}`,
+    src: dentist.avatar || `https://i.pravatar.cc/150?img=${dentist.id}`,
+  }))
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-gray-50 via-white to-gray-100 py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-grid-gray-900/[0.02] bg-[size:20px_20px]" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-3xl mx-auto"
+          >
+            <h1 className="text-5xl md:text-6xl font-display font-bold text-gray-800 mb-6 tracking-tight">
+              Meet Our Expert Team
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              Our experienced dental professionals are dedicated to providing you with the highest quality care and personalized treatment.
+            </p>
+            <Link to="/booking" className="inline-block">
+              <InteractiveHoverButton 
+                text="Book an Appointment" 
+                variant="primary"
+                className="text-lg px-8 py-4 w-auto min-w-[220px]"
+                as="div"
+              />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Animated Testimonials Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-display font-bold text-gray-800 mb-4">
+              Our Dental Professionals
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Get to know the talented team members who will care for your smile
+            </p>
+          </motion.div>
+          <AnimatedTestimonials testimonials={dentistTestimonials} />
+        </div>
+      </section>
+
+      {/* Detailed Team Cards */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-display font-bold text-gray-800 mb-4">
+              Expert Care, Personalized Service
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Each member of our team brings years of experience and a commitment to excellence
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {DENTISTS.map((dentist, index) => (
+              <motion.div
+                key={dentist.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="card p-8 hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="text-center mb-6">
+                  <div className="relative inline-block mb-4">
+                    {dentist.avatar ? (
+                      <img
+                        src={dentist.avatar}
+                        alt={dentist.name}
+                        className="w-32 h-32 rounded-full object-cover mx-auto border-4 border-gray-200"
+                        loading="lazy"
+                        width="128"
+                        height="128"
+                      />
+                    ) : (
+                      <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mx-auto border-4 border-gray-200">
+                        <span className="text-4xl font-bold text-gray-600">
+                          {dentist.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                    <div className="absolute bottom-0 right-0 bg-green-500 rounded-full p-2 border-4 border-white">
+                      <Award className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-display font-bold text-gray-800 mb-2">
+                    {dentist.name}
+                  </h3>
+                  <p className="text-gray-600 font-medium mb-3">
+                    {dentist.specialization}
+                  </p>
+                  <div className="flex items-center justify-center gap-1 mb-4">
+                    <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    <span className="text-lg font-semibold text-gray-800">
+                      {dentist.rating}
+                    </span>
+                    <span className="text-gray-500 text-sm">
+                      ({dentist.reviews} reviews)
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-4 mb-6">
+                  <div className="flex items-center space-x-3 text-gray-700">
+                    <GraduationCap className="w-5 h-5 text-gray-600" />
+                    <span className="text-sm font-medium">{dentist.qualifications}</span>
+                  </div>
+                  <div className="flex items-center space-x-3 text-gray-700">
+                    <Clock className="w-5 h-5 text-gray-600" />
+                    <span className="text-sm">{dentist.experience} years of experience</span>
+                  </div>
+                </div>
+
+                <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                  {dentist.bio}
+                </p>
+
+                <Link to="/booking" className="inline-block w-full">
+                  <InteractiveHoverButton 
+                    text={`Book with ${dentist.name.split(' ')[1]}`}
+                    variant="primary"
+                    className="w-full"
+                    as="div"
+                  />
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-gradient-to-br from-gray-800 to-gray-900 text-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-3xl mx-auto"
+          >
+            <h2 className="text-4xl font-display font-bold mb-6">
+              Ready to Meet Your Perfect Dentist?
+            </h2>
+            <p className="text-gray-300 text-lg mb-8">
+              Book an appointment with one of our expert dental professionals today. 
+              Experience personalized care in a comfortable, modern environment.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/booking" className="inline-block">
+                <InteractiveHoverButton 
+                  text="Book Appointment" 
+                  variant="secondary"
+                  className="px-8 py-4 w-auto min-w-[200px]"
+                  as="div"
+                />
+              </Link>
+              <Link
+                to="/contact"
+                className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-gray-800 transition-colors"
+              >
+                Contact Us
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+export default Team
+

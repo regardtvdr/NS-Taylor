@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Calendar } from 'lucide-react'
+import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -10,6 +11,7 @@ const Header = () => {
   const navItems = [
     { path: '/', label: 'Home' },
     { path: '/about', label: 'About' },
+    { path: '/team', label: 'Our Team' },
     { path: '/location', label: 'Location' },
     { path: '/contact', label: 'Contact' },
   ]
@@ -51,11 +53,13 @@ const Header = () => {
                 )}
               </Link>
             ))}
-            <Link
-              to="/booking"
-              className="btn-primary text-sm py-2 px-5"
-            >
-              Book Appointment
+            <Link to="/booking" className="inline-block">
+              <InteractiveHoverButton 
+                text="Book Appointment" 
+                variant="primary"
+                className="text-sm py-2 px-5 w-auto min-w-[160px]"
+                as="div"
+              />
             </Link>
           </div>
 
@@ -97,13 +101,20 @@ const Header = () => {
                     {item.label}
                   </Link>
                 ))}
-                <Link
-                  to="/booking"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block mx-4 btn-primary text-center"
-                >
-                  Book Appointment
-                </Link>
+                <div className="mx-4 flex justify-center">
+                  <Link 
+                    to="/booking" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="inline-block"
+                  >
+                    <InteractiveHoverButton 
+                      text="Book Appointment" 
+                      variant="primary"
+                      className="w-full min-w-[200px]"
+                      as="div"
+                    />
+                  </Link>
+                </div>
               </div>
             </motion.div>
           )}
