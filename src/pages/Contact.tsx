@@ -1,0 +1,196 @@
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react'
+
+const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+  })
+  const [submitted, setSubmitted] = useState(false)
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Simulate form submission
+    setSubmitted(true)
+    setTimeout(() => {
+      setSubmitted(false)
+      setFormData({ name: '', email: '', phone: '', message: '' })
+    }, 3000)
+  }
+
+  return (
+    <div className="min-h-screen py-12 bg-gray-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12"
+        >
+          <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800 mb-4">
+            Get in Touch
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Have a question? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+          {/* Contact Info */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="space-y-8"
+          >
+            <div>
+              <h2 className="text-2xl font-display font-bold text-gray-800 mb-6">
+                Contact Information
+              </h2>
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-6 h-6 text-gray-700" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-1">Phone</h3>
+                    <p className="text-gray-600">+27 11 123 4567</p>
+                    <p className="text-sm text-gray-500">Mon-Fri: 8:00 AM - 5:00 PM</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-6 h-6 text-gray-700" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-1">Email</h3>
+                    <p className="text-gray-600">info@premiumdental.co.za</p>
+                    <p className="text-sm text-gray-500">We'll respond within 24 hours</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-6 h-6 text-gray-700" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 mb-1">Address</h3>
+                    <p className="text-gray-600">
+                      123 Medical Boulevard<br />
+                      Sandton, Johannesburg 2196<br />
+                      South Africa
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br bg-gray-50 rounded-card p-6">
+              <h3 className="font-semibold text-gray-800 mb-3">Emergency Contact</h3>
+              <p className="text-gray-600 mb-2">
+                For dental emergencies outside business hours, please call:
+              </p>
+              <p className="text-xl font-bold text-gray-700">+27 11 123 4567</p>
+            </div>
+          </motion.div>
+
+          {/* Contact Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="card p-8"
+          >
+            <h2 className="text-2xl font-display font-bold text-gray-800 mb-6">
+              Send us a Message
+            </h2>
+
+            {submitted ? (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="bg-gray-50 border-2 border-gray-200 rounded-card p-6 text-center"
+              >
+                <CheckCircle className="w-12 h-12 text-gray-700 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  Message Sent!
+                </h3>
+                <p className="text-gray-600">
+                  We'll get back to you as soon as possible.
+                </p>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="input-field"
+                    placeholder="John Doe"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="input-field"
+                    placeholder="john@example.com"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="input-field"
+                    placeholder="+27 11 123 4567"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+                    Message *
+                  </label>
+                  <textarea
+                    required
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    rows={6}
+                    className="input-field resize-none"
+                    placeholder="Tell us how we can help..."
+                  />
+                </div>
+
+                <button type="submit" className="btn-primary w-full flex items-center justify-center space-x-2">
+                  <Send className="w-5 h-5" />
+                  <span>Send Message</span>
+                </button>
+              </form>
+            )}
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Contact
+

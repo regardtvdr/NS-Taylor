@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /booking/confirm
+
+Sitemap: https://premiumdental.co.za/sitemap.xml
+

@@ -1,0 +1,566 @@
+import { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { MessageCircle, X, Send, Bot, User } from 'lucide-react'
+import { DEPOSIT_AMOUNT } from '../utils/constants'
+
+interface Message {
+  id: string
+  text: string
+  sender: 'user' | 'bot'
+  timestamp: Date
+}
+
+const Chatbot = () => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      text: "Hello! 👋 Welcome to Premium Dental Practice. I'm here to help answer any questions you might have. Whether you need help booking an appointment, understanding our services, finding our location, or anything else about our practice - I'm here to assist. Take your time, and feel free to ask me anything. How can I help you today?",
+      sender: 'bot',
+      timestamp: new Date(),
+    },
+  ])
+  const [inputValue, setInputValue] = useState('')
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [isOpen])
+
+  const getBotResponse = (userMessage: string): string => {
+    const lowerMessage = userMessage.toLowerCase().trim()
+
+    // Greetings - Check first (with more variations for older users)
+    if (
+      lowerMessage.includes('hello') || 
+      lowerMessage.includes('hi') || 
+      lowerMessage.includes('hey') || 
+      lowerMessage.includes('good morning') || 
+      lowerMessage.includes('good afternoon') ||
+      lowerMessage.includes('good evening') ||
+      lowerMessage.includes('good day') ||
+      lowerMessage.includes('greetings') ||
+      lowerMessage === 'hey' ||
+      lowerMessage === 'hi' ||
+      lowerMessage === 'hello' ||
+      lowerMessage.startsWith('hi ') ||
+      lowerMessage.startsWith('hey ') ||
+      lowerMessage.startsWith('hello ') ||
+      lowerMessage === 'hii' ||
+      lowerMessage === 'hiii' ||
+      lowerMessage === 'hallo' ||
+      lowerMessage === 'howdy'
+    ) {
+      return "Hello! Welcome to Premium Dental Practice. I'm here to help you with any questions you might have. Whether you need help booking an appointment, understanding our services, or finding information about our practice - I'm here to assist. What would you like to know?"
+    }
+
+    // Thank you responses - Check early (with more variations)
+    if (
+      lowerMessage.includes('thank') || 
+      lowerMessage.includes('thanks') ||
+      lowerMessage.includes('appreciate') ||
+      lowerMessage.includes('grateful') ||
+      lowerMessage.includes('much obliged') ||
+      lowerMessage === 'ty' ||
+      lowerMessage === 'thx' ||
+      lowerMessage === 'tnx' ||
+      lowerMessage.startsWith('thank you') ||
+      lowerMessage.startsWith('thanks ') ||
+      lowerMessage === 'thank you' ||
+      lowerMessage === 'thanks' ||
+      lowerMessage === 'thank' ||
+      lowerMessage.includes('bless you')
+    ) {
+      return "You're very welcome! 😊 I'm happy I could help. Please don't hesitate to ask if you have any other questions. I'm here to assist you with anything you need about our dental practice."
+    }
+
+    // Goodbye/Farewell
+    if (
+      lowerMessage.includes('bye') || 
+      lowerMessage.includes('goodbye') ||
+      lowerMessage.includes('see you') ||
+      lowerMessage.includes('farewell') ||
+      lowerMessage === 'bye' ||
+      lowerMessage.startsWith('bye ') ||
+      lowerMessage.includes('have a good') ||
+      lowerMessage.includes('take care')
+    ) {
+      return "Goodbye! Have a wonderful day. Feel free to come back if you have any more questions. We look forward to helping you with your dental care needs!"
+    }
+
+    // Booking related (expanded for older users and more variations)
+    if (
+      lowerMessage.includes('book') || 
+      lowerMessage.includes('appointment') || 
+      lowerMessage.includes('schedule') ||
+      lowerMessage.includes('make an appointment') ||
+      lowerMessage.includes('set up') ||
+      lowerMessage.includes('arrange') ||
+      lowerMessage.includes('come in') ||
+      lowerMessage.includes('visit') ||
+      lowerMessage.includes('see a dentist') ||
+      lowerMessage.includes('see the dentist') ||
+      lowerMessage.includes('come see') ||
+      lowerMessage.includes('make appointment') ||
+      lowerMessage.includes('need to see') ||
+      lowerMessage.includes('when can i')
+    ) {
+      if (lowerMessage.includes('how') || lowerMessage.includes('where') || lowerMessage.includes('what do i')) {
+        return "Booking an appointment is easy! Here's how: 1) Click the 'Book Appointment' button at the top of the page, 2) Choose the service you need (like cleaning, consultation, etc.), 3) Select your preferred dentist, 4) Pick a date and time that works for you, 5) Fill in your name, email, and phone number, 6) Pay a small R50 deposit to secure your appointment. The whole process takes just a few minutes. Would you like help with any specific step?"
+      }
+      if (lowerMessage.includes('online') || lowerMessage.includes('website') || lowerMessage.includes('internet')) {
+        return "Yes, you can book online right here on our website! Just click the 'Book Appointment' button in the top menu. If you're not comfortable with online booking, you can also call us at +27 11 123 4567 and we'll be happy to help you over the phone."
+      }
+      return "To book an appointment, simply click the 'Book Appointment' button at the top of this page. You'll go through a few easy steps: choose your service, pick your dentist, select a date and time, provide your contact information, and pay a R50 deposit. Don't worry - it's very straightforward, and if you need help, you can always call us at +27 11 123 4567."
+    }
+
+    // Deposit and Payment related (expanded with more explanations for older users)
+    if (
+      lowerMessage.includes('deposit') || 
+      lowerMessage.includes('payment') || 
+      lowerMessage.includes('pay') ||
+      lowerMessage.includes('money') ||
+      lowerMessage.includes('cost') ||
+      lowerMessage.includes('price') ||
+      lowerMessage.includes('how much') ||
+      lowerMessage.includes('fee') ||
+      lowerMessage.includes('charge') ||
+      lowerMessage.includes('credit card') ||
+      lowerMessage.includes('card required')
+    ) {
+      if (lowerMessage.includes('how much') || lowerMessage.includes('what is') || lowerMessage.includes('amount')) {
+        return `The deposit is R${DEPOSIT_AMOUNT} - that's just R50 to secure your appointment. This small amount helps us ensure everyone keeps their appointments. You'll pay the rest of the cost when you come in for your visit. We accept Ozow and PayFast for online payments, and you don't need a credit card. If you prefer, you can also pay the deposit when you arrive.`
+      }
+      if (lowerMessage.includes('why') || lowerMessage.includes('need') || lowerMessage.includes('required')) {
+        return `We ask for a small R${DEPOSIT_AMOUNT} deposit to secure your appointment. This helps reduce missed appointments (we've seen 42% fewer no-shows!), which means we can serve more patients and keep appointment times available. It's a small amount that shows you're committed to your appointment. You'll pay the remaining balance on the day of your visit.`
+      }
+      if (lowerMessage.includes('credit card') || lowerMessage.includes('card') || lowerMessage.includes('don\'t have')) {
+        return `Good news - you don't need a credit card! We accept Ozow and PayFast, which work with most South African bank accounts. If you're not comfortable with online payments, you can also call us at +27 11 123 4567 and we can arrange payment over the phone or when you arrive.`
+      }
+      return `We require a small R${DEPOSIT_AMOUNT} deposit to secure your appointment. This helps ensure appointments are kept and allows us to serve more patients. You can pay online using Ozow or PayFast (no credit card needed), or call us to arrange payment. The remaining amount is paid on the day of your appointment.`
+    }
+
+    // Services (expanded with more variations and explanations)
+    if (
+      lowerMessage.includes('service') || 
+      lowerMessage.includes('treatment') || 
+      lowerMessage.includes('what do you offer') ||
+      lowerMessage.includes('what can you do') ||
+      lowerMessage.includes('what services') ||
+      lowerMessage.includes('what treatments') ||
+      lowerMessage.includes('do you do') ||
+      lowerMessage.includes('offer') ||
+      lowerMessage.includes('cleaning') ||
+      lowerMessage.includes('checkup') ||
+      lowerMessage.includes('examination') ||
+      lowerMessage.includes('whitening') ||
+      lowerMessage.includes('implant') ||
+      lowerMessage.includes('root canal') ||
+      lowerMessage.includes('filling') ||
+      lowerMessage.includes('crown') ||
+      lowerMessage.includes('extraction') ||
+      lowerMessage.includes('tooth pulled')
+    ) {
+      if (lowerMessage.includes('cleaning') || lowerMessage.includes('clean') || lowerMessage.includes('scale')) {
+        return "Yes, we do teeth cleaning! Our Teeth Cleaning & Polish service costs R650 and takes about 45 minutes. This includes professional cleaning, scaling (removing tartar), and a fluoride treatment to protect your teeth. It's recommended every 6 months to keep your teeth and gums healthy."
+      }
+      if (lowerMessage.includes('checkup') || lowerMessage.includes('examination') || lowerMessage.includes('consultation')) {
+        return "We offer Comprehensive Consultations for R850. This includes a full oral examination, X-rays if needed, and a personalized treatment plan. The consultation takes about 60 minutes and helps us understand your dental health needs."
+      }
+      if (lowerMessage.includes('whitening') || lowerMessage.includes('white')) {
+        return "Yes, we offer professional Teeth Whitening for R2500. This is an in-office treatment that takes about 90 minutes and gives you noticeably whiter teeth. It's much more effective than over-the-counter products."
+      }
+      if (lowerMessage.includes('implant')) {
+        return "We offer Dental Implant Consultations for R1200. During this 60-minute consultation, we'll assess whether implants are right for you and create a treatment plan. Implants are a great solution for replacing missing teeth."
+      }
+      if (lowerMessage.includes('root canal')) {
+        return "Yes, we perform Root Canal Treatment for R3500. This procedure saves your tooth when the nerve is damaged or infected. It takes about 2 hours and is much more comfortable than it used to be with modern techniques."
+      }
+      if (lowerMessage.includes('emergency') || lowerMessage.includes('pain') || lowerMessage.includes('urgent')) {
+        return "We offer Emergency Visits for R950. These 30-minute appointments are for urgent dental problems like severe pain, trauma, or infections. If you have a dental emergency, please call us at +27 11 123 4567."
+      }
+      return "We offer a full range of dental services: Comprehensive Consultation (R850), Teeth Cleaning & Polish (R650), Teeth Whitening (R2500), Dental Implant Consultation (R1200), Root Canal Treatment (R3500), and Emergency Visits (R950). We also do fillings, crowns, extractions, and more. What specific treatment are you interested in?"
+    }
+
+    // Dentists (expanded with more context)
+    if (
+      lowerMessage.includes('dentist') || 
+      lowerMessage.includes('doctor') || 
+      lowerMessage.includes('who') ||
+      lowerMessage.includes('dental professional') ||
+      lowerMessage.includes('practitioner') ||
+      lowerMessage.includes('who will') ||
+      lowerMessage.includes('who does') ||
+      lowerMessage.includes('which dentist')
+    ) {
+      if (lowerMessage.includes('best') || lowerMessage.includes('recommend') || lowerMessage.includes('which one')) {
+        return "All our dentists are highly qualified and experienced! Dr. Sarah Johnson specializes in general dentistry (12 years experience), Dr. Michael Chen is our expert in orthodontics and implants (15 years), and Dr. Emily Williams focuses on cosmetic and restorative work (10 years). During booking, you can see their specializations and choose who you'd like to see. They're all excellent!"
+      }
+      return "We have three wonderful, experienced dentists: Dr. Sarah Johnson specializes in General Dentistry with 12 years of experience, Dr. Michael Chen is our expert in Orthodontics & Implants with 15 years of experience, and Dr. Emily Williams focuses on Cosmetic & Restorative dentistry with 10 years of experience. You can choose your preferred dentist when you book your appointment. They're all highly qualified and caring professionals."
+    }
+
+    // Location (expanded with directions and parking info)
+    if (
+      lowerMessage.includes('location') || 
+      lowerMessage.includes('address') || 
+      lowerMessage.includes('where') || 
+      lowerMessage.includes('find') ||
+      lowerMessage.includes('directions') ||
+      lowerMessage.includes('how to get') ||
+      lowerMessage.includes('parking') ||
+      lowerMessage.includes('park') ||
+      lowerMessage.includes('drive') ||
+      lowerMessage.includes('located')
+    ) {
+      if (lowerMessage.includes('parking') || lowerMessage.includes('park')) {
+        return "Yes, we have secure parking available on-site! There's plenty of parking space, so you won't have to worry about finding a spot. The parking is free for our patients."
+      }
+      if (lowerMessage.includes('directions') || lowerMessage.includes('how to get') || lowerMessage.includes('drive')) {
+        return "We're located at 123 Medical Boulevard, Sandton, Johannesburg 2196. We're just off the M1 highway, making us easy to reach. You can get directions by visiting our Location page - there's a Google Maps link that will give you turn-by-turn directions from your location."
+      }
+      return "We're located at 123 Medical Boulevard, Sandton, Johannesburg 2196, South Africa. We have secure parking on-site. You can find us easily on Google Maps - just visit the 'Location' page in the top menu, and you'll see a map with directions. We're conveniently located just off the M1 highway."
+    }
+
+    // Hours (expanded with more variations)
+    if (
+      lowerMessage.includes('hours') || 
+      lowerMessage.includes('open') || 
+      lowerMessage.includes('time') || 
+      lowerMessage.includes('when') ||
+      lowerMessage.includes('what time') ||
+      lowerMessage.includes('closed') ||
+      lowerMessage.includes('available') ||
+      lowerMessage.includes('weekend') ||
+      lowerMessage.includes('saturday') ||
+      lowerMessage.includes('sunday') ||
+      lowerMessage.includes('monday') ||
+      lowerMessage.includes('friday')
+    ) {
+      if (lowerMessage.includes('weekend') || lowerMessage.includes('saturday') || lowerMessage.includes('sunday')) {
+        return "We're closed on weekends (Saturday and Sunday) to allow our team to rest and spend time with their families. However, for dental emergencies, you can call our emergency line at +27 11 123 4567, and we'll do our best to help."
+      }
+      if (lowerMessage.includes('today') || lowerMessage.includes('now')) {
+        return "We're open Monday to Friday from 8:00 AM to 5:00 PM. If you're calling outside these hours, please leave a message or call our emergency line at +27 11 123 4567 for urgent dental issues."
+      }
+      return "Our practice is open Monday to Friday from 8:00 AM to 5:00 PM. We're closed on weekends. For dental emergencies outside these hours, please call +27 11 123 4567 and we'll assist you."
+    }
+
+    // Contact (expanded with more options)
+    if (
+      lowerMessage.includes('contact') || 
+      lowerMessage.includes('phone') || 
+      lowerMessage.includes('email') || 
+      lowerMessage.includes('call') ||
+      lowerMessage.includes('number') ||
+      lowerMessage.includes('reach') ||
+      lowerMessage.includes('speak to') ||
+      lowerMessage.includes('talk to') ||
+      lowerMessage.includes('get in touch')
+    ) {
+      if (lowerMessage.includes('phone') || lowerMessage.includes('call') || lowerMessage.includes('number')) {
+        return "Our phone number is +27 11 123 4567. You can call us Monday to Friday between 8:00 AM and 5:00 PM. If you call outside these hours, please leave a message and we'll get back to you. For emergencies, you can also call this number."
+      }
+      if (lowerMessage.includes('email') || lowerMessage.includes('e-mail')) {
+        return "Our email address is info@premiumdental.co.za. You can send us an email anytime, and we'll respond within 24 hours during business days. You can also use the Contact page on our website to send us a message directly."
+      }
+      return "You can reach us in several ways: Phone us at +27 11 123 4567 (Monday-Friday, 8 AM - 5 PM), Email us at info@premiumdental.co.za, or visit our Contact page to send us a message through the website. We're here to help!"
+    }
+
+    // Cancellation
+    if (lowerMessage.includes('cancel') || lowerMessage.includes('reschedule') || lowerMessage.includes('change')) {
+      return "To cancel or reschedule your appointment, you'll receive a cancellation link in your confirmation email. Click the link to access the cancellation portal where you can manage your appointment."
+    }
+
+    // Reminders
+    if (lowerMessage.includes('reminder') || lowerMessage.includes('notification') || lowerMessage.includes('alert')) {
+      return "We offer appointment reminders via SMS, WhatsApp, and Google Calendar. You can select your preferred reminder methods during the booking process in the Patient Details step."
+    }
+
+    // Pricing
+    if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('how much') || lowerMessage.includes('fee')) {
+      return "Our services range from R650 for Teeth Cleaning to R3500 for Root Canal Treatment. The exact price depends on the service you choose. You can see all service prices on our homepage or during the booking process."
+    }
+
+    // Emergency
+    if (lowerMessage.includes('emergency') || lowerMessage.includes('urgent') || lowerMessage.includes('pain') || lowerMessage.includes('hurt')) {
+      return "For dental emergencies, we offer Emergency Visit appointments (R950, 30 minutes). For urgent care outside business hours, please call +27 11 123 4567. We're here to help with dental pain and trauma."
+    }
+
+    // Insurance
+    if (lowerMessage.includes('insurance') || lowerMessage.includes('medical aid') || lowerMessage.includes('cover')) {
+      return "We accept most major medical aid schemes. Please bring your medical aid card to your appointment. You can contact us at +27 11 123 4567 to verify if your specific medical aid is accepted."
+    }
+
+    // General help
+    if (lowerMessage.includes('help') || lowerMessage.includes('stuck') || lowerMessage.includes('problem') || lowerMessage.includes('issue')) {
+      return "I'm here to help! You can ask me about: booking appointments, our services, pricing, location, operating hours, contact information, or anything else about our practice. What would you like to know?"
+    }
+
+    // Confirmation/Yes responses
+    if (
+      lowerMessage === 'yes' ||
+      lowerMessage === 'yeah' ||
+      lowerMessage === 'yep' ||
+      lowerMessage === 'yup' ||
+      lowerMessage === 'ok' ||
+      lowerMessage === 'okay' ||
+      lowerMessage === 'sure' ||
+      lowerMessage === 'alright' ||
+      lowerMessage.startsWith('yes ') ||
+      lowerMessage.startsWith('yeah ')
+    ) {
+      return "Great! What would you like to know more about? I can help with booking, services, pricing, location, hours, or anything else about our dental practice."
+    }
+
+    // No/Negative responses
+    if (
+      lowerMessage === 'no' ||
+      lowerMessage === 'nope' ||
+      lowerMessage === 'nah' ||
+      lowerMessage.startsWith('no ') ||
+      lowerMessage.startsWith('not ')
+    ) {
+      return "That's perfectly fine! Is there anything else I can help you with? I'm here to answer any questions about our dental practice."
+    }
+
+    // Confusion/Don't understand
+    if (
+      lowerMessage.includes("don't understand") ||
+      lowerMessage.includes('confused') ||
+      lowerMessage.includes('unclear') ||
+      lowerMessage.includes('not sure') ||
+      lowerMessage.includes('what do you mean')
+    ) {
+      return "I understand - let me try to explain things more clearly. What specifically would you like help with? I can walk you through booking an appointment, explain our services, help you find our location, or answer questions about pricing. What's on your mind?"
+    }
+
+    // Technology/Website help (for older users)
+    if (
+      lowerMessage.includes('website') ||
+      lowerMessage.includes('internet') ||
+      lowerMessage.includes('online') ||
+      lowerMessage.includes('computer') ||
+      lowerMessage.includes('not good with') ||
+      lowerMessage.includes('not comfortable') ||
+      lowerMessage.includes('difficult') ||
+      lowerMessage.includes('complicated') ||
+      lowerMessage.includes('confusing')
+    ) {
+      return "I completely understand - technology can be confusing! Don't worry, you don't have to use the website if you're not comfortable. You can always call us directly at +27 11 123 4567, and our friendly staff will help you book an appointment over the phone. We're here Monday to Friday, 8 AM to 5 PM. Would you like our phone number?"
+    }
+
+    // Default response (more helpful and conversational)
+    return "I want to make sure I help you properly. Could you tell me a bit more about what you're looking for? I can help with: booking an appointment (I can walk you through it step by step), our services and what we offer, pricing and costs, finding our location, our opening hours, or contacting us. What would be most helpful for you?"
+  }
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!inputValue.trim()) return
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: inputValue,
+      sender: 'user',
+      timestamp: new Date(),
+    }
+
+    setMessages((prev) => [...prev, userMessage])
+    setInputValue('')
+
+    // Simulate bot thinking delay
+    setTimeout(() => {
+      const botResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        text: getBotResponse(inputValue),
+        sender: 'bot',
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, botResponse])
+    }, 500)
+  }
+
+  const handleQuickQuestion = (question: string) => {
+    setInputValue(question)
+    setTimeout(() => {
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        text: question,
+        sender: 'user',
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, userMessage])
+
+      setTimeout(() => {
+        const botResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          text: getBotResponse(question),
+          sender: 'bot',
+          timestamp: new Date(),
+        }
+        setMessages((prev) => [...prev, botResponse])
+      }, 500)
+    }, 100)
+  }
+
+  const quickQuestions = [
+    'How do I book an appointment?',
+    'What is the deposit amount?',
+    'What services do you offer?',
+    'Where are you located?',
+  ]
+
+  return (
+    <>
+      {/* Chat Button */}
+      <motion.button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-6 right-6 w-14 h-14 bg-gray-800 text-white rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-gray-900 transition-colors"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        aria-label="Open chat"
+      >
+        <AnimatePresence mode="wait">
+          {isOpen ? (
+            <motion.div
+              key="close"
+              initial={{ rotate: -90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: 90, opacity: 0 }}
+            >
+              <X className="w-6 h-6" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="open"
+              initial={{ rotate: 90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: -90, opacity: 0 }}
+            >
+              <MessageCircle className="w-6 h-6" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.button>
+
+      {/* Chat Window */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="fixed bottom-24 right-6 w-96 h-[600px] bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col z-50"
+          >
+            {/* Header */}
+            <div className="bg-gray-800 text-white p-4 rounded-t-lg flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
+                  <Bot className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Premium Dental Assistant</h3>
+                  <p className="text-xs text-gray-300">We're here to help</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {messages.map((message) => (
+                <motion.div
+                  key={message.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`flex items-start space-x-2 max-w-[80%] ${
+                      message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''
+                    }`}
+                  >
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        message.sender === 'user'
+                          ? 'bg-gray-800 text-white'
+                          : 'bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      {message.sender === 'user' ? (
+                        <User className="w-4 h-4" />
+                      ) : (
+                        <Bot className="w-4 h-4" />
+                      )}
+                    </div>
+                    <div
+                      className={`rounded-lg px-4 py-2 ${
+                        message.sender === 'user'
+                          ? 'bg-gray-800 text-white'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
+                      <p className="text-sm leading-relaxed">{message.text}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Quick Questions */}
+            {messages.length === 1 && (
+              <div className="px-4 pb-2">
+                <p className="text-xs text-gray-500 mb-2">Quick questions:</p>
+                <div className="flex flex-wrap gap-2">
+                  {quickQuestions.map((question, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleQuickQuestion(question)}
+                      className="text-xs px-3 py-1 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-full transition-colors border border-gray-200"
+                    >
+                      {question}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Input */}
+            <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
+              <div className="flex items-center space-x-2">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="Type your question..."
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent text-sm"
+                />
+                <button
+                  type="submit"
+                  disabled={!inputValue.trim()}
+                  className="w-10 h-10 bg-gray-800 text-white rounded-lg flex items-center justify-center hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  )
+}
+
+export default Chatbot
+
