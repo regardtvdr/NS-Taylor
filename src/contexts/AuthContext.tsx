@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate()
 
   const login = (password: string): boolean => {
-    if (password === 'dental2025') {
+    if (password === 'smile2025') {
       setIsAuthenticated(true)
       localStorage.setItem('staff_authenticated', 'true')
       return true

@@ -14,10 +14,11 @@ import PrivacyPolicy from './pages/PrivacyPolicy'
 import Team from './pages/Team'
 import Login from './pages/staff/Login'
 import StaffDashboard from './pages/staff/StaffDashboard'
-import Bookings from './pages/staff/Bookings'
-import Patients from './pages/staff/Patients'
+import Today from './pages/staff/Today'
+import Calendar from './pages/staff/Calendar'
 import Schedule from './pages/staff/Schedule'
 import Analytics from './pages/staff/Analytics'
+import HelpME from './pages/staff/HelpME'
 
 function App() {
   const location = useLocation()
@@ -47,10 +48,11 @@ function App() {
         >
           <Route path="/staff" element={<Navigate to="/staff/dashboard" replace />} />
           <Route path="/staff/dashboard" element={<StaffDashboard />} />
+          <Route path="/staff/today" element={<Today />} />
+          <Route path="/staff/calendar" element={<Calendar />} />
           <Route path="/staff/schedule" element={<Schedule />} />
           <Route path="/staff/analytics" element={<Analytics />} />
-          <Route path="/staff/bookings" element={<Bookings />} />
-          <Route path="/staff/patients" element={<Patients />} />
+          <Route path="/staff/help" element={<HelpME />} />
         </Route>
 
         {/* Public Routes */}

@@ -62,7 +62,7 @@ const DateTimeSelection = ({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="mt-3 bg-white rounded-md shadow-md p-4 border border-gray-200"
+              className="mt-3 bg-white rounded-lg shadow-lg p-4 border border-gray-200 calendar-wrapper"
             >
               <DayPicker
                 mode="single"
@@ -82,6 +82,83 @@ const DateTimeSelection = ({
                 }}
                 className="mx-auto"
               />
+              <style>{`
+                .calendar-wrapper .rdp {
+                  --rdp-cell-size: 40px;
+                  --rdp-accent-color: #1f2937;
+                  --rdp-background-color: #f9fafb;
+                  --rdp-accent-color-dark: #374151;
+                  --rdp-background-color-dark: #111827;
+                  --rdp-outline: 2px solid var(--rdp-accent-color);
+                  --rdp-outline-selected: 2px solid var(--rdp-accent-color);
+                  font-size: 14px;
+                }
+                .calendar-wrapper .rdp-month {
+                  margin: 0;
+                }
+                .calendar-wrapper .rdp-table {
+                  width: 100%;
+                }
+                .calendar-wrapper .rdp-head_cell {
+                  font-weight: 600;
+                  font-size: 12px;
+                  color: #374151;
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                  padding: 8px 0;
+                }
+                .calendar-wrapper .rdp-day {
+                  width: var(--rdp-cell-size);
+                  height: var(--rdp-cell-size);
+                  font-weight: 500;
+                  color: #1f2937;
+                  border: 1px solid transparent;
+                  border-radius: 8px;
+                  transition: all 0.2s;
+                }
+                .calendar-wrapper .rdp-day:hover:not(.rdp-day_disabled):not(.rdp-day_selected) {
+                  background-color: #f3f4f6;
+                  border-color: #d1d5db;
+                  color: #111827;
+                }
+                .calendar-wrapper .rdp-day_selected {
+                  background-color: #1f2937 !important;
+                  color: white !important;
+                  font-weight: 600;
+                }
+                .calendar-wrapper .rdp-day_today {
+                  font-weight: 700;
+                  color: #1f2937;
+                }
+                .calendar-wrapper .rdp-day_today:not(.rdp-day_selected) {
+                  border: 2px solid #6b7280;
+                }
+                .calendar-wrapper .rdp-day_disabled {
+                  color: #d1d5db;
+                  opacity: 0.5;
+                }
+                .calendar-wrapper .rdp-caption {
+                  font-weight: 600;
+                  font-size: 16px;
+                  color: #111827;
+                  padding: 8px 0;
+                  margin-bottom: 8px;
+                }
+                .calendar-wrapper .rdp-button {
+                  color: #374151;
+                }
+                .calendar-wrapper .rdp-button:hover {
+                  background-color: #f3f4f6;
+                }
+                .calendar-wrapper .rdp-nav_button {
+                  width: 32px;
+                  height: 32px;
+                }
+                .calendar-wrapper .rdp-nav_button:hover {
+                  background-color: #f3f4f6;
+                  border-radius: 6px;
+                }
+              `}</style>
             </motion.div>
           )}
         </AnimatePresence>
@@ -94,10 +171,10 @@ const DateTimeSelection = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <label className="block text-xs font-medium text-gray-700 mb-2.5 uppercase tracking-wide">
+          <label className="block text-sm font-semibold text-gray-800 mb-3">
             Available Times
           </label>
-          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2">
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
             {timeSlots.map((time) => {
               const status = getSlotStatus(time)
               const isSelected = selectedTime === time
@@ -116,13 +193,13 @@ const DateTimeSelection = ({
                       ? 'border-gray-200 bg-gray-50 hover:border-gray-400 text-gray-600'
                       : 'border-gray-100 bg-gray-50 opacity-40 cursor-not-allowed text-gray-400'
                   }`}
-                  whileHover={status !== 'unavailable' && !isSelected ? { scale: 1.02 } : {}}
-                  whileTap={status !== 'unavailable' ? { scale: 0.98 } : {}}
+                  whileHover={status !== 'unavailable' && !isSelected ? { scale: 1.05, y: -2 } : {}}
+                  whileTap={status !== 'unavailable' ? { scale: 0.95 } : {}}
                 >
-                  <span className="font-medium text-xs">{time}</span>
+                  <span className="text-sm font-semibold">{time}</span>
                   {status === 'available' && !isSelected && (
-                    <div className="absolute top-1 right-1">
-                      <Circle className="w-1.5 h-1.5 text-green-500 fill-green-500" />
+                    <div className="absolute top-1.5 right-1.5">
+                      <Circle className="w-2 h-2 text-green-500 fill-green-500" />
                     </div>
                   )}
                 </motion.button>

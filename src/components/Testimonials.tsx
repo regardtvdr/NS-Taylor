@@ -2,13 +2,25 @@ import { motion } from 'framer-motion'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import { REVIEWS } from '../utils/constants'
 import { Star, Quote } from 'lucide-react'
+import { AnimatedGridPattern } from './ui/animated-grid-pattern'
+import { cn } from '../lib/utils'
 
 const Testimonials = () => {
   const { ref, isInView } = useScrollAnimation()
 
   return (
-    <section ref={ref} className="py-20 bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={ref} className="py-20 bg-white relative overflow-hidden">
+      <AnimatedGridPattern
+        numSquares={30}
+        maxOpacity={0.6}
+        duration={3}
+        repeatDelay={1}
+        className={cn(
+          "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
+          "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
+        )}
+      />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -30,7 +42,7 @@ const Testimonials = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: index * 0.1, duration: 0.6 }}
-              className="card p-6 relative"
+              className="bg-white rounded-lg shadow-sm hover:shadow-md border-2 border-gray-900 p-6 relative"
             >
               <Quote className="w-6 h-6 text-gray-300 absolute top-4 right-4" />
               
@@ -44,7 +56,7 @@ const Testimonials = () => {
                   height="40"
                 />
                 <div>
-                  <h4 className="font-semibold text-gray-800 text-sm">{review.name}</h4>
+                  <h4 className="font-semibold text-gray-900 text-sm">{review.name}</h4>
                   <div className="flex items-center space-x-0.5 mt-1">
                     {[...Array(5)].map((_, i) => (
                       <Star
@@ -56,9 +68,9 @@ const Testimonials = () => {
                 </div>
               </div>
 
-              <p className="text-gray-700 mb-4 text-sm leading-relaxed">"{review.comment}"</p>
+              <p className="text-gray-800 mb-4 text-sm leading-relaxed">"{review.comment}"</p>
               
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-500">
                 {new Date(review.date).toLocaleDateString('en-ZA', {
                   year: 'numeric',
                   month: 'long',

@@ -13,6 +13,8 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
+import { AnimatedGridPattern } from './ui/animated-grid-pattern'
+import { cn } from '../lib/utils'
 
 const iconMap: Record<string, any> = {
   stethoscope: Stethoscope,
@@ -27,8 +29,18 @@ const Services = () => {
   const { ref, isInView } = useScrollAnimation()
 
   return (
-    <section ref={ref} className="py-20 bg-gray-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={ref} className="py-20 bg-gray-50 relative overflow-hidden">
+      <AnimatedGridPattern
+        numSquares={30}
+        maxOpacity={0.6}
+        duration={3}
+        repeatDelay={1}
+        className={cn(
+          "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
+          "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
+        )}
+      />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -53,10 +65,10 @@ const Services = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="card p-6 group cursor-pointer"
+                className="bg-white border-2 border-gray-900 rounded-lg p-6 group cursor-pointer shadow-sm hover:shadow-md transition-all duration-300"
               >
-                <div className="w-12 h-12 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center mb-4 group-hover:bg-gray-100 transition-colors duration-300">
-                  <Icon className="w-6 h-6 text-gray-700" />
+                <div className="w-12 h-12 bg-gray-50 border-2 border-gray-900 rounded-lg flex items-center justify-center mb-4 group-hover:bg-gray-100 transition-colors duration-300">
+                  <Icon className="w-6 h-6 text-gray-900" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2 tracking-tight">
                   {service.name}

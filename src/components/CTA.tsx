@@ -6,16 +6,8 @@ import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
 
 const CTA = () => {
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-white relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
-          backgroundSize: '40px 40px',
-        }} />
-      </div>
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section className="py-20 bg-gray-900 relative overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -23,7 +15,7 @@ const CTA = () => {
           transition={{ duration: 0.8 }}
           className="text-center max-w-4xl mx-auto"
         >
-          <h2 className="text-4xl md:text-5xl font-display font-bold mb-6 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-6 tracking-tight">
             Ready to Transform Your Smile?
           </h2>
           <p className="text-lg md:text-xl text-gray-100 mb-12 font-light leading-relaxed max-w-3xl mx-auto">
@@ -40,7 +32,7 @@ const CTA = () => {
               className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20"
             >
               <Shield className="w-6 h-6 text-gray-300 mx-auto mb-3" />
-              <h3 className="font-semibold mb-2 text-sm">SSL Secured</h3>
+              <h3 className="font-semibold mb-2 text-sm text-white">SSL Secured</h3>
               <p className="text-xs text-gray-200">Your data is protected</p>
             </motion.div>
 
@@ -52,7 +44,7 @@ const CTA = () => {
               className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20"
             >
               <Clock className="w-6 h-6 text-gray-300 mx-auto mb-3" />
-              <h3 className="font-semibold mb-2 text-sm">Quick Booking</h3>
+              <h3 className="font-semibold mb-2 text-sm text-white">Quick Booking</h3>
               <p className="text-xs text-gray-200">Book in under 2 minutes</p>
             </motion.div>
 
@@ -64,7 +56,7 @@ const CTA = () => {
               className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20"
             >
               <CheckCircle className="w-6 h-6 text-gray-300 mx-auto mb-3" />
-              <h3 className="font-semibold mb-2 text-sm">42% Fewer No-Shows</h3>
+              <h3 className="font-semibold mb-2 text-sm text-white">42% Fewer No-Shows</h3>
               <p className="text-xs text-gray-200">Deposit system works</p>
             </motion.div>
           </div>
@@ -77,8 +69,8 @@ const CTA = () => {
             <Link to="/booking" className="inline-block">
               <InteractiveHoverButton 
                 text="Book Your Appointment Now" 
-                variant="secondary"
-                className="px-8 py-4 w-auto min-w-[280px] bg-white text-gray-800 border-white"
+                variant="primary"
+                className="px-8 py-4 w-auto min-w-[280px]"
                 as="div"
               />
             </Link>

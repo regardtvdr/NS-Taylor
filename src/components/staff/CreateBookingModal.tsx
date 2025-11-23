@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, User, Mail, Phone, Calendar, Clock, DollarSign } from 'lucide-react'
 import { DayPicker } from 'react-day-picker'
@@ -12,18 +12,23 @@ interface CreateBookingModalProps {
   isOpen: boolean
   onClose: () => void
   onSave: (booking: any) => void
+  initialDate?: string
+  initialTime?: string
+  initialDentist?: string
 }
 
-const CreateBookingModal = ({ isOpen, onClose, onSave }: CreateBookingModalProps) => {
+const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime, initialDentist }: CreateBookingModalProps) => {
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
     patientName: '',
     patientEmail: '',
     patientPhone: '',
     service: null as Service | null,
-    dentist: null as Dentist | null,
-    date: null as Date | null,
-    time: '',
+    dentist: initialDentist ? DENTISTS.find(d => d.name === initialDentist) || null : null as Dentist | null,
+    date: initialDate ? new Date(initialDate) : null as Date | null,
+    time: initialTime || '',
+    selectedSlots: [] as string[], // Array of consecutive time slots
+    slotCount: 1, // Number of slots (1, 2, or 3)
     depositPaid: false,
     depositAmount: 50,
     notes: '',
@@ -33,21 +38,67 @@ const CreateBookingModal = ({ isOpen, onClose, onSave }: CreateBookingModalProps
 
   const timeSlots = formData.date ? generateTimeSlots(formData.date) : []
 
+  // Get consecutive time slots starting from a selected time
+  const getConsecutiveSlots = (startTime: string, count: number, slots: string[]): string[] => {
+    const result: string[] = []
+    const startIndex = slots.indexOf(startTime)
+    
+    if (startIndex === -1) return []
+    
+    for (let i = 0; i < count && startIndex + i < slots.length; i++) {
+      result.push(slots[startIndex + i])
+    }
+    
+    return result
+  }
+
+  // Update form when initial values change
+  useEffect(() => {
+    if (isOpen) {
+      if (initialDate) {
+        setFormData(prev => ({ ...prev, date: new Date(initialDate) }))
+      }
+      if (initialTime) {
+        const currentTimeSlots = formData.date ? generateTimeSlots(formData.date) : []
+        const slots = getConsecutiveSlots(initialTime, 1, currentTimeSlots)
+        setFormData(prev => ({ ...prev, time: initialTime, selectedSlots: slots }))
+      }
+      if (initialDentist) {
+        const dentist = DENTISTS.find(d => d.name === initialDentist)
+        if (dentist) {
+          setFormData(prev => ({ ...prev, dentist }))
+        }
+      }
+    }
+  }, [isOpen, initialDate, initialTime, initialDentist, formData.date])
+
   const resetForm = () => {
     setFormData({
       patientName: '',
       patientEmail: '',
       patientPhone: '',
       service: null,
-      dentist: null,
-      date: null,
-      time: '',
+      dentist: initialDentist ? DENTISTS.find(d => d.name === initialDentist) || null : null,
+      date: initialDate ? new Date(initialDate) : null,
+      time: initialTime || '',
+      selectedSlots: [],
+      slotCount: 1,
       depositPaid: false,
       depositAmount: 50,
       notes: '',
     })
     setStep(1)
     setIsCalendarOpen(false)
+  }
+
+  // Handle time slot selection with multi-slot support
+  const handleTimeSlotClick = (time: string) => {
+    const slots = getConsecutiveSlots(time, formData.slotCount, timeSlots)
+    setFormData({
+      ...formData,
+      time: time,
+      selectedSlots: slots,
+    })
   }
 
   const handleSave = () => {
@@ -58,8 +109,15 @@ const CreateBookingModal = ({ isOpen, onClose, onSave }: CreateBookingModalProps
       formData.service &&
       formData.dentist &&
       formData.date &&
-      formData.time
+      formData.time &&
+      formData.selectedSlots.length > 0
     ) {
+      // Calculate end time based on number of slots
+      const endTime = formData.selectedSlots[formData.selectedSlots.length - 1]
+      const endTimeIndex = timeSlots.indexOf(endTime)
+      const nextSlotIndex = endTimeIndex + 1
+      const calculatedEndTime = nextSlotIndex < timeSlots.length ? timeSlots[nextSlotIndex] : endTime
+
       onSave({
         id: `BK-${Date.now()}`,
         patient: formData.patientName,
@@ -69,6 +127,10 @@ const CreateBookingModal = ({ isOpen, onClose, onSave }: CreateBookingModalProps
         dentist: formData.dentist.name,
         date: format(formData.date, 'yyyy-MM-dd'),
         time: formData.time,
+        endTime: calculatedEndTime,
+        duration: formData.slotCount * 30, // Duration in minutes
+        slotCount: formData.slotCount,
+        selectedSlots: formData.selectedSlots,
         status: 'confirmed',
         deposit: formData.depositPaid ? formData.depositAmount : 0,
         total: formData.service.price,
@@ -91,7 +153,7 @@ const CreateBookingModal = ({ isOpen, onClose, onSave }: CreateBookingModalProps
       case 2:
         return formData.service !== null && formData.dentist !== null
       case 3:
-        return formData.date !== null && formData.time !== ''
+        return formData.date !== null && formData.time !== '' && formData.selectedSlots.length > 0
       default:
         return false
     }
@@ -217,49 +279,89 @@ const CreateBookingModal = ({ isOpen, onClose, onSave }: CreateBookingModalProps
                 className="space-y-6"
               >
                 <h3 className="text-xl font-display font-semibold text-gray-800 mb-4">
-                  Service & Dentist
+                  Appointment Details
                 </h3>
+                
+                {/* Service Selection Dropdown */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-800 mb-3">
-                    Select Service *
+                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+                    What is this appointment for? *
                   </label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {SERVICES.map((service) => (
-                      <button
-                        key={service.id}
-                        onClick={() => setFormData({ ...formData, service })}
-                        className={`p-4 rounded-lg border text-left transition-all ${
-                          formData.service?.id === service.id
-                            ? 'border-gray-700 bg-gray-50'
-                            : 'border-gray-200 hover:border-gray-400'
-                        }`}
-                      >
-                        <div className="font-semibold text-gray-800 mb-1">{service.name}</div>
-                        <div className="text-sm text-gray-600">R{service.price}</div>
-                      </button>
-                    ))}
+                  <div className="relative">
+                    <select
+                      value={formData.service?.id || ''}
+                      onChange={(e) => {
+                        const selectedService = SERVICES.find(s => s.id === e.target.value)
+                        setFormData({ ...formData, service: selectedService || null })
+                      }}
+                      className="input-field appearance-none pr-10 cursor-pointer"
+                      required
+                    >
+                      <option value="">Select a service...</option>
+                      {SERVICES.map((service) => (
+                        <option key={service.id} value={service.id}>
+                          {service.name} - R{service.price} ({service.duration} min)
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
                   </div>
+                  {formData.service && (
+                    <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="text-sm text-gray-700">
+                        <span className="font-medium">{formData.service.name}</span>
+                        <span className="text-gray-600"> - {formData.service.description}</span>
+                      </div>
+                      <div className="mt-1 text-xs text-gray-600">
+                        Duration: {formData.service.duration} minutes • Price: R{formData.service.price}
+                      </div>
+                    </div>
+                  )}
                 </div>
+
+                {/* Dentist Selection Dropdown */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-800 mb-3">
-                    Select Dentist *
+                  <label className="block text-sm font-semibold text-gray-800 mb-2">
+                    Which dentist would the patient like to see? *
                   </label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {DENTISTS.map((dentist) => (
-                      <button
-                        key={dentist.id}
-                        onClick={() => setFormData({ ...formData, dentist })}
-                        className={`p-4 rounded-lg border text-left transition-all ${
-                          formData.dentist?.id === dentist.id
-                            ? 'border-gray-700 bg-gray-50'
-                            : 'border-gray-200 hover:border-gray-400'
-                        }`}
-                      >
-                        <div className="font-semibold text-gray-800 mb-1">{dentist.name}</div>
-                        <div className="text-xs text-gray-600">{dentist.specialization}</div>
-                      </button>
-                    ))}
+                  <div className="relative">
+                    <select
+                      value={formData.dentist?.id || ''}
+                      onChange={(e) => {
+                        const selectedDentist = DENTISTS.find(d => d.id === e.target.value)
+                        setFormData({ ...formData, dentist: selectedDentist || null })
+                      }}
+                      className="input-field appearance-none pr-10 cursor-pointer"
+                      required
+                    >
+                      <option value="">Select a dentist...</option>
+                      {DENTISTS.map((dentist) => (
+                        <option key={dentist.id} value={dentist.id}>
+                          {dentist.name} - {dentist.specialization}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
                   </div>
+                  {formData.dentist && (
+                    <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="text-sm text-gray-700">
+                        <span className="font-medium">{formData.dentist.name}</span>
+                        <span className="text-gray-600"> - {formData.dentist.specialization}</span>
+                      </div>
+                      <div className="mt-1 text-xs text-gray-600">
+                        {formData.dentist.qualifications} • {formData.dentist.experience} years experience
+                      </div>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -293,14 +395,14 @@ const CreateBookingModal = ({ isOpen, onClose, onSave }: CreateBookingModalProps
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="mt-3 bg-white rounded-lg shadow-md p-3 border border-gray-200"
+                      className="mt-3 bg-white rounded-lg shadow-lg p-4 border border-gray-200 calendar-wrapper"
                     >
                       <DayPicker
                         mode="single"
                         selected={formData.date || undefined}
                         onSelect={(date) => {
                           if (date) {
-                            setFormData({ ...formData, date, time: '' })
+                            setFormData({ ...formData, date, time: '', selectedSlots: [] })
                             setIsCalendarOpen(false)
                           }
                         }}
@@ -312,30 +414,186 @@ const CreateBookingModal = ({ isOpen, onClose, onSave }: CreateBookingModalProps
                           selected: 'bg-gray-800 text-white rounded-full',
                         }}
                       />
+                      <style>{`
+                        .calendar-wrapper .rdp {
+                          --rdp-cell-size: 40px;
+                          --rdp-accent-color: #1f2937;
+                          --rdp-background-color: #f9fafb;
+                          --rdp-accent-color-dark: #374151;
+                          --rdp-background-color-dark: #111827;
+                          --rdp-outline: 2px solid var(--rdp-accent-color);
+                          --rdp-outline-selected: 2px solid var(--rdp-accent-color);
+                          font-size: 14px;
+                        }
+                        .calendar-wrapper .rdp-month {
+                          margin: 0;
+                        }
+                        .calendar-wrapper .rdp-table {
+                          width: 100%;
+                        }
+                        .calendar-wrapper .rdp-head_cell {
+                          font-weight: 600;
+                          font-size: 12px;
+                          color: #374151;
+                          text-transform: uppercase;
+                          letter-spacing: 0.05em;
+                          padding: 8px 0;
+                        }
+                        .calendar-wrapper .rdp-day {
+                          width: var(--rdp-cell-size);
+                          height: var(--rdp-cell-size);
+                          font-weight: 500;
+                          color: #1f2937;
+                          border: 1px solid transparent;
+                          border-radius: 8px;
+                          transition: all 0.2s;
+                        }
+                        .calendar-wrapper .rdp-day:hover:not(.rdp-day_disabled):not(.rdp-day_selected) {
+                          background-color: #f3f4f6;
+                          border-color: #d1d5db;
+                          color: #111827;
+                        }
+                        .calendar-wrapper .rdp-day_selected {
+                          background-color: #1f2937 !important;
+                          color: white !important;
+                          font-weight: 600;
+                        }
+                        .calendar-wrapper .rdp-day_today {
+                          font-weight: 700;
+                          color: #1f2937;
+                        }
+                        .calendar-wrapper .rdp-day_today:not(.rdp-day_selected) {
+                          border: 2px solid #6b7280;
+                        }
+                        .calendar-wrapper .rdp-day_disabled {
+                          color: #d1d5db;
+                          opacity: 0.5;
+                        }
+                        .calendar-wrapper .rdp-caption {
+                          font-weight: 600;
+                          font-size: 16px;
+                          color: #111827;
+                          padding: 8px 0;
+                          margin-bottom: 8px;
+                        }
+                        .calendar-wrapper .rdp-button {
+                          color: #374151;
+                        }
+                        .calendar-wrapper .rdp-button:hover {
+                          background-color: #f3f4f6;
+                        }
+                        .calendar-wrapper .rdp-nav_button {
+                          width: 32px;
+                          height: 32px;
+                        }
+                        .calendar-wrapper .rdp-nav_button:hover {
+                          background-color: #f3f4f6;
+                          border-radius: 6px;
+                        }
+                      `}</style>
                     </motion.div>
                   )}
                 </div>
 
                 {formData.date && (
                   <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Select Time *
-                    </label>
-                    <div className="grid grid-cols-4 gap-2">
-                      {timeSlots.map((time) => (
-                        <button
-                          key={time}
-                          onClick={() => setFormData({ ...formData, time })}
-                          className={`p-2 rounded-lg border text-center transition-all ${
-                            formData.time === time
-                              ? 'border-gray-700 bg-gray-50 text-gray-800'
-                              : 'border-gray-200 hover:border-gray-400'
-                          }`}
-                        >
-                          {time}
-                        </button>
-                      ))}
+                    <div className="flex items-center justify-between mb-4">
+                      <label className="block text-sm font-semibold text-gray-800">
+                        Select Time & Duration *
+                      </label>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs text-gray-600">Duration:</span>
+                        <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
+                          {[1, 2, 3].map((count) => (
+                            <button
+                              key={count}
+                              onClick={() => {
+                                const newSlots = formData.time 
+                                  ? getConsecutiveSlots(formData.time, count, timeSlots)
+                                  : []
+                                setFormData({
+                                  ...formData,
+                                  slotCount: count,
+                                  selectedSlots: newSlots,
+                                })
+                              }}
+                              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                                formData.slotCount === count
+                                  ? 'bg-gray-800 text-white'
+                                  : 'text-gray-600 hover:bg-gray-200'
+                              }`}
+                            >
+                              {count}x
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
+                    <div className="mb-2">
+                      {formData.selectedSlots.length > 0 && (
+                        <div className="p-2 bg-blue-50 border border-blue-200 rounded-lg mb-3">
+                          <p className="text-sm text-gray-700">
+                            <span className="font-medium">Selected:</span>{' '}
+                            {formData.selectedSlots[0]} - {formData.selectedSlots[formData.selectedSlots.length - 1]}
+                            {' '}({formData.slotCount * 30} minutes)
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-4 gap-3 max-h-64 overflow-y-auto p-1">
+                      {timeSlots.map((time, index) => {
+                        const isSelected = formData.selectedSlots.includes(time)
+                        const isStartSlot = formData.selectedSlots[0] === time
+                        const isEndSlot = formData.selectedSlots[formData.selectedSlots.length - 1] === time
+                        const isInRange = formData.selectedSlots.includes(time)
+                        
+                        // Check if this slot can be selected (enough consecutive slots available)
+                        const canSelect = index + formData.slotCount <= timeSlots.length
+                        
+                        return (
+                          <motion.button
+                            key={time}
+                            onClick={() => canSelect && handleTimeSlotClick(time)}
+                            disabled={!canSelect}
+                            className={`p-3 rounded-lg border-2 text-center transition-all relative font-semibold ${
+                              isSelected
+                                ? 'border-gray-800 bg-gray-800 text-white shadow-md'
+                                : isInRange
+                                ? 'border-blue-400 bg-blue-100 text-blue-900'
+                                : !canSelect
+                                ? 'border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed'
+                                : 'border-gray-300 bg-white hover:border-gray-500 hover:bg-gray-50 text-gray-800 shadow-sm'
+                            }`}
+                            whileHover={canSelect && !isSelected ? { scale: 1.05, y: -2 } : {}}
+                            whileTap={canSelect ? { scale: 0.95 } : {}}
+                            title={
+                              !canSelect
+                                ? 'Not enough consecutive slots available'
+                                : isSelected
+                                ? 'Start time'
+                                : ''
+                            }
+                          >
+                            <span className="text-sm">{time}</span>
+                            {isStartSlot && (
+                              <div className="absolute -top-1 -left-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                                <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              </div>
+                            )}
+                            {isEndSlot && isStartSlot && formData.slotCount > 1 && (
+                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                                <span className="text-white text-xs font-bold">E</span>
+                              </div>
+                            )}
+                          </motion.button>
+                        )
+                      })}
+                    </div>
+                    <p className="mt-2 text-xs text-gray-500">
+                      Select a start time. The booking will span {formData.slotCount} consecutive slot{formData.slotCount > 1 ? 's' : ''} ({formData.slotCount * 30} minutes).
+                    </p>
                   </div>
                 )}
 
