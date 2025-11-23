@@ -21,6 +21,7 @@ import Calendar from './pages/staff/Calendar'
 import Schedule from './pages/staff/Schedule'
 import Analytics from './pages/staff/Analytics'
 import HelpME from './pages/staff/HelpME'
+import TestFirebase from './pages/TestFirebase'
 
 function App() {
   const location = useLocation()
@@ -76,6 +77,7 @@ function App() {
           <Route path="/location" element={<Location />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/test-firebase" element={<TestFirebase />} />
           <Route path="/dashboard" element={<Navigate to="/staff/login" replace />} />
         </Route>
       </Routes>

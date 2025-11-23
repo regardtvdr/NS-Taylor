@@ -129,3 +129,33 @@ export interface RecurringAppointment {
   createdOccurrences: number
 }
 
+export interface BookingDetail {
+  id: string
+  patient: string
+  email?: string
+  phone?: string
+  service: string
+  dentist: string
+  date: string
+  time: string
+  status: 'confirmed' | 'pending' | 'cancelled' | 'completed' | 'arrived' | 'no-show'
+  deposit?: number
+  total?: number
+  isRecurring?: boolean
+  recurrence?: RecurrencePattern
+}
+
+export interface ScheduleAppointment {
+  id: string
+  time: string
+  patient: string
+  service: string
+  dentist: string
+  depositPaid: boolean
+  status: 'scheduled' | 'arrived' | 'no-show' | 'completed'
+  phone?: string
+  email?: string
+  date: string
+  total?: number
+}
+
