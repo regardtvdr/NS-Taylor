@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageCircle, X, Send, Bot, User } from 'lucide-react'
-import { DEPOSIT_AMOUNT } from '../utils/constants'
+import { DEPOSIT_AMOUNT, DENTISTS, SERVICES } from '../utils/constants'
 
 interface Message {
   id: string
@@ -360,8 +360,225 @@ const Chatbot = () => {
       return "I completely understand - technology can be confusing! Don't worry, you don't have to use the website if you're not comfortable. You can always call us directly at +27 11 123 4567, and our friendly staff will help you book an appointment over the phone. We're here Monday to Friday, 8 AM to 5 PM. Would you like our phone number?"
     }
 
+    // About page / Practice information
+    if (
+      lowerMessage.includes('about') ||
+      lowerMessage.includes('practice') ||
+      lowerMessage.includes('mission') ||
+      lowerMessage.includes('who are you') ||
+      lowerMessage.includes('tell me about') ||
+      lowerMessage.includes('what is premium dental')
+    ) {
+      if (lowerMessage.includes('mission') || lowerMessage.includes('values') || lowerMessage.includes('believe')) {
+        return "Our mission at Premium Dental is to provide exceptional dental services in a comfortable, modern environment while making the booking process as simple and convenient as possible. We believe everyone deserves access to world-class dental care. We've revolutionized the appointment booking experience with our innovative online platform, reducing no-shows by 42% and ensuring every patient receives the care they need when they need it."
+      }
+      return "Premium Dental Practice is a premier dental practice in South Africa, dedicated to providing exceptional dental care with a focus on patient comfort and satisfaction. We're an award-winning practice with an expert team of highly qualified dentists. We use modern technology and state-of-the-art equipment to provide patient-centered care. You can learn more about us on our 'About Us' page in the top menu."
+    }
+
+    // Team / Dentists - more specific questions
+    if (
+      lowerMessage.includes('team') ||
+      lowerMessage.includes('staff') ||
+      lowerMessage.includes('sarah johnson') ||
+      lowerMessage.includes('michael chen') ||
+      lowerMessage.includes('emily williams') ||
+      lowerMessage.includes('qualifications') ||
+      lowerMessage.includes('experience') ||
+      lowerMessage.includes('specialist') ||
+      lowerMessage.includes('specialization')
+    ) {
+      if (lowerMessage.includes('sarah') || (lowerMessage.includes('johnson') && !lowerMessage.includes('michael'))) {
+        return "Dr. Sarah Johnson specializes in General Dentistry with 12 years of experience. She has a BDS and MDS degree and is specialized in preventive care and cosmetic dentistry. She has a 4.9 rating with 234 reviews. You can learn more about her and our other dentists on the 'Our Team' page."
+      }
+      if (lowerMessage.includes('michael') || lowerMessage.includes('chen')) {
+        return "Dr. Michael Chen is our expert in Orthodontics & Implants with 15 years of experience. He has a BDS, MDS, and PhD degree and is known for precision and patient care. He has a 4.8 rating with 189 reviews. You can learn more about him and our other dentists on the 'Our Team' page."
+      }
+      if (lowerMessage.includes('emily') || lowerMessage.includes('williams')) {
+        return "Dr. Emily Williams specializes in Cosmetic & Restorative dentistry with 10 years of experience. She has a BDS and MDS degree and is passionate about creating beautiful smiles through advanced cosmetic and restorative procedures. She has a 4.9 rating with 156 reviews. You can learn more about her and our other dentists on the 'Our Team' page."
+      }
+      return `We have three excellent dentists: ${DENTISTS.map(d => `${d.name} (${d.specialization}, ${d.experience} years)`).join(', ')}. All are highly qualified and experienced. You can read more about each dentist, their qualifications, and patient reviews on the 'Our Team' page in the top menu.`
+    }
+
+    // Reviews / Testimonials
+    if (
+      lowerMessage.includes('review') ||
+      lowerMessage.includes('testimonial') ||
+      lowerMessage.includes('rating') ||
+      lowerMessage.includes('feedback') ||
+      lowerMessage.includes('what do patients say') ||
+      lowerMessage.includes('patient experience')
+    ) {
+      return "We're proud to have excellent patient reviews! Our dentists have ratings between 4.8 and 4.9 stars, with hundreds of satisfied patients. Patients consistently praise our professional service, modern technology, seamless booking process, and caring staff. You can read patient testimonials on our homepage in the 'What Our Patients Say' section."
+    }
+
+    // Contact page questions
+    if (
+      lowerMessage.includes('contact page') ||
+      lowerMessage.includes('send message') ||
+      lowerMessage.includes('contact form') ||
+      lowerMessage.includes('get in touch')
+    ) {
+      return "You can contact us in several ways: 1) Use the Contact page on our website to send us a message directly, 2) Call us at +27 11 123 4567 (Monday-Friday, 8 AM - 5 PM), 3) Email us at info@premiumdental.co.za, or 4) Visit us at 123 Medical Boulevard, Sandton, Johannesburg. For emergencies outside business hours, call our emergency line at +27 11 123 4567."
+    }
+
+    // Location page / Directions
+    if (
+      lowerMessage.includes('location page') ||
+      lowerMessage.includes('directions') ||
+      lowerMessage.includes('how to get there') ||
+      lowerMessage.includes('map') ||
+      lowerMessage.includes('gautrain') ||
+      lowerMessage.includes('public transport') ||
+      lowerMessage.includes('car') ||
+      lowerMessage.includes('parking')
+    ) {
+      if (lowerMessage.includes('gautrain') || lowerMessage.includes('public transport') || lowerMessage.includes('train') || lowerMessage.includes('bus')) {
+        return "We're easily accessible via public transport! The practice is just 5 minutes walk from the Gautrain Sandton Station. Multiple bus routes also serve the area. Visit our Location page for more details and a map."
+      }
+      if (lowerMessage.includes('car') || lowerMessage.includes('drive') || lowerMessage.includes('highway')) {
+        return "We're located on Medical Boulevard in Sandton, with easy access from the N1 and M1 highways. We have free parking available on-site for all patients. Visit our Location page for detailed directions and a Google Maps link."
+      }
+      return "Visit our Location page in the top menu for detailed information about finding us, including a Google Maps link, directions by car and public transport, parking information, and our full address: 123 Medical Boulevard, Sandton, Johannesburg 2196, South Africa."
+    }
+
+    // Privacy Policy / Terms of Service
+    if (
+      lowerMessage.includes('privacy') ||
+      lowerMessage.includes('data') ||
+      lowerMessage.includes('information') ||
+      lowerMessage.includes('popia') ||
+      lowerMessage.includes('cpa') ||
+      lowerMessage.includes('ecta') ||
+      lowerMessage.includes('personal information') ||
+      lowerMessage.includes('data protection')
+    ) {
+      if (lowerMessage.includes('terms') || lowerMessage.includes('service') || lowerMessage.includes('agreement')) {
+        return "Our Terms of Service cover appointment booking, cancellation policies, payment terms, and your rights as a consumer under the Consumer Protection Act (CPA). You can read the full Terms of Service by clicking 'Terms of Service' in the footer or visiting /terms on our website."
+      }
+      return "We take your privacy seriously and comply with POPIA (Protection of Personal Information Act), CPA (Consumer Protection Act), and ECTA (Electronic Communications and Transactions Act). We only collect necessary information for providing dental services and managing appointments. You can read our full Privacy Policy by clicking 'Privacy Policy' in the footer or visiting /privacy on our website. Our Information Officer is Dr. Jane Smith (privacy@premiumdental.co.za)."
+    }
+
+    // What to expect / First visit
+    if (
+      lowerMessage.includes('what to expect') ||
+      lowerMessage.includes('first visit') ||
+      lowerMessage.includes('first appointment') ||
+      lowerMessage.includes('what happens') ||
+      lowerMessage.includes('what should i bring') ||
+      lowerMessage.includes('prepare') ||
+      lowerMessage.includes('arrive')
+    ) {
+      if (lowerMessage.includes('bring') || lowerMessage.includes('need')) {
+        return "For your first visit, please bring: 1) Your ID or passport, 2) Your medical aid card (if applicable), 3) A list of any medications you're taking, 4) Any previous dental X-rays if you have them. Arrive 10-15 minutes early to complete any necessary paperwork."
+      }
+      return "During your first visit, you'll have a comprehensive consultation where we'll examine your oral health, take X-rays if needed, and create a personalized treatment plan. The consultation takes about 60 minutes. Our friendly staff will make you feel comfortable, and you'll have time to ask any questions. We use modern, pain-free techniques to ensure your comfort."
+    }
+
+    // Follow-up care / After treatment
+    if (
+      lowerMessage.includes('follow up') ||
+      lowerMessage.includes('after treatment') ||
+      lowerMessage.includes('after care') ||
+      lowerMessage.includes('recovery') ||
+      lowerMessage.includes('post treatment')
+    ) {
+      return "After your treatment, we'll provide you with detailed after-care instructions. Depending on your procedure, you may need a follow-up appointment. We'll schedule this before you leave. If you have any questions or concerns after your visit, don't hesitate to call us at +27 11 123 4567."
+    }
+
+    // Payment methods - more detailed
+    if (
+      lowerMessage.includes('ozow') ||
+      lowerMessage.includes('payfast') ||
+      lowerMessage.includes('payment method') ||
+      lowerMessage.includes('how to pay') ||
+      lowerMessage.includes('bank transfer') ||
+      lowerMessage.includes('eft') ||
+      lowerMessage.includes('cash')
+    ) {
+      if (lowerMessage.includes('ozow') || lowerMessage.includes('payfast')) {
+        return "We accept Ozow and PayFast for online payments. Both work with most South African bank accounts - you don't need a credit card. These are secure payment gateways that allow you to pay directly from your bank account. The deposit is R50, and you'll pay the remaining balance on the day of your appointment."
+      }
+      if (lowerMessage.includes('cash') || lowerMessage.includes('card') || lowerMessage.includes('eft')) {
+        return "On the day of your appointment, we accept cash, card payments, and direct medical aid claims (subject to verification). You can also pay the deposit in person when you arrive if you prefer not to pay online."
+      }
+      return "For the R50 deposit, you can pay online using Ozow or PayFast (no credit card needed - works with most SA bank accounts). On the day of your appointment, we accept cash, card, and medical aid. If you're not comfortable with online payments, you can call us to arrange payment or pay when you arrive."
+    }
+
+    // Website navigation / Pages
+    if (
+      lowerMessage.includes('page') ||
+      lowerMessage.includes('menu') ||
+      lowerMessage.includes('navigate') ||
+      lowerMessage.includes('where is') ||
+      lowerMessage.includes('find') ||
+      lowerMessage.includes('homepage') ||
+      lowerMessage.includes('home page')
+    ) {
+      if (lowerMessage.includes('home') || lowerMessage.includes('main')) {
+        return "The homepage shows our services, patient testimonials, and information about our practice. You can book an appointment, learn about our team, or explore our services from there. Click 'Home' in the top menu to return to the homepage."
+      }
+      return "Our website has several pages: Home (services and testimonials), About Us (our mission and practice info), Our Team (meet our dentists), Book Appointment (booking portal), Location (directions and map), and Contact (contact form and information). Use the top menu to navigate between pages."
+    }
+
+    // Accessibility / Special needs
+    if (
+      lowerMessage.includes('accessibility') ||
+      lowerMessage.includes('disabled') ||
+      lowerMessage.includes('wheelchair') ||
+      lowerMessage.includes('special needs') ||
+      lowerMessage.includes('accommodation')
+    ) {
+      return "We're committed to making our practice accessible to everyone. Our facility is wheelchair accessible, and we have parking close to the entrance. If you have specific accessibility needs, please let us know when booking, and we'll make sure everything is arranged for your comfort. Call us at +27 11 123 4567 to discuss any special requirements."
+    }
+
+    // Booking process - more detailed steps
+    if (
+      lowerMessage.includes('step') ||
+      lowerMessage.includes('process') ||
+      lowerMessage.includes('how does booking work') ||
+      lowerMessage.includes('walkthrough')
+    ) {
+      return "The booking process has 5 simple steps: 1) Choose your service (cleaning, consultation, etc.), 2) Select your preferred dentist (or we can assign one), 3) Pick a date and time from available slots, 4) Enter your contact details (name, email, phone), 5) Pay the R50 deposit to secure your appointment. You'll receive a confirmation email with all the details. The whole process takes just a few minutes!"
+    }
+
+    // Specific service questions
+    if (
+      lowerMessage.includes('filling') ||
+      lowerMessage.includes('crown') ||
+      lowerMessage.includes('extraction') ||
+      lowerMessage.includes('braces') ||
+      lowerMessage.includes('orthodontic') ||
+      lowerMessage.includes('cosmetic')
+    ) {
+      if (lowerMessage.includes('filling')) {
+        return "Yes, we do fillings! Fillings are used to repair cavities and restore damaged teeth. The cost depends on the size and material used. During your consultation, we'll assess what's needed and provide a detailed treatment plan with pricing."
+      }
+      if (lowerMessage.includes('crown')) {
+        return "Yes, we provide dental crowns! Crowns are used to restore damaged or weakened teeth. The cost varies depending on the material and complexity. We'll discuss your options during your consultation."
+      }
+      if (lowerMessage.includes('extraction') || lowerMessage.includes('remove tooth') || lowerMessage.includes('pull tooth')) {
+        return "Yes, we perform tooth extractions when necessary. We use modern techniques to make the procedure as comfortable as possible. The cost depends on the complexity of the extraction. We'll discuss this during your consultation."
+      }
+      if (lowerMessage.includes('braces') || lowerMessage.includes('orthodontic')) {
+        return "Dr. Michael Chen specializes in orthodontics, including braces and other orthodontic treatments. We offer consultations to assess your needs and create a treatment plan. Book a consultation to discuss your orthodontic options."
+      }
+      if (lowerMessage.includes('cosmetic')) {
+        return "Dr. Emily Williams specializes in cosmetic dentistry, including teeth whitening, veneers, and smile makeovers. We offer professional teeth whitening (R2500) and various cosmetic procedures. Book a consultation to discuss your cosmetic dental goals."
+      }
+    }
+
+    // Cancellation policy - more detailed
+    if (
+      lowerMessage.includes('cancellation policy') ||
+      lowerMessage.includes('refund') ||
+      lowerMessage.includes('24 hours') ||
+      lowerMessage.includes('no show')
+    ) {
+      return "Our cancellation policy: Appointments cancelled more than 24 hours in advance receive a full refund of the R50 deposit. Cancellations made less than 24 hours before the appointment, or no-shows, result in forfeiture of the deposit. You can reschedule free of charge up to 24 hours before your appointment. Use the cancellation link in your confirmation email to manage your appointment."
+    }
+
     // Default response (more helpful and conversational)
-    return "I want to make sure I help you properly. Could you tell me a bit more about what you're looking for? I can help with: booking an appointment (I can walk you through it step by step), our services and what we offer, pricing and costs, finding our location, our opening hours, or contacting us. What would be most helpful for you?"
+    return "I want to make sure I help you properly. Could you tell me a bit more about what you're looking for? I can help with: booking an appointment (I can walk you through it step by step), our services and what we offer, pricing and costs, finding our location, our opening hours, our team of dentists, contact information, privacy and terms, or anything else about our practice. What would be most helpful for you?"
   }
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -418,6 +635,8 @@ const Chatbot = () => {
     'What is the deposit amount?',
     'What services do you offer?',
     'Where are you located?',
+    'What are your opening hours?',
+    'Who are your dentists?',
   ]
 
   return (
@@ -425,7 +644,7 @@ const Chatbot = () => {
       {/* Chat Button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-gray-800 text-white rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-gray-900 transition-colors"
+        className="fixed bottom-6 right-4 md:right-6 w-12 h-12 md:w-14 md:h-14 bg-gray-800 text-white rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-gray-900 transition-colors"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         aria-label="Open chat"
@@ -460,7 +679,7 @@ const Chatbot = () => {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 w-96 h-[600px] bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col z-50"
+            className="fixed bottom-20 md:bottom-24 right-4 md:right-6 w-[calc(100vw-2rem)] md:w-96 h-[calc(100vh-6rem)] md:h-[600px] max-h-[600px] bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col z-50"
           >
             {/* Header */}
             <div className="bg-gray-800 text-white p-4 rounded-t-lg flex items-center justify-between">

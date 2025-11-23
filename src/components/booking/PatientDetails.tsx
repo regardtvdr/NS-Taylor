@@ -44,7 +44,7 @@ const InputField = ({
     <div className="relative">
       <div className="relative">
         <Icon
-          className={`absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 transition-colors ${
+          className={`absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 transition-colors z-10 ${
             isFocused ? 'text-gray-700' : 'text-gray-400'
           }`}
         />
@@ -56,18 +56,20 @@ const InputField = ({
           onFocus={() => onFocus(name)}
           onBlur={onBlur}
           required={required}
-          className="input-field pl-12 pr-4"
+          className="input-field pl-10 md:pl-12 pr-10 md:pr-4 relative z-0 text-base"
+          placeholder=""
         />
         <motion.label
           initial={false}
           animate={{
-            y: isFocused || hasValue ? -12 : 0,
-            x: isFocused || hasValue ? 12 : 48,
+            top: isFocused || hasValue ? '0px' : '50%',
+            y: isFocused || hasValue ? '-50%' : '-50%',
+            x: isFocused || hasValue ? 10 : 40,
             scale: isFocused || hasValue ? 0.85 : 1,
           }}
-          className={`absolute left-12 top-1/2 transform -translate-y-1/2 pointer-events-none transition-colors ${
+          className={`absolute left-10 md:left-12 pointer-events-none z-20 transition-colors text-sm md:text-base ${
             isFocused || hasValue
-              ? 'text-gray-700 bg-white px-2'
+              ? 'text-gray-700 bg-white px-1.5 md:px-2'
               : 'text-gray-500'
           }`}
         >
@@ -77,9 +79,9 @@ const InputField = ({
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2"
+            className="absolute right-3 md:right-4 top-1/2 transform -translate-y-1/2 z-10"
           >
-            <Check className="w-5 h-5 text-gray-700" />
+            <Check className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
           </motion.div>
         )}
       </div>
@@ -179,7 +181,7 @@ const PatientDetails = ({ data, onChange }: PatientDetailsProps) => {
       <div className="mt-6 md:mt-8 p-4 md:p-6 bg-gray-50 rounded-card">
         <h3 className="text-sm md:text-base font-semibold text-gray-800 mb-3 md:mb-4">Reminder Preferences</h3>
         <div className="space-y-2.5 md:space-y-3">
-          <label className="flex items-center space-x-3 cursor-pointer">
+          <label className="flex items-center space-x-3 cursor-pointer py-1">
             <input
               type="checkbox"
               checked={data.reminders.sms}
@@ -188,11 +190,11 @@ const PatientDetails = ({ data, onChange }: PatientDetailsProps) => {
                   reminders: { ...data.reminders, sms: e.target.checked },
                 })
               }
-              className="w-5 h-5 text-gray-700 rounded focus:ring-gray-500"
+              className="w-5 h-5 md:w-5 md:h-5 text-gray-700 rounded focus:ring-gray-500 flex-shrink-0"
             />
-            <span className="text-gray-700">SMS Reminder</span>
+            <span className="text-sm md:text-base text-gray-700">SMS Reminder</span>
           </label>
-          <label className="flex items-center space-x-3 cursor-pointer">
+          <label className="flex items-center space-x-3 cursor-pointer py-1">
             <input
               type="checkbox"
               checked={data.reminders.whatsapp}
@@ -201,11 +203,11 @@ const PatientDetails = ({ data, onChange }: PatientDetailsProps) => {
                   reminders: { ...data.reminders, whatsapp: e.target.checked },
                 })
               }
-              className="w-5 h-5 text-gray-700 rounded focus:ring-gray-500"
+              className="w-5 h-5 md:w-5 md:h-5 text-gray-700 rounded focus:ring-gray-500 flex-shrink-0"
             />
-            <span className="text-gray-700">WhatsApp Reminder</span>
+            <span className="text-sm md:text-base text-gray-700">WhatsApp Reminder</span>
           </label>
-          <label className="flex items-center space-x-3 cursor-pointer">
+          <label className="flex items-center space-x-3 cursor-pointer py-1">
             <input
               type="checkbox"
               checked={data.reminders.calendar}
@@ -214,9 +216,9 @@ const PatientDetails = ({ data, onChange }: PatientDetailsProps) => {
                   reminders: { ...data.reminders, calendar: e.target.checked },
                 })
               }
-              className="w-5 h-5 text-gray-700 rounded focus:ring-gray-500"
+              className="w-5 h-5 md:w-5 md:h-5 text-gray-700 rounded focus:ring-gray-500 flex-shrink-0"
             />
-            <span className="text-gray-700">Add to Google Calendar</span>
+            <span className="text-sm md:text-base text-gray-700">Add to Google Calendar</span>
           </label>
         </div>
       </div>
