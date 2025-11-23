@@ -5,7 +5,6 @@ import confetti from 'canvas-confetti'
 import { CheckCircle, Calendar, Clock, User, Mail, Phone, Download, Home, UserCircle } from 'lucide-react'
 import { BookingData } from '../types'
 import { formatDate } from '../utils/dateUtils'
-import { DEPOSIT_AMOUNT } from '../utils/constants'
 
 const BookingConfirmation = () => {
   const location = useLocation()
@@ -194,18 +193,6 @@ const BookingConfirmation = () => {
                 </div>
             </div>
 
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Deposit Paid</span>
-                <span className="text-2xl font-bold text-gray-800">R{DEPOSIT_AMOUNT}</span>
-              </div>
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-gray-600">Balance Due</span>
-                <span className="text-lg font-semibold text-gray-800">
-                  R{(bookingData.service?.price || 0) - DEPOSIT_AMOUNT}
-                </span>
-              </div>
-            </div>
           </motion.div>
 
           {/* Reminders */}

@@ -7,11 +7,10 @@ import ServiceSelection from '../components/booking/ServiceSelection'
 import DentistSelection from '../components/booking/DentistSelection'
 import DateTimeSelection from '../components/booking/DateTimeSelection'
 import PatientDetails from '../components/booking/PatientDetails'
-import PaymentStep from '../components/booking/PaymentStep'
+import DisclaimerStep from '../components/booking/DisclaimerStep'
 import { BookingData, Service, Dentist } from '../types'
-import { DEPOSIT_AMOUNT } from '../utils/constants'
 
-const STEPS = ['Service', 'Dentist', 'Date & Time', 'Details', 'Payment']
+const STEPS = ['Service', 'Dentist', 'Date & Time', 'Details', 'Disclaimer']
 
 const Booking = () => {
   const navigate = useNavigate()
@@ -32,7 +31,7 @@ const Booking = () => {
       whatsapp: false,
       calendar: false,
     },
-    paymentMethod: null,
+    disclaimerAccepted: false,
   })
 
   const updateBookingData = (updates: Partial<BookingData>) => {
@@ -55,7 +54,7 @@ const Booking = () => {
           bookingData.patientDetails.phone !== ''
         )
       case 5:
-        return bookingData.paymentMethod !== null
+        return bookingData.disclaimerAccepted === true
       default:
         return false
     }
@@ -137,10 +136,9 @@ const Booking = () => {
             )}
 
             {currentStep === 5 && (
-              <PaymentStep
-                selectedMethod={bookingData.paymentMethod}
-                onSelect={(method) => updateBookingData({ paymentMethod: method })}
-                servicePrice={bookingData.service?.price || 0}
+              <DisclaimerStep
+                accepted={bookingData.disclaimerAccepted}
+                onAccept={(accepted) => updateBookingData({ disclaimerAccepted: accepted })}
               />
             )}
           </AnimatePresence>
@@ -173,17 +171,6 @@ const Booking = () => {
           </div>
         </motion.div>
 
-        {/* Deposit Info Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mt-4 md:mt-6 bg-gray-50 border border-gray-200 rounded-md p-3 text-center"
-        >
-          <p className="font-medium text-xs sm:text-sm text-gray-700">
-            🔒 Secure your appointment with just R{DEPOSIT_AMOUNT} deposit
-          </p>
-        </motion.div>
       </div>
     </div>
   )

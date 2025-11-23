@@ -32,8 +32,10 @@ export const generateTimeSlots = (date: Date): string[] => {
   
   for (let hour = startHour; hour < endHour; hour++) {
     slots.push(`${hour.toString().padStart(2, '0')}:00`)
+    slots.push(`${hour.toString().padStart(2, '0')}:15`)
+    slots.push(`${hour.toString().padStart(2, '0')}:30`)
     if (hour < endHour - 1) {
-      slots.push(`${hour.toString().padStart(2, '0')}:30`)
+      slots.push(`${hour.toString().padStart(2, '0')}:45`)
     }
   }
   

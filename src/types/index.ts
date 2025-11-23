@@ -42,7 +42,7 @@ export interface BookingData {
     whatsapp: boolean
     calendar: boolean
   }
-  paymentMethod: 'ozow' | 'payfast' | null
+  disclaimerAccepted: boolean
 }
 
 export interface Review {

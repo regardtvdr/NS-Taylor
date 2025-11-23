@@ -1,10 +1,11 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { Calendar, DollarSign, CreditCard, TrendingUp, Clock, User, Plus, Phone, MessageCircle, CheckCircle, Search } from 'lucide-react'
+import { Calendar, DollarSign, CreditCard, TrendingUp, Clock, User, Plus, Phone, MessageCircle, CheckCircle, Search, AlertCircle } from 'lucide-react'
 import { DayPicker } from 'react-day-picker'
 import { format, isSameDay, parseISO } from 'date-fns'
 import CreateBookingModal from '../../components/staff/CreateBookingModal'
+import BookingDetailModal from '../../components/staff/BookingDetailModal'
 import { AnimatedCounter } from '../../components/ui/AnimatedCounter'
 import { useToast } from '../../contexts/ToastContext'
 import { playSound } from '../../utils/sounds'
@@ -27,6 +28,8 @@ const StaffDashboard = () => {
   const navigate = useNavigate()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const { showToast } = useToast()
 
   // Mock data - in production, this would come from Firestore
@@ -211,12 +214,23 @@ const StaffDashboard = () => {
           className="mb-8 flex items-center justify-between"
         >
           <div>
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800 dark:text-gray-100 mb-2">
-              Good Morning! 👋
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800 dark:text-gray-100">
+              Dashboard
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">Here's what's happening today</p>
           </div>
           <div className="flex items-center space-x-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                navigate('/staff/today')
+                // playSound('click')
+              }}
+              className="flex items-center space-x-2 shadow-lg bg-red-600 hover:bg-red-700 text-white border-2 border-red-700 font-semibold py-3.5 px-6 rounded-button transition-all duration-300"
+            >
+              <AlertCircle className="w-5 h-5" />
+              <span>Emergency Booking</span>
+            </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -227,7 +241,7 @@ const StaffDashboard = () => {
               className="flex items-center space-x-2 shadow-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border-2 border-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 font-semibold py-3.5 px-6 rounded-button transition-all duration-300"
             >
               <Search className="w-5 h-5" />
-              <span>Find Patient</span>
+              <span>Book Existing Patient</span>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -340,7 +354,11 @@ const StaffDashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.3 + index * 0.05 }}
-                      className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white dark:from-gray-700 dark:to-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all group"
+                      onClick={() => {
+                        setSelectedBooking(apt)
+                        setIsDetailModalOpen(true)
+                      }}
+                      className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white dark:from-gray-700 dark:to-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all group cursor-pointer"
                     >
                       <div className="flex items-center space-x-4 flex-1">
                         <div className="flex flex-col items-center min-w-[60px]">
@@ -367,14 +385,17 @@ const StaffDashboard = () => {
                           {apt.status}
                         </span>
                       </div>
-                      <div className="flex items-center space-x-2 ml-4">
+                      <div className="flex items-center space-x-2 ml-4 relative z-10" onClick={(e) => e.stopPropagation()}>
                         {apt.phone && (
                           <>
                             <motion.button
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
-                              onClick={() => handleQuickAction('call', apt.id)}
-                              className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleQuickAction('call', apt.id)
+                              }}
+                              className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors relative z-10"
                               title="Call"
                             >
                               <Phone className="w-4 h-4 text-gray-700 dark:text-gray-300" />
@@ -382,8 +403,11 @@ const StaffDashboard = () => {
                             <motion.button
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
-                              onClick={() => handleQuickAction('whatsapp', apt.id)}
-                              className="p-2 bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 rounded-lg transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleQuickAction('whatsapp', apt.id)
+                              }}
+                              className="p-2 bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 rounded-lg transition-colors relative z-10"
                               title="WhatsApp"
                             >
                               <MessageCircle className="w-4 h-4 text-green-700 dark:text-green-300" />
@@ -394,8 +418,11 @@ const StaffDashboard = () => {
                           <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
-                            onClick={() => handleQuickAction('arrived', apt.id)}
-                            className="p-2 bg-teal-100 dark:bg-teal-900 hover:bg-teal-200 dark:hover:bg-teal-800 rounded-lg transition-colors"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleQuickAction('arrived', apt.id)
+                            }}
+                            className="p-2 bg-teal-100 dark:bg-teal-900 hover:bg-teal-200 dark:hover:bg-teal-800 rounded-lg transition-colors relative z-10"
                             title="Mark Arrived"
                           >
                             <CheckCircle className="w-4 h-4 text-teal-700 dark:text-teal-300" />
@@ -576,6 +603,27 @@ const StaffDashboard = () => {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSave={handleCreateBooking}
+      />
+
+      <BookingDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => {
+          setIsDetailModalOpen(false)
+          setSelectedBooking(null)
+        }}
+        booking={selectedBooking ? {
+          id: selectedBooking.id,
+          patient: selectedBooking.patient,
+          email: selectedBooking.email || '',
+          phone: selectedBooking.phone || '',
+          service: selectedBooking.service,
+          dentist: selectedBooking.dentist,
+          date: selectedBooking.date || format(new Date(), 'yyyy-MM-dd'),
+          time: selectedBooking.time,
+          status: selectedBooking.status === 'arrived' ? 'confirmed' : selectedBooking.status,
+          deposit: selectedBooking.deposit || 0,
+          total: selectedBooking.total || 0,
+        } : null}
       />
     </div>
   )

@@ -5,7 +5,7 @@ export interface BookingSlot {
   dentist: string
   date: string
   time: string
-  duration?: number // in minutes, default 30
+  duration?: number // in minutes, default 15
 }
 
 export interface ConflictCheck {
@@ -32,12 +32,12 @@ export const checkBookingConflict = (
   )
 
   const newStartTime = parseTime(newBooking.time)
-  const newDuration = newBooking.duration || 30
+  const newDuration = newBooking.duration || 15
   const newEndTime = newStartTime + newDuration
 
   sameDayBookings.forEach(booking => {
     const bookingStartTime = parseTime(booking.time)
-    const bookingDuration = booking.duration || 30
+    const bookingDuration = booking.duration || 15
     const bookingEndTime = bookingStartTime + bookingDuration
 
     // Check for overlap

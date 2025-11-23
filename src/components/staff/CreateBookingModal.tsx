@@ -36,8 +36,6 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
     time: initialTime || '',
     selectedSlots: [] as string[], // Array of consecutive time slots
     slotCount: 1, // Number of slots (1, 2, or 3)
-    depositPaid: false,
-    depositAmount: 50,
     notes: '',
     recurrence: null as RecurrencePattern | null,
   })
@@ -101,8 +99,6 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
       time: initialTime || '',
       selectedSlots: [],
       slotCount: 1,
-      depositPaid: false,
-      depositAmount: 50,
       notes: '',
       recurrence: null,
     })
@@ -147,11 +143,11 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
         date: format(formData.date, 'yyyy-MM-dd'),
         time: formData.time,
         endTime: calculatedEndTime,
-        duration: formData.slotCount * 30, // Duration in minutes
+        duration: formData.slotCount * 15, // Duration in minutes
         slotCount: formData.slotCount,
         selectedSlots: formData.selectedSlots,
         status: 'confirmed',
-        deposit: formData.depositPaid ? formData.depositAmount : 0,
+        deposit: 0,
         total: formData.service.price,
         notes: formData.notes,
         recurrence: formData.recurrence,
@@ -387,7 +383,7 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
               </motion.div>
             )}
 
-            {/* Step 3: Date, Time & Deposit */}
+            {/* Step 3: Date, Time & Recurrence */}
             {step === 3 && (
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
@@ -594,7 +590,7 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
                           <p className="text-sm text-gray-700 dark:text-gray-200">
                             <span className="font-medium">Selected:</span>{' '}
                             {formData.selectedSlots[0]} - {formData.selectedSlots[formData.selectedSlots.length - 1]}
-                            {' '}({formData.slotCount * 30} minutes)
+                            {' '}({formData.slotCount * 15} minutes)
                           </p>
                         </div>
                       )}
@@ -651,7 +647,7 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
                       })}
                     </div>
                     <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                      Select a start time. The booking will span {formData.slotCount} consecutive slot{formData.slotCount > 1 ? 's' : ''} ({formData.slotCount * 30} minutes).
+                      Select a start time. The booking will span {formData.slotCount} consecutive slot{formData.slotCount > 1 ? 's' : ''} ({formData.slotCount * 15} minutes).
                     </p>
                   </div>
                 )}
@@ -665,25 +661,16 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
                   />
                 )}
 
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-3">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600 dark:text-gray-300">Service Total</span>
                     <span className="font-semibold text-gray-800 dark:text-gray-100">
                       R{formData.service?.price || 0}
                     </span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <input
-                      type="checkbox"
-                      id="depositPaid"
-                      checked={formData.depositPaid}
-                      onChange={(e) => setFormData({ ...formData, depositPaid: e.target.checked })}
-                      className="w-5 h-5 text-gray-700 dark:text-gray-300 rounded"
-                    />
-                    <label htmlFor="depositPaid" className="text-sm text-gray-700 dark:text-gray-300">
-                      Deposit Paid (R{formData.depositAmount})
-                    </label>
-                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    Payment is due on the day of the appointment
+                  </p>
                 </div>
 
                 <div>

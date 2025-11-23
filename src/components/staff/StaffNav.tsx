@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { LayoutDashboard, LogOut, Clock, BarChart3, Moon, Sun, Calendar, CalendarDays, HelpCircle } from 'lucide-react'
+import { LayoutDashboard, LogOut, Clock, BarChart3, Moon, Sun, Calendar, CalendarDays, HelpCircle, CheckCircle } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useTheme } from '../../contexts/ThemeContext'
 
@@ -12,6 +12,7 @@ const StaffNav = () => {
   const navItems = [
     { path: '/staff/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/staff/today', label: "Today", icon: Calendar },
+    { path: '/staff/checkin', label: 'Check In', icon: CheckCircle },
     { path: '/staff/calendar', label: 'Calendar', icon: CalendarDays },
     { path: '/staff/schedule', label: 'Manage', icon: Clock },
     { path: '/staff/analytics', label: 'Analytics', icon: BarChart3 },
@@ -80,7 +81,7 @@ const StaffNav = () => {
       {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-lg z-50">
         <div className="flex items-center justify-around h-16">
-          {navItems.slice(0, 5).map((item) => {
+          {navItems.slice(0, 6).map((item) => {
             const Icon = item.icon
             const active = isActive(item.path)
             return (

@@ -9,6 +9,7 @@ import { useToast } from '../../contexts/ToastContext'
 import PatientSearch from '../../components/staff/PatientSearch'
 import PatientProfileModal from '../../components/staff/PatientProfileModal'
 import CreateBookingModal from '../../components/staff/CreateBookingModal'
+import BookingDetailModal from '../../components/staff/BookingDetailModal'
 import { Patient } from '../../types'
 import 'react-day-picker/dist/style.css'
 
@@ -23,6 +24,7 @@ interface ScheduleAppointment {
   phone?: string
   email?: string
   date: string
+  total?: number
 }
 
 const Schedule = () => {
@@ -38,6 +40,8 @@ const Schedule = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null)
   const [isPatientProfileOpen, setIsPatientProfileOpen] = useState(false)
   const [isCreateBookingOpen, setIsCreateBookingOpen] = useState(false)
+  const [selectedBookingDetail, setSelectedBookingDetail] = useState<ScheduleAppointment | null>(null)
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   
   // Initialize viewMode from URL parameter, default to 'appointments'
   const initialViewMode = searchParams.get('view') === 'patients' ? 'patients' : 'appointments'
@@ -286,9 +290,9 @@ const Schedule = () => {
   const handleConfirmDelete = () => {
     if (!selectedAppointment) return
 
-    setAllAppointments((prev) => prev.filter((apt) => apt.id !== selectedAppointment.id))
-    // playSound('success')
-    showToast('Appointment deleted successfully', 'success')
+    const appointmentToDelete = selectedAppointment
+    setAllAppointments((prev) => prev.filter((apt) => apt.id !== appointmentToDelete.id))
+    showToast(`Appointment for ${appointmentToDelete.patient} deleted successfully`, 'success')
     setIsDeleteModalOpen(false)
     setSelectedAppointment(null)
   }
@@ -672,7 +676,11 @@ const Schedule = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="card p-6 bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow"
+                onClick={() => {
+                  setSelectedBookingDetail(apt)
+                  setIsDetailModalOpen(true)
+                }}
+                className="card p-6 bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow cursor-pointer"
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   {/* Appointment Info */}
@@ -710,21 +718,21 @@ const Schedule = () => {
                             <span className="text-gray-600 dark:text-gray-400">{apt.phone}</span>
                           </div>
                         )}
-                        <span className={`text-sm ${apt.depositPaid ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'}`}>
-                          {apt.depositPaid ? '✓ Deposit Paid' : '⚠ Deposit Pending'}
-                        </span>
                       </div>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex items-center space-x-2 flex-shrink-0">
+                  <div className="flex items-center space-x-2 flex-shrink-0 relative z-10" onClick={(e) => e.stopPropagation()}>
                     {apt.phone && (
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => showToast(`Calling ${apt.patient}...`, 'info')}
-                        className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          showToast(`Calling ${apt.patient}...`, 'info')
+                        }}
+                        className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors relative z-10"
                         title="Call"
                       >
                         <Phone className="w-4 h-4 text-gray-700 dark:text-gray-300" />
@@ -733,8 +741,11 @@ const Schedule = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => handleReschedule(apt)}
-                      className="p-2 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 rounded-lg transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleReschedule(apt)
+                      }}
+                      className="p-2 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 rounded-lg transition-colors relative z-10"
                       title="Reschedule"
                     >
                       <Edit2 className="w-4 h-4 text-blue-700 dark:text-blue-300" />
@@ -742,8 +753,11 @@ const Schedule = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => handleDelete(apt)}
-                      className="p-2 bg-red-100 dark:bg-red-900 hover:bg-red-200 dark:hover:bg-red-800 rounded-lg transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDelete(apt)
+                      }}
+                      className="p-2 bg-red-100 dark:bg-red-900 hover:bg-red-200 dark:hover:bg-red-800 rounded-lg transition-colors relative z-10"
                       title="Delete"
                     >
                       <Trash2 className="w-4 h-4 text-red-700 dark:text-red-300" />
@@ -1113,7 +1127,7 @@ const Schedule = () => {
             patient: booking.patient,
             service: booking.service,
             dentist: booking.dentist,
-            depositPaid: booking.deposit > 0,
+            depositPaid: false,
             status: 'scheduled',
             phone: booking.phone,
             email: booking.email,
@@ -1134,6 +1148,27 @@ const Schedule = () => {
           email: selectedPatient.email,
           phone: selectedPatient.phone,
         } : undefined}
+      />
+
+      <BookingDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => {
+          setIsDetailModalOpen(false)
+          setSelectedBookingDetail(null)
+        }}
+        booking={selectedBookingDetail ? {
+          id: selectedBookingDetail.id,
+          patient: selectedBookingDetail.patient,
+          email: selectedBookingDetail.email || '',
+          phone: selectedBookingDetail.phone || '',
+          service: selectedBookingDetail.service,
+          dentist: selectedBookingDetail.dentist,
+          date: selectedBookingDetail.date,
+          time: selectedBookingDetail.time,
+          status: selectedBookingDetail.status === 'arrived' ? 'confirmed' : selectedBookingDetail.status === 'no-show' ? 'cancelled' : selectedBookingDetail.status === 'completed' ? 'completed' : 'confirmed',
+          deposit: 0,
+          total: selectedBookingDetail.total || 0,
+        } : null}
       />
     </div>
   )

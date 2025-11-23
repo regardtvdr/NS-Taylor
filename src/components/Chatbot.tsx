@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageCircle, X, Send, Bot, User } from 'lucide-react'
-import { DEPOSIT_AMOUNT, DENTISTS } from '../utils/constants'
+import { DENTISTS } from '../utils/constants'
 
 interface Message {
   id: string
@@ -123,15 +123,15 @@ const Chatbot = () => {
         return "Welcome back! If you've booked with us before, our staff can quickly find your information to make booking faster. When you call us at +27 11 123 4567, they can pull up your previous appointments and medical history to streamline the process. You can also book online again - just use the same contact information, and we'll have your details on file."
       }
       if (lowerMessage.includes('how') || lowerMessage.includes('where') || lowerMessage.includes('what do i')) {
-        return "Booking an appointment is easy! Here's how: 1) Click the 'Book Appointment' button at the top of the page, 2) Choose the service you need (like cleaning, consultation, etc.), 3) Select your preferred dentist, 4) Pick a date and time that works for you, 5) Fill in your name, email, and phone number, 6) Pay a small R50 deposit to secure your appointment. The whole process takes just a few minutes. Would you like help with any specific step?"
+        return "Booking an appointment is easy! Here's how: 1) Click the 'Book Appointment' button at the top of the page, 2) Choose the service you need (like cleaning, consultation, etc.), 3) Select your preferred dentist, 4) Pick a date and time that works for you, 5) Fill in your name, email, and phone number. That's it! The whole process takes just a few minutes. Payment is made on the day of your visit. Would you like help with any specific step?"
       }
       if (lowerMessage.includes('online') || lowerMessage.includes('website') || lowerMessage.includes('internet')) {
         return "Yes, you can book online right here on our website! Just click the 'Book Appointment' button in the top menu. If you're not comfortable with online booking, you can also call us at +27 11 123 4567 and we'll be happy to help you over the phone."
       }
-      return "To book an appointment, simply click the 'Book Appointment' button at the top of this page. You'll go through a few easy steps: choose your service, pick your dentist, select a date and time, provide your contact information, and pay a R50 deposit. Don't worry - it's very straightforward, and if you need help, you can always call us at +27 11 123 4567."
+      return "To book an appointment, simply click the 'Book Appointment' button at the top of this page. You'll go through a few easy steps: choose your service, pick your dentist, select a date and time, and provide your contact information. No payment is required upfront - you'll pay on the day of your appointment. Don't worry - it's very straightforward, and if you need help, you can always call us at +27 11 123 4567."
     }
 
-    // Deposit and Payment related (expanded with more explanations for older users)
+    // Pricing and Payment related (updated - no deposit required)
     if (
       lowerMessage.includes('deposit') || 
       lowerMessage.includes('payment') || 
@@ -145,16 +145,16 @@ const Chatbot = () => {
       lowerMessage.includes('credit card') ||
       lowerMessage.includes('card required')
     ) {
-      if (lowerMessage.includes('how much') || lowerMessage.includes('what is') || lowerMessage.includes('amount')) {
-        return `The deposit is R${DEPOSIT_AMOUNT} - that's just R50 to secure your appointment. This small amount helps us ensure everyone keeps their appointments. You'll pay the rest of the cost when you come in for your visit. We accept Ozow and PayFast for online payments, and you don't need a credit card. If you prefer, you can also pay the deposit when you arrive.`
+      if (lowerMessage.includes('how much') || lowerMessage.includes('what is') || lowerMessage.includes('price') || lowerMessage.includes('cost')) {
+        return "Our services range from R650 for Teeth Cleaning to R3500 for Root Canal Treatment. The exact price depends on the service you choose. You can see all service prices on our homepage or during the booking process. Payment is made on the day of your appointment - we accept cash, card, and medical aid."
       }
-      if (lowerMessage.includes('why') || lowerMessage.includes('need') || lowerMessage.includes('required')) {
-        return `We ask for a small R${DEPOSIT_AMOUNT} deposit to secure your appointment. This helps reduce missed appointments (we've seen 42% fewer no-shows!), which means we can serve more patients and keep appointment times available. It's a small amount that shows you're committed to your appointment. You'll pay the remaining balance on the day of your visit.`
+      if (lowerMessage.includes('when') || lowerMessage.includes('how to pay') || lowerMessage.includes('payment method')) {
+        return "Payment is made on the day of your appointment. We accept cash, card payments, and direct medical aid claims (subject to verification). There's no deposit required when booking - you simply pay when you come in for your visit."
       }
-      if (lowerMessage.includes('credit card') || lowerMessage.includes('card') || lowerMessage.includes('don\'t have')) {
-        return `Good news - you don't need a credit card! We accept Ozow and PayFast, which work with most South African bank accounts. If you're not comfortable with online payments, you can also call us at +27 11 123 4567 and we can arrange payment over the phone or when you arrive.`
+      if (lowerMessage.includes('deposit') || lowerMessage.includes('required')) {
+        return "No deposit is required to book an appointment. You simply pay for your service on the day of your visit. We accept cash, card, and medical aid payments."
       }
-      return `We require a small R${DEPOSIT_AMOUNT} deposit to secure your appointment. This helps ensure appointments are kept and allows us to serve more patients. You can pay online using Ozow or PayFast (no credit card needed), or call us to arrange payment. The remaining amount is paid on the day of your appointment.`
+      return "Payment is made on the day of your appointment. We accept cash, card payments, and medical aid. There's no deposit or upfront payment required when booking - you simply pay when you come in for your visit."
     }
 
     // Services (expanded with more variations and explanations)
@@ -285,7 +285,10 @@ const Chatbot = () => {
 
     // Cancellation
     if (lowerMessage.includes('cancel') || lowerMessage.includes('reschedule') || lowerMessage.includes('change')) {
-      return "To cancel or reschedule your appointment, you'll receive a cancellation link in your confirmation email. Click the link to access the cancellation portal where you can manage your appointment."
+      if (lowerMessage.includes('policy') || lowerMessage.includes('billed') || lowerMessage.includes('charge')) {
+        return "Our cancellation policy requires that all cancellations be made at least 1 hour before your scheduled appointment time. If you cancel less than 1 hour before your appointment or fail to show up, you will be billed for the appointment. You can cancel using the link in your confirmation email or by calling us at +27 11 123 4567."
+      }
+      return "To cancel or reschedule your appointment, you'll receive a cancellation link in your confirmation email. Click the link to access the cancellation portal where you can manage your appointment. Please note: cancellations must be made at least 1 hour before your appointment time, otherwise you will be billed."
     }
 
     // Reminders
@@ -295,7 +298,7 @@ const Chatbot = () => {
 
     // Pricing
     if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('how much') || lowerMessage.includes('fee')) {
-      return "Our services range from R650 for Teeth Cleaning to R3500 for Root Canal Treatment. The exact price depends on the service you choose. You can see all service prices on our homepage or during the booking process."
+      return "Our services range from R650 for Teeth Cleaning to R3500 for Root Canal Treatment. The exact price depends on the service you choose. You can see all service prices on our homepage or during the booking process. Payment is made on the day of your appointment - no deposit required."
     }
 
     // Emergency
@@ -501,13 +504,7 @@ const Chatbot = () => {
       lowerMessage.includes('eft') ||
       lowerMessage.includes('cash')
     ) {
-      if (lowerMessage.includes('ozow') || lowerMessage.includes('payfast')) {
-        return "We accept Ozow and PayFast for online payments. Both work with most South African bank accounts - you don't need a credit card. These are secure payment gateways that allow you to pay directly from your bank account. The deposit is R50, and you'll pay the remaining balance on the day of your appointment."
-      }
-      if (lowerMessage.includes('cash') || lowerMessage.includes('card') || lowerMessage.includes('eft')) {
-        return "On the day of your appointment, we accept cash, card payments, and direct medical aid claims (subject to verification). You can also pay the deposit in person when you arrive if you prefer not to pay online."
-      }
-      return "For the R50 deposit, you can pay online using Ozow or PayFast (no credit card needed - works with most SA bank accounts). On the day of your appointment, we accept cash, card, and medical aid. If you're not comfortable with online payments, you can call us to arrange payment or pay when you arrive."
+      return "Payment is made on the day of your appointment. We accept cash, card payments (credit and debit), and direct medical aid claims (subject to verification). There's no deposit or upfront payment required when booking - you simply pay when you come in for your visit."
     }
 
     // Website navigation / Pages
@@ -545,9 +542,9 @@ const Chatbot = () => {
       lowerMessage.includes('walkthrough')
     ) {
       if (lowerMessage.includes('recurring') || lowerMessage.includes('repeat')) {
-        return "For recurring appointments, the process is: 1) Choose your service, 2) Select your dentist, 3) Pick your first appointment date and time, 4) Choose how often you want to repeat (daily, weekly, monthly, or yearly), 5) Set when the recurring appointments should end (never, on a specific date, or after a certain number of visits), 6) Enter your contact details, 7) Pay the R50 deposit. The system will automatically schedule all your future appointments based on your preferences!"
+        return "For recurring appointments, the process is: 1) Choose your service, 2) Select your dentist, 3) Pick your first appointment date and time, 4) Choose how often you want to repeat (daily, weekly, monthly, or yearly), 5) Set when the recurring appointments should end (never, on a specific date, or after a certain number of visits), 6) Enter your contact details. That's it! The system will automatically schedule all your future appointments based on your preferences. Payment is made on the day of each appointment."
       }
-      return "The booking process has 5 simple steps: 1) Choose your service (cleaning, consultation, etc.), 2) Select your preferred dentist (or we can assign one), 3) Pick a date and time from available slots, 4) Enter your contact details (name, email, phone), 5) Pay the R50 deposit to secure your appointment. You'll receive a confirmation email with all the details. The whole process takes just a few minutes! For regular visits, you can also set up recurring appointments."
+      return "The booking process has 4 simple steps: 1) Choose your service (cleaning, consultation, etc.), 2) Select your preferred dentist (or we can assign one), 3) Pick a date and time from available slots, 4) Enter your contact details (name, email, phone). That's it! You'll receive a confirmation email with all the details. Payment is made on the day of your appointment - no deposit required. The whole process takes just a few minutes! For regular visits, you can also set up recurring appointments."
     }
 
     // Specific service questions
@@ -584,9 +581,9 @@ const Chatbot = () => {
       lowerMessage.includes('no show')
     ) {
       if (lowerMessage.includes('recurring') || lowerMessage.includes('repeat')) {
-        return "For recurring appointments, you can cancel individual appointments or the entire series. Individual cancellations follow our standard policy: more than 24 hours notice = full refund of deposit, less than 24 hours = deposit forfeited. To cancel a recurring series, contact us at +27 11 123 4567 at least 24 hours before the next scheduled appointment."
+        return "For recurring appointments, you can cancel individual appointments or the entire series. All cancellations must be made at least 1 hour before the scheduled appointment time, otherwise you will be billed. To cancel a recurring series, contact us at +27 11 123 4567 at least 1 hour before the next scheduled appointment."
       }
-      return "Our cancellation policy: Appointments cancelled more than 24 hours in advance receive a full refund of the R50 deposit. Cancellations made less than 24 hours before the appointment, or no-shows, result in forfeiture of the deposit. You can reschedule free of charge up to 24 hours before your appointment. Use the cancellation link in your confirmation email to manage your appointment."
+      return "Our cancellation policy: All cancellations must be made at least 1 hour before your scheduled appointment time. If you cancel less than 1 hour before your appointment or fail to show up, you will be billed for the appointment. You can reschedule free of charge if done at least 1 hour in advance. Use the cancellation link in your confirmation email to manage your appointment, or call us at +27 11 123 4567."
     }
 
     // Default response (more helpful and conversational)
@@ -644,11 +641,11 @@ const Chatbot = () => {
 
   const quickQuestions = [
     'How do I book an appointment?',
-    'What is the deposit amount?',
     'What services do you offer?',
     'Where are you located?',
     'What are your opening hours?',
     'Who are your dentists?',
+    'When do I pay for my appointment?',
   ]
 
   return (

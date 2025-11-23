@@ -101,7 +101,7 @@ const HelpME = () => {
     ],
     'multi-slot': [
       'When creating a booking, you can select 1x, 2x, or 3x duration buttons.',
-      '1x = 30 minutes, 2x = 60 minutes, 3x = 90 minutes.',
+      '1x = 15 minutes, 2x = 30 minutes, 3x = 45 minutes.',
       'After selecting duration, click a start time - the system will automatically book consecutive slots.',
       'Selected slots are highlighted in blue, with the start slot marked with a green checkmark.',
       'This is useful for longer procedures like root canals or comprehensive consultations.',

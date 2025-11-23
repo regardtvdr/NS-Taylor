@@ -4,6 +4,7 @@ import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Clock, User,
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths, parseISO } from 'date-fns'
 import { DENTISTS } from '../../utils/constants'
 import CreateBookingModal from '../../components/staff/CreateBookingModal'
+import BookingDetailModal from '../../components/staff/BookingDetailModal'
 import { useToast } from '../../contexts/ToastContext'
 import { playSound } from '../../utils/sounds'
 
@@ -31,6 +32,8 @@ const Calendar = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null)
   const [leaveDays, setLeaveDays] = useState<LeaveDay[]>([])
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const { showToast } = useToast()
 
   // Mock bookings data
@@ -77,13 +80,15 @@ const Calendar = () => {
     },
   ])
 
-  // Generate time slots (8 AM to 5 PM, 30-min intervals)
+  // Generate time slots (8 AM to 5 PM, 15-min intervals)
   const timeSlots = useMemo(() => {
     const slots: string[] = []
     for (let hour = 8; hour < 18; hour++) {
       slots.push(`${hour.toString().padStart(2, '0')}:00`)
+      slots.push(`${hour.toString().padStart(2, '0')}:15`)
+      slots.push(`${hour.toString().padStart(2, '0')}:30`)
       if (hour < 17) {
-        slots.push(`${hour.toString().padStart(2, '0')}:30`)
+        slots.push(`${hour.toString().padStart(2, '0')}:45`)
       }
     }
     return slots
@@ -524,7 +529,11 @@ const Calendar = () => {
                               {bookingsAtTime.map((booking) => (
                                 <div
                                   key={booking.id}
-                                  className="p-2 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded text-sm"
+                                  onClick={() => {
+                                    setSelectedBooking(booking)
+                                    setIsDetailModalOpen(true)
+                                  }}
+                                  className="p-2 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded text-sm cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors"
                                 >
                                   <div className="font-medium text-gray-800 dark:text-gray-100">{booking.patient}</div>
                                   <div className="text-xs text-gray-600 dark:text-gray-400">{booking.service}</div>
@@ -598,6 +607,27 @@ const Calendar = () => {
         initialDate={selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined}
         initialTime={selectedTimeSlot || undefined}
         initialDentist={selectedDentist !== 'all' ? selectedDentist : undefined}
+      />
+
+      <BookingDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => {
+          setIsDetailModalOpen(false)
+          setSelectedBooking(null)
+        }}
+        booking={selectedBooking ? {
+          id: selectedBooking.id,
+          patient: selectedBooking.patient,
+          email: selectedBooking.email || '',
+          phone: selectedBooking.phone || '',
+          service: selectedBooking.service,
+          dentist: selectedBooking.dentist,
+          date: selectedBooking.date,
+          time: selectedBooking.time,
+          status: selectedBooking.status,
+          deposit: 0,
+          total: 0,
+        } : null}
       />
     </div>
   )
