@@ -51,11 +51,14 @@ export const usePatients = () => {
     }
   }, [showToast])
 
-  const createPatient = useCallback(async (patient: Omit<Patient, 'id' | 'createdAt' | 'lastVisit' | 'totalVisits' | 'totalSpent'>) => {
+  const createPatient = useCallback(async (patient: Omit<Patient, 'id' | 'createdAt' | 'lastVisit' | 'totalVisits' | 'totalSpent'>, options?: { silent?: boolean }) => {
     try {
       const id = await patientsServiceMethods.create(patient)
       await loadPatients()
-      showToast('Patient created successfully!', 'success')
+      // Only show toast if not silent (for staff-side operations)
+      if (!options?.silent) {
+        showToast('Patient created successfully!', 'success')
+      }
       return id
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create patient'

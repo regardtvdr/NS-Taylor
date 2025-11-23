@@ -9,11 +9,13 @@ import DateTimeSelection from '../components/booking/DateTimeSelection'
 import PatientDetails from '../components/booking/PatientDetails'
 import DisclaimerStep from '../components/booking/DisclaimerStep'
 import { BookingData, Service, Dentist } from '../types'
+import { useBookings } from '../hooks/useBookings'
 
 const STEPS = ['Service', 'Dentist', 'Date & Time', 'Details', 'Disclaimer']
 
 const Booking = () => {
   const navigate = useNavigate()
+  const { bookings } = useBookings()
   const [currentStep, setCurrentStep] = useState(1)
   const [bookingData, setBookingData] = useState<BookingData>({
     service: null,
@@ -123,6 +125,8 @@ const Booking = () => {
               <DateTimeSelection
                 selectedDate={bookingData.date}
                 selectedTime={bookingData.time}
+                selectedDentist={bookingData.dentist?.name || null}
+                bookings={bookings}
                 onDateSelect={(date) => updateBookingData({ date })}
                 onTimeSelect={(time) => updateBookingData({ time })}
               />

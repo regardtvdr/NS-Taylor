@@ -1016,6 +1016,7 @@ const Schedule = () => {
           setIsCreateBookingOpen(false)
           // Keep selectedPatient so user can try booking again if they cancel
         }}
+        bookings={bookings}
         onSave={async (booking) => {
           try {
             await createBooking({

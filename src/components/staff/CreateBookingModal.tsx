@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, User, Mail, Phone, Calendar } from 'lucide-react'
 import { DayPicker } from 'react-day-picker'
 import { format } from 'date-fns'
 import { SERVICES, DENTISTS } from '../../utils/constants'
-import { Service, Dentist, RecurrencePattern } from '../../types'
+import { Service, Dentist, RecurrencePattern, BookingDetail } from '../../types'
 import { generateTimeSlots } from '../../utils/dateUtils'
 import RecurrenceSelector from './RecurrenceSelector'
 import 'react-day-picker/dist/style.css'
@@ -13,6 +13,7 @@ interface CreateBookingModalProps {
   isOpen: boolean
   onClose: () => void
   onSave: (booking: any) => void
+  bookings?: BookingDetail[]
   initialDate?: string
   initialTime?: string
   initialDentist?: string
@@ -24,7 +25,7 @@ interface CreateBookingModalProps {
   }
 }
 
-const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime, initialDentist, initialPatient }: CreateBookingModalProps) => {
+const CreateBookingModal = ({ isOpen, onClose, onSave, bookings = [], initialDate, initialTime, initialDentist, initialPatient }: CreateBookingModalProps) => {
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
     patientName: initialPatient ? `${initialPatient.firstName} ${initialPatient.lastName}` : '',
@@ -43,6 +44,25 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
   const timeSlots = formData.date ? generateTimeSlots(formData.date) : []
+
+  // Check if a time slot is booked for the selected dentist and date
+  const isSlotBooked = useMemo(() => {
+    if (!formData.date || !formData.dentist) return () => false
+    
+    const dateStr = format(formData.date, 'yyyy-MM-dd')
+    const bookedSlots = new Set(
+      bookings
+        .filter(b => 
+          b.date === dateStr && 
+          b.dentist === formData.dentist?.name && 
+          b.status !== 'cancelled' &&
+          b.status !== 'no-show'
+        )
+        .map(b => b.time)
+    )
+    
+    return (time: string) => bookedSlots.has(time)
+  }, [formData.date, formData.dentist, bookings])
 
   // Get consecutive time slots starting from a selected time
   const getConsecutiveSlots = (startTime: string, count: number, slots: string[]): string[] => {
@@ -601,9 +621,10 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
                         const isStartSlot = formData.selectedSlots[0] === time
                         const isEndSlot = formData.selectedSlots[formData.selectedSlots.length - 1] === time
                         const isInRange = formData.selectedSlots.includes(time)
+                        const isBooked = isSlotBooked(time)
                         
-                        // Check if this slot can be selected (enough consecutive slots available)
-                        const canSelect = index + formData.slotCount <= timeSlots.length
+                        // Check if this slot can be selected (enough consecutive slots available and not booked)
+                        const canSelect = !isBooked && index + formData.slotCount <= timeSlots.length
                         
                         return (
                           <motion.button
@@ -615,6 +636,8 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
                                 ? 'border-gray-800 bg-gray-800 text-white shadow-md'
                                 : isInRange
                                 ? 'border-blue-400 dark:border-blue-600 bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-200'
+                                : isBooked
+                                ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 opacity-60 cursor-not-allowed line-through'
                                 : !canSelect
                                 ? 'border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed'
                                 : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:border-gray-500 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 shadow-sm'
@@ -622,7 +645,9 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
                             whileHover={canSelect && !isSelected ? { scale: 1.05, y: -2 } : {}}
                             whileTap={canSelect ? { scale: 0.95 } : {}}
                             title={
-                              !canSelect
+                              isBooked
+                                ? 'This time slot is already booked'
+                                : !canSelect
                                 ? 'Not enough consecutive slots available'
                                 : isSelected
                                 ? 'Start time'
@@ -630,14 +655,19 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
                             }
                           >
                             <span className="text-sm">{time}</span>
-                            {isStartSlot && (
+                            {isStartSlot && !isBooked && (
                               <div className="absolute -top-1 -left-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
                                 <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
                               </div>
                             )}
-                            {isEndSlot && isStartSlot && formData.slotCount > 1 && (
+                            {isBooked && (
+                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                                <X className="w-2.5 h-2.5 text-white" />
+                              </div>
+                            )}
+                            {isEndSlot && isStartSlot && formData.slotCount > 1 && !isBooked && (
                               <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
                                 <span className="text-white text-xs font-bold">E</span>
                               </div>

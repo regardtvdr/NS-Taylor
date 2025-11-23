@@ -27,12 +27,29 @@ type TodayAppointment = {
 const Today = () => {
   const { bookings, createBooking, updateBooking, updateBookingStatus } = useBookings()
   const { patients, createPatient } = usePatients()
-  const today = format(new Date(), 'yyyy-MM-dd')
   
-  // Convert bookings to appointments format for today
+  const [dentistDates, setDentistDates] = useState<Record<string, Date>>(() => {
+    const today = new Date()
+    const dates: Record<string, Date> = {}
+    DENTISTS.forEach((dentist) => {
+      dates[dentist.name] = today
+    })
+    return dates
+  })
+
+  // Convert bookings to appointments format - filter by selected dates from dentistDates
   const appointments = useMemo(() => {
     return bookings
-      .filter(b => b.date === today && (b.status === 'confirmed' || b.status === 'pending' || b.status === 'arrived' || b.status === 'no-show'))
+      .filter(b => {
+        // Check if booking date matches any of the selected dates for dentists
+        if (!b.date) return false
+        // Check if the booking's dentist has a selected date that matches
+        const dentistSelectedDate = dentistDates[b.dentist]
+        if (!dentistSelectedDate) return false
+        const bookingDateStr = b.date
+        const selectedDateStr = format(dentistSelectedDate, 'yyyy-MM-dd')
+        return bookingDateStr === selectedDateStr && (b.status === 'confirmed' || b.status === 'pending' || b.status === 'arrived' || b.status === 'no-show')
+      })
       .map(b => ({
         id: b.id,
         time: b.time,
@@ -44,7 +61,7 @@ const Today = () => {
         email: b.email,
         date: b.date,
       }))
-  }, [bookings, today])
+  }, [bookings, dentistDates])
 
   const [draggedItem, setDraggedItem] = useState<string | null>(null)
   const [draggedPatient, setDraggedPatient] = useState<Patient | null>(null)
@@ -67,14 +84,6 @@ const Today = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<TodayAppointment | null>(null)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [dentistDates, setDentistDates] = useState<Record<string, Date>>(() => {
-    const today = new Date()
-    const dates: Record<string, Date> = {}
-    DENTISTS.forEach((dentist) => {
-      dates[dentist.name] = today
-    })
-    return dates
-  })
   const { showToast } = useToast()
 
   const allPatients = patients
@@ -457,13 +466,15 @@ const Today = () => {
     if (!pendingEmergencyBooking || !draggedPatient) return
     
     try {
+      // Use the selected date for the dentist, or today if not set
+      const dentistDate = dentistDates[pendingEmergencyBooking.dentist] || new Date()
       await createBooking({
         patient: pendingEmergencyBooking.patient,
         email: draggedPatient.email,
         phone: draggedPatient.phone,
         service: 'Emergency Visit',
         dentist: pendingEmergencyBooking.dentist,
-        date: today,
+        date: format(dentistDate, 'yyyy-MM-dd'),
         time: pendingEmergencyBooking.time,
         status: 'confirmed',
       })
@@ -523,13 +534,18 @@ const Today = () => {
 
   const handleCreateBooking = async (newBooking: any) => {
     try {
+      // Use the date from the booking form, or the selected date for the dentist, or today
+      const dentistDate = newBooking.dentist && dentistDates[newBooking.dentist] 
+        ? format(dentistDates[newBooking.dentist], 'yyyy-MM-dd')
+        : format(new Date(), 'yyyy-MM-dd')
+      
       await createBooking({
         patient: newBooking.patient,
         email: newBooking.email,
         phone: newBooking.phone,
         service: newBooking.service,
         dentist: newBooking.dentist,
-        date: newBooking.date || today,
+        date: newBooking.date || dentistDate,
         time: newBooking.time,
         status: 'confirmed',
         deposit: newBooking.deposit,
@@ -1580,6 +1596,7 @@ const Today = () => {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSave={handleCreateBooking}
+        bookings={bookings}
       />
 
       {/* Add New Patient Modal */}

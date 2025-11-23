@@ -552,6 +552,7 @@ const Calendar = () => {
           setSelectedTimeSlot(null)
         }}
         onSave={handleCreateBooking}
+        bookings={allBookings}
         initialDate={selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined}
         initialTime={selectedTimeSlot || undefined}
         initialDentist={selectedDentist !== 'all' ? selectedDentist : undefined}

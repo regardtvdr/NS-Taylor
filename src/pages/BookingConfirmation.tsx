@@ -18,16 +18,11 @@ const BookingConfirmation = () => {
   const { createBooking } = useBookings()
   const { createPatient, searchPatients } = usePatients()
 
+  // Save booking to Firebase - separate effect to prevent duplicates
   useEffect(() => {
-    if (!bookingData) {
-      navigate('/booking')
-      return
-    }
+    if (!bookingData || bookingSaved) return
 
-    // Save booking to Firebase
     const saveBooking = async () => {
-      if (bookingSaved) return
-      
       try {
         // First, check if patient exists or create new patient
         const [firstName, ...lastNameParts] = bookingData.patientDetails.firstName.split(' ')
@@ -37,14 +32,14 @@ const BookingConfirmation = () => {
         const existingPatient = existingPatients.find(p => p.email === bookingData.patientDetails.email)
         
         if (!existingPatient) {
-          // Create new patient
+          // Create new patient silently (don't show toast to patients)
           await createPatient({
             firstName: firstName,
             lastName: lastName,
             email: bookingData.patientDetails.email,
             phone: bookingData.patientDetails.phone,
             idNumber: bookingData.patientDetails.idNumber,
-          })
+          }, { silent: true })
         }
 
         // Create booking
@@ -70,40 +65,52 @@ const BookingConfirmation = () => {
     }
 
     saveBooking()
+  }, [bookingData, bookingSaved, createBooking, createPatient, searchPatients])
 
-    if (!confettiFired) {
-      // Confetti explosion
-      const duration = 3000
-      const animationEnd = Date.now() + duration
-      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 }
+  // Confetti effect - separate to prevent re-running booking save
+  useEffect(() => {
+    if (!bookingData || confettiFired) return
 
-      function randomInRange(min: number, max: number) {
-        return Math.random() * (max - min) + min
+    // Confetti explosion
+    const duration = 3000
+    const animationEnd = Date.now() + duration
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 }
+
+    function randomInRange(min: number, max: number) {
+      return Math.random() * (max - min) + min
+    }
+
+    const interval = setInterval(function () {
+      const timeLeft = animationEnd - Date.now()
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval)
       }
 
-      const interval = setInterval(function () {
-        const timeLeft = animationEnd - Date.now()
+      const particleCount = 50 * (timeLeft / duration)
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      })
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      })
+    }, 250)
 
-        if (timeLeft <= 0) {
-          return clearInterval(interval)
-        }
+    setConfettiFired(true)
 
-        const particleCount = 50 * (timeLeft / duration)
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-        })
-        confetti({
-          ...defaults,
-          particleCount,
-          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-        })
-      }, 250)
+    return () => clearInterval(interval)
+  }, [bookingData, confettiFired])
 
-      setConfettiFired(true)
+  // Navigate if no booking data
+  useEffect(() => {
+    if (!bookingData) {
+      navigate('/booking')
     }
-  }, [bookingData, navigate, confettiFired])
+  }, [bookingData, navigate])
 
   if (!bookingData) return null
 

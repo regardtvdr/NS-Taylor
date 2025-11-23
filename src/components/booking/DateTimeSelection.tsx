@@ -1,14 +1,17 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { DayPicker } from 'react-day-picker'
 import { format } from 'date-fns'
 import { Calendar, Circle } from 'lucide-react'
 import { generateTimeSlots } from '../../utils/dateUtils'
+import { BookingDetail } from '../../types'
 import 'react-day-picker/dist/style.css'
 
 interface DateTimeSelectionProps {
   selectedDate: Date | null
   selectedTime: string
+  selectedDentist: string | null
+  bookings: BookingDetail[]
   onDateSelect: (date: Date) => void
   onTimeSelect: (time: string) => void
 }
@@ -16,18 +19,37 @@ interface DateTimeSelectionProps {
 const DateTimeSelection = ({
   selectedDate,
   selectedTime,
+  selectedDentist,
+  bookings,
   onDateSelect,
   onTimeSelect,
 }: DateTimeSelectionProps) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   const timeSlots = selectedDate ? generateTimeSlots(selectedDate) : []
 
-  const getSlotStatus = (time: string): 'available' | 'limited' | 'unavailable' => {
-    // Mock availability logic
-    const hour = parseInt(time.split(':')[0])
-    if (hour >= 8 && hour <= 10) return 'available'
-    if (hour >= 11 && hour <= 13) return 'limited'
-    return 'unavailable'
+  // Check if a time slot is booked for the selected dentist and date
+  const isSlotBooked = useMemo(() => {
+    if (!selectedDate || !selectedDentist) return () => false
+    
+    const dateStr = format(selectedDate, 'yyyy-MM-dd')
+    const bookedSlots = new Set(
+      bookings
+        .filter(b => 
+          b.date === dateStr && 
+          b.dentist === selectedDentist && 
+          b.status !== 'cancelled' &&
+          b.status !== 'no-show'
+        )
+        .map(b => b.time)
+    )
+    
+    return (time: string) => bookedSlots.has(time)
+  }, [selectedDate, selectedDentist, bookings])
+
+  const getSlotStatus = (time: string): 'available' | 'booked' | 'unavailable' => {
+    if (!selectedDentist) return 'unavailable'
+    if (isSlotBooked(time)) return 'booked'
+    return 'available'
   }
 
   return (
@@ -178,28 +200,35 @@ const DateTimeSelection = ({
             {timeSlots.map((time) => {
               const status = getSlotStatus(time)
               const isSelected = selectedTime === time
+              const isBooked = status === 'booked'
 
               return (
                 <motion.button
                   key={time}
-                  onClick={() => onTimeSelect(time)}
-                  disabled={status === 'unavailable'}
+                  onClick={() => !isBooked && onTimeSelect(time)}
+                  disabled={isBooked}
                   className={`relative p-2 md:p-2.5 rounded-md border transition-all duration-200 text-center ${
                     isSelected
                       ? 'border-gray-700 bg-gray-100 text-gray-900'
+                      : isBooked
+                      ? 'border-red-200 bg-red-50 opacity-60 cursor-not-allowed text-red-600 line-through'
                       : status === 'available'
                       ? 'border-gray-200 bg-white hover:border-gray-400 hover:bg-gray-50 text-gray-700'
-                      : status === 'limited'
-                      ? 'border-gray-200 bg-gray-50 hover:border-gray-400 text-gray-600'
                       : 'border-gray-100 bg-gray-50 opacity-40 cursor-not-allowed text-gray-400'
                   }`}
-                  whileHover={status !== 'unavailable' && !isSelected ? { scale: 1.05, y: -2 } : {}}
-                  whileTap={status !== 'unavailable' ? { scale: 0.95 } : {}}
+                  whileHover={!isBooked && !isSelected ? { scale: 1.05, y: -2 } : {}}
+                  whileTap={!isBooked ? { scale: 0.95 } : {}}
+                  title={isBooked ? 'This time slot is already booked' : ''}
                 >
                   <span className="text-xs md:text-sm font-semibold">{time}</span>
                   {status === 'available' && !isSelected && (
                     <div className="absolute top-1.5 right-1.5">
                       <Circle className="w-2 h-2 text-green-500 fill-green-500" />
+                    </div>
+                  )}
+                  {isBooked && (
+                    <div className="absolute top-1.5 right-1.5">
+                      <Circle className="w-2 h-2 text-red-500 fill-red-500" />
                     </div>
                   )}
                 </motion.button>
@@ -212,8 +241,8 @@ const DateTimeSelection = ({
               <span>Available</span>
             </div>
             <div className="flex items-center space-x-1.5">
-              <Circle className="w-2 h-2 text-gray-400 fill-gray-400" />
-              <span>Limited</span>
+              <Circle className="w-2 h-2 text-red-500 fill-red-500" />
+              <span>Booked</span>
             </div>
           </div>
         </motion.div>

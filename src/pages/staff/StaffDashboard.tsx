@@ -504,6 +504,7 @@ const StaffDashboard = () => {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSave={handleCreateBooking}
+        bookings={allBookings}
       />
 
       <BookingDetailModal
