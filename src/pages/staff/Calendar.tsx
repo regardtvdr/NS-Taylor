@@ -172,14 +172,14 @@ const Calendar = () => {
   const handleDateClick = (date: Date) => {
     if (isPastDate(date) || isTooFarInFuture(date)) return
     setSelectedDate(date)
-    playSound('click')
+    // playSound('click')
   }
 
   const handleQuickBook = (time: string, dentist: string) => {
     if (!selectedDate) return
     setSelectedTimeSlot(time)
     setIsCreateModalOpen(true)
-    playSound('click')
+    // playSound('click')
   }
 
   const handleCreateBooking = (newBooking: any) => {
@@ -194,7 +194,7 @@ const Calendar = () => {
       phone: newBooking.phone,
     }
     setAllBookings((prev) => [...prev, booking])
-    playSound('success')
+    // playSound('success')
     showToast('Booking created successfully!', 'success')
     setSelectedTimeSlot(null)
   }
@@ -210,7 +210,7 @@ const Calendar = () => {
       setLeaveDays((prev) => [...prev, { date: dateStr, dentist, reason: 'Leave' }])
       showToast('Leave day added', 'success')
     }
-    playSound('click')
+    // playSound('click')
   }
 
   const navigateMonth = (direction: 'prev' | 'next') => {

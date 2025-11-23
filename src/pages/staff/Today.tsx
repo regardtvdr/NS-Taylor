@@ -118,7 +118,7 @@ const Today = () => {
   ])
 
   const handleAction = (id: string, action: 'call' | 'whatsapp' | 'arrived' | 'no-show') => {
-    playSound('click')
+    // playSound('click')
     
     if (action === 'arrived') {
       setAppointments((prev) =>
@@ -126,7 +126,7 @@ const Today = () => {
           apt.id === id ? { ...apt, status: 'arrived' as const } : apt
         )
       )
-      playSound('success')
+      // playSound('success')
       showToast('Patient marked as arrived! 🎉', 'success')
     } else if (action === 'no-show') {
       setAppointments((prev) =>
@@ -134,7 +134,7 @@ const Today = () => {
           apt.id === id ? { ...apt, status: 'no-show' as const } : apt
         )
       )
-      playSound('error')
+      // playSound('error')
       showToast('Marked as no-show', 'warning')
     } else {
       const apt = appointments.find((a) => a.id === id)
@@ -168,7 +168,7 @@ const Today = () => {
 
     setAppointments(newAppointments)
     setDraggedItem(null)
-    playSound('success')
+    // playSound('success')
     showToast('Appointment order updated', 'success')
   }
 
@@ -184,7 +184,7 @@ const Today = () => {
       phone: newBooking.phone,
     }
     setAppointments((prev) => [...prev, appointment].sort((a, b) => a.time.localeCompare(b.time)))
-    playSound('success')
+    // playSound('success')
     showToast('Walk-in appointment added!', 'success')
   }
 
@@ -262,7 +262,7 @@ const Today = () => {
               <button
                 onClick={() => {
                   setViewMode('timeline')
-                  playSound('click')
+                  // playSound('click')
                 }}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-2 ${
                   viewMode === 'timeline'
@@ -276,7 +276,7 @@ const Today = () => {
               <button
                 onClick={() => {
                   setViewMode('hourly')
-                  playSound('click')
+                  // playSound('click')
                 }}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-2 ${
                   viewMode === 'hourly'
@@ -294,7 +294,7 @@ const Today = () => {
               whileTap={{ scale: 0.95 }}
               onClick={() => {
                 setIsCreateModalOpen(true)
-                playSound('click')
+                // playSound('click')
               }}
               className="btn-primary flex items-center space-x-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-lg"
             >
@@ -616,7 +616,7 @@ const Today = () => {
         whileTap={{ scale: 0.9 }}
         onClick={() => {
           setIsCreateModalOpen(true)
-          playSound('click')
+          // playSound('click')
         }}
         className="md:hidden fixed bottom-20 right-6 w-14 h-14 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full shadow-lg flex items-center justify-center text-white z-40"
       >

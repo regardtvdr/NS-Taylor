@@ -186,7 +186,7 @@ const Schedule = () => {
       )
     )
 
-    playSound('success')
+    // playSound('success')
     showToast(`Appointment rescheduled to ${format(rescheduleDate, 'MMM d, yyyy')} at ${rescheduleTime}`, 'success')
     setIsRescheduleModalOpen(false)
     setSelectedAppointment(null)
@@ -203,7 +203,7 @@ const Schedule = () => {
     if (!selectedAppointment) return
 
     setAllAppointments((prev) => prev.filter((apt) => apt.id !== selectedAppointment.id))
-    playSound('success')
+    // playSound('success')
     showToast('Appointment deleted successfully', 'success')
     setIsDeleteModalOpen(false)
     setSelectedAppointment(null)

@@ -1,8 +1,10 @@
 import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Calendar, BarChart3, TrendingUp, Users, Clock, ChevronLeft, ChevronRight, Filter } from 'lucide-react'
-import { format, isSameDay, addDays, subDays, parseISO } from 'date-fns'
-import { DENTISTS } from '../../utils/constants'
+import { Calendar, BarChart3, TrendingUp, Users, Clock, ChevronLeft, ChevronRight, Filter, Download, FileText, DollarSign, AlertCircle } from 'lucide-react'
+import { format, isSameDay, addDays, subDays, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subMonths, addMonths } from 'date-fns'
+import { DayPicker } from 'react-day-picker'
+import { DENTISTS, SERVICES } from '../../utils/constants'
+import 'react-day-picker/dist/style.css'
 
 interface Booking {
   id: string
@@ -12,11 +14,19 @@ interface Booking {
   date: string
   time: string
   status: 'confirmed' | 'pending' | 'cancelled' | 'completed'
+  deposit?: number
+  total?: number
 }
+
+type DateRangeType = 'today' | 'week' | 'month' | 'custom'
 
 const Analytics = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [selectedDentist, setSelectedDentist] = useState<string>('all')
+  const [dateRangeType, setDateRangeType] = useState<DateRangeType>('today')
+  const [customStartDate, setCustomStartDate] = useState<Date | null>(null)
+  const [customEndDate, setCustomEndDate] = useState<Date | null>(null)
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
   // Mock bookings data - in a real app, this would come from an API
   const allBookings: Booking[] = [
@@ -36,7 +46,9 @@ const Analytics = () => {
       dentist: 'Dr. Michael Chen',
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '09:00',
-      status: 'confirmed',
+      status: 'completed',
+      deposit: 50,
+      total: 850,
     },
     {
       id: 'BK-003',
@@ -45,7 +57,9 @@ const Analytics = () => {
       dentist: 'Dr. Emily Williams',
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '09:30',
-      status: 'confirmed',
+      status: 'completed',
+      deposit: 50,
+      total: 2500,
     },
     {
       id: 'BK-004',
@@ -54,7 +68,9 @@ const Analytics = () => {
       dentist: 'Dr. Sarah Johnson',
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '10:00',
-      status: 'confirmed',
+      status: 'completed',
+      deposit: 50,
+      total: 3500,
     },
     {
       id: 'BK-005',
@@ -63,7 +79,9 @@ const Analytics = () => {
       dentist: 'Dr. Michael Chen',
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '10:30',
-      status: 'confirmed',
+      status: 'cancelled',
+      deposit: 50,
+      total: 950,
     },
     {
       id: 'BK-006',
@@ -72,25 +90,31 @@ const Analytics = () => {
       dentist: 'Dr. Emily Williams',
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '11:00',
-      status: 'confirmed',
+      status: 'completed',
+      deposit: 50,
+      total: 1200,
     },
     {
       id: 'BK-007',
       patient: 'Jennifer Martinez',
-      service: 'Regular Checkup',
+      service: 'Teeth Cleaning & Polish',
       dentist: 'Dr. Sarah Johnson',
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '13:00',
-      status: 'confirmed',
+      status: 'completed',
+      deposit: 50,
+      total: 650,
     },
     {
       id: 'BK-008',
       patient: 'Robert Taylor',
-      service: 'Teeth Cleaning',
+      service: 'Teeth Cleaning & Polish',
       dentist: 'Dr. Michael Chen',
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '13:30',
-      status: 'confirmed',
+      status: 'completed',
+      deposit: 50,
+      total: 650,
     },
     {
       id: 'BK-009',
@@ -99,7 +123,9 @@ const Analytics = () => {
       dentist: 'Dr. Emily Williams',
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '14:00',
-      status: 'confirmed',
+      status: 'completed',
+      deposit: 50,
+      total: 850,
     },
     {
       id: 'BK-010',
@@ -108,7 +134,9 @@ const Analytics = () => {
       dentist: 'Dr. Sarah Johnson',
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '14:30',
-      status: 'confirmed',
+      status: 'cancelled',
+      deposit: 50,
+      total: 2500,
     },
     {
       id: 'BK-011',
@@ -117,7 +145,9 @@ const Analytics = () => {
       dentist: 'Dr. Michael Chen',
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '15:00',
-      status: 'confirmed',
+      status: 'completed',
+      deposit: 50,
+      total: 3500,
     },
     {
       id: 'BK-012',
@@ -126,7 +156,9 @@ const Analytics = () => {
       dentist: 'Dr. Emily Williams',
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '15:30',
-      status: 'confirmed',
+      status: 'completed',
+      deposit: 50,
+      total: 950,
     },
     {
       id: 'BK-013',
@@ -135,26 +167,46 @@ const Analytics = () => {
       dentist: 'Dr. Sarah Johnson',
       date: format(new Date(), 'yyyy-MM-dd'),
       time: '16:00',
-      status: 'confirmed',
+      status: 'completed',
+      deposit: 50,
+      total: 650,
     },
   ]
 
-  // Filter bookings for selected date and dentist
+  // Calculate date range based on type
+  const dateRange = useMemo(() => {
+    switch (dateRangeType) {
+      case 'today':
+        return { start: new Date(), end: new Date() }
+      case 'week':
+        return { start: startOfWeek(new Date()), end: endOfWeek(new Date()) }
+      case 'month':
+        return { start: startOfMonth(new Date()), end: endOfMonth(new Date()) }
+      case 'custom':
+        return {
+          start: customStartDate || new Date(),
+          end: customEndDate || new Date()
+        }
+      default:
+        return { start: new Date(), end: new Date() }
+    }
+  }, [dateRangeType, customStartDate, customEndDate])
+
+  // Filter bookings for selected date range and dentist
   const filteredBookings = useMemo(() => {
     return allBookings.filter((booking) => {
-      const matchesDate = (() => {
-        try {
-          return isSameDay(parseISO(booking.date), selectedDate)
-        } catch {
-          return false
-        }
-      })()
-      const matchesDentist = selectedDentist === 'all' || booking.dentist === selectedDentist
-      return matchesDate && matchesDentist
+      try {
+        const bookingDate = parseISO(booking.date)
+        const matchesDate = bookingDate >= dateRange.start && bookingDate <= dateRange.end
+        const matchesDentist = selectedDentist === 'all' || booking.dentist === selectedDentist
+        return matchesDate && matchesDentist
+      } catch {
+        return false
+      }
     })
-  }, [selectedDate, selectedDentist, allBookings])
+  }, [dateRange, selectedDentist, allBookings])
 
-  // Group bookings by hour
+  // Group bookings by hour (only for today view)
   const bookingsByHour = useMemo(() => {
     const grouped: Record<string, Booking[]> = {}
     
@@ -164,16 +216,19 @@ const Analytics = () => {
       grouped[timeKey] = []
     }
 
-    filteredBookings.forEach((booking) => {
-      const hour = parseInt(booking.time.split(':')[0])
-      const timeKey = `${hour.toString().padStart(2, '0')}:00`
-      if (grouped[timeKey]) {
-        grouped[timeKey].push(booking)
-      }
-    })
+    // Only group by hour if viewing a single day
+    if (dateRangeType === 'today') {
+      filteredBookings.forEach((booking) => {
+        const hour = parseInt(booking.time.split(':')[0])
+        const timeKey = `${hour.toString().padStart(2, '0')}:00`
+        if (grouped[timeKey]) {
+          grouped[timeKey].push(booking)
+        }
+      })
+    }
 
     return grouped
-  }, [filteredBookings])
+  }, [filteredBookings, dateRangeType])
 
   // Group bookings by service type for pie chart
   const bookingsByService = useMemo(() => {
@@ -193,12 +248,58 @@ const Analytics = () => {
     return Math.max(...counts, 1)
   }, [bookingsByHour])
 
+  // Calculate revenue metrics
+  const revenueMetrics = useMemo(() => {
+    const completed = filteredBookings.filter(b => b.status === 'completed')
+    const totalRevenue = completed.reduce((sum, b) => sum + (b.total || 0), 0)
+    const totalDeposits = filteredBookings.reduce((sum, b) => sum + (b.deposit || 50), 0)
+    const averageRevenue = completed.length > 0 ? totalRevenue / completed.length : 0
+    const noShows = filteredBookings.filter(b => b.status === 'cancelled').length
+    const noShowRate = filteredBookings.length > 0 ? (noShows / filteredBookings.length) * 100 : 0
+
+    return {
+      totalRevenue,
+      totalDeposits,
+      averageRevenue,
+      noShows,
+      noShowRate,
+      completedCount: completed.length
+    }
+  }, [filteredBookings])
+
+  // Dentist performance metrics
+  const dentistMetrics = useMemo(() => {
+    const metrics: Record<string, { appointments: number, revenue: number, noShows: number }> = {}
+    
+    filteredBookings.forEach(booking => {
+      if (!metrics[booking.dentist]) {
+        metrics[booking.dentist] = { appointments: 0, revenue: 0, noShows: 0 }
+      }
+      metrics[booking.dentist].appointments++
+      if (booking.status === 'completed') {
+        metrics[booking.dentist].revenue += booking.total || 0
+      }
+      if (booking.status === 'cancelled') {
+        metrics[booking.dentist].noShows++
+      }
+    })
+
+    return metrics
+  }, [filteredBookings])
+
   const navigateDate = (direction: 'prev' | 'next') => {
-    setSelectedDate((prev) => (direction === 'next' ? addDays(prev, 1) : subDays(prev, 1)))
+    if (dateRangeType === 'today') {
+      setSelectedDate((prev) => (direction === 'next' ? addDays(prev, 1) : subDays(prev, 1)))
+    } else if (dateRangeType === 'week') {
+      setSelectedDate((prev) => (direction === 'next' ? addDays(prev, 7) : subDays(prev, 7)))
+    } else if (dateRangeType === 'month') {
+      setSelectedDate((prev) => (direction === 'next' ? addMonths(prev, 1) : subMonths(prev, 1)))
+    }
   }
 
   const goToToday = () => {
     setSelectedDate(new Date())
+    setDateRangeType('today')
   }
 
   // Pie Chart Component
@@ -376,6 +477,43 @@ const Analytics = () => {
     ? 'All Dentists' 
     : DENTISTS.find(d => d.name === selectedDentist)?.name || 'All Dentists'
 
+  // Export functionality
+  const handleExport = (format: 'csv' | 'json') => {
+    const data = filteredBookings.map(booking => ({
+      ID: booking.id,
+      Patient: booking.patient,
+      Service: booking.service,
+      Dentist: booking.dentist,
+      Date: booking.date,
+      Time: booking.time,
+      Status: booking.status,
+      Deposit: booking.deposit || 50,
+      Total: booking.total || 0
+    }))
+
+    if (format === 'csv') {
+      const headers = Object.keys(data[0] || {}).join(',')
+      const rows = data.map(row => Object.values(row).join(','))
+      const csv = [headers, ...rows].join('\n')
+      const blob = new Blob([csv], { type: 'text/csv' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `appointments-${format(new Date(), 'yyyy-MM-dd')}.csv`
+      a.click()
+      URL.revokeObjectURL(url)
+    } else {
+      const json = JSON.stringify(data, null, 2)
+      const blob = new Blob([json], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `appointments-${format(new Date(), 'yyyy-MM-dd')}.json`
+      a.click()
+      URL.revokeObjectURL(url)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 pb-24 md:pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -393,61 +531,162 @@ const Analytics = () => {
             </div>
           </div>
 
-          {/* Date Navigation and Filter */}
+          {/* Date Range and Filters */}
           <div className="card p-6 mb-6 bg-white dark:bg-gray-800">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              {/* Date Navigation */}
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => navigateDate('prev')}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                >
-                  <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                </button>
-                <div className="flex items-center space-x-4">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              {/* Date Range Selection */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-1">
+                <div className="flex items-center space-x-2">
                   <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                  <h2 className="text-xl font-display font-semibold text-gray-800 dark:text-gray-100">
-                    {format(selectedDate, 'EEEE, MMMM d, yyyy')}
-                  </h2>
-                  {!isSameDay(selectedDate, new Date()) && (
+                  <div className="flex items-center space-x-2">
                     <button
-                      onClick={goToToday}
-                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 underline"
+                      onClick={() => setDateRangeType('today')}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                        dateRangeType === 'today'
+                          ? 'bg-gray-800 dark:bg-gray-700 text-white dark:text-gray-100'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      }`}
                     >
                       Today
                     </button>
-                  )}
+                    <button
+                      onClick={() => setDateRangeType('week')}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                        dateRangeType === 'week'
+                          ? 'bg-gray-800 dark:bg-gray-700 text-white dark:text-gray-100'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      This Week
+                    </button>
+                    <button
+                      onClick={() => setDateRangeType('month')}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                        dateRangeType === 'month'
+                          ? 'bg-gray-800 dark:bg-gray-700 text-white dark:text-gray-100'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      This Month
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDateRangeType('custom')
+                        setIsCalendarOpen(!isCalendarOpen)
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                        dateRangeType === 'custom'
+                          ? 'bg-gray-800 dark:bg-gray-700 text-white dark:text-gray-100'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      }`}
+                    >
+                      Custom
+                    </button>
+                  </div>
                 </div>
-                <button
-                  onClick={() => navigateDate('next')}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                >
-                  <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                </button>
+                {dateRangeType === 'custom' && (
+                  <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                    <span>
+                      {customStartDate ? format(customStartDate, 'MMM d, yyyy') : 'Start date'}
+                    </span>
+                    <span>to</span>
+                    <span>
+                      {customEndDate ? format(customEndDate, 'MMM d, yyyy') : 'End date'}
+                    </span>
+                  </div>
+                )}
+                {dateRangeType !== 'custom' && (
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    {format(dateRange.start, 'MMM d')} - {format(dateRange.end, 'MMM d, yyyy')}
+                  </div>
+                )}
               </div>
 
-              {/* Dentist Filter */}
+              {/* Dentist Filter and Export */}
               <div className="flex items-center space-x-3">
-                <Filter className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                <select
-                  value={selectedDentist}
-                  onChange={(e) => setSelectedDentist(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent"
-                >
-                  <option value="all">All Dentists</option>
-                  {DENTISTS.map((dentist) => (
-                    <option key={dentist.id} value={dentist.name}>
-                      {dentist.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center space-x-2">
+                  <Filter className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <select
+                    value={selectedDentist}
+                    onChange={(e) => setSelectedDentist(e.target.value)}
+                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent text-sm"
+                  >
+                    <option value="all">All Dentists</option>
+                    {DENTISTS.map((dentist) => (
+                      <option key={dentist.id} value={dentist.name}>
+                        {dentist.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="relative">
+                  <button
+                    onClick={() => {
+                      if (dateRangeType === 'custom') {
+                        setIsCalendarOpen(!isCalendarOpen)
+                      } else {
+                        // Quick export menu
+                        const menu = document.createElement('div')
+                        menu.className = 'absolute right-0 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-2 z-50'
+                        menu.innerHTML = `
+                          <button class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Export CSV</button>
+                          <button class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Export JSON</button>
+                        `
+                        document.body.appendChild(menu)
+                        setTimeout(() => document.body.removeChild(menu), 100)
+                      }
+                    }}
+                    className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                    title="Export data"
+                  >
+                    <Download className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             </div>
+
+            {/* Custom Date Range Picker */}
+            {dateRangeType === 'custom' && (
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Start Date</label>
+                    <DayPicker
+                      mode="single"
+                      selected={customStartDate || undefined}
+                      onSelect={(date) => {
+                        setCustomStartDate(date || null)
+                        if (date && customEndDate && date > customEndDate) {
+                          setCustomEndDate(null)
+                        }
+                      }}
+                      className="mx-auto"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">End Date</label>
+                    <DayPicker
+                      mode="single"
+                      selected={customEndDate || undefined}
+                      onSelect={(date) => {
+                        if (date && customStartDate && date >= customStartDate) {
+                          setCustomEndDate(date || null)
+                        } else if (date) {
+                          setCustomEndDate(date || null)
+                        }
+                      }}
+                      disabled={customStartDate ? { before: customStartDate } : undefined}
+                      className="mx-auto"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </motion.div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -469,11 +708,11 @@ const Analytics = () => {
             className="card p-6 bg-white dark:bg-gray-800 border-l-4 border-l-green-500 dark:border-l-green-400 shadow-md"
           >
             <div className="flex items-center justify-between mb-3">
-              <TrendingUp className="w-8 h-8 text-green-600 dark:text-green-400" />
+              <DollarSign className="w-8 h-8 text-green-600 dark:text-green-400" />
             </div>
-            <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">{peakHour.hour || 'N/A'}</div>
-            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Peak Hour</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{peakHour.count} appointments</div>
+            <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">R{revenueMetrics.totalRevenue.toLocaleString()}</div>
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Revenue</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">R{revenueMetrics.averageRevenue.toFixed(0)} avg per visit</div>
           </motion.div>
 
           <motion.div
@@ -483,29 +722,60 @@ const Analytics = () => {
             className="card p-6 bg-white dark:bg-gray-800 border-l-4 border-l-purple-500 dark:border-l-purple-400 shadow-md"
           >
             <div className="flex items-center justify-between mb-3">
-              <BarChart3 className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+              <TrendingUp className="w-8 h-8 text-purple-600 dark:text-purple-400" />
             </div>
-            <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">{maxBookings}</div>
-            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Max Hourly Load</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">Busiest hour</div>
+            <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">{peakHour.hour || 'N/A'}</div>
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Peak Hour</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{peakHour.count} appointments</div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="card p-6 bg-white dark:bg-gray-800 border-l-4 border-l-orange-500 dark:border-l-orange-400 shadow-md"
+            className="card p-6 bg-white dark:bg-gray-800 border-l-4 border-l-red-500 dark:border-l-red-400 shadow-md"
           >
             <div className="flex items-center justify-between mb-3">
-              <Clock className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+              <AlertCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
             </div>
-            <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">
-              {totalAppointments > 0 ? (totalAppointments / 10).toFixed(1) : '0.0'}
-            </div>
-            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Avg per Hour</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">Across 10 hours</div>
+            <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">{revenueMetrics.noShowRate.toFixed(1)}%</div>
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">No-Show Rate</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{revenueMetrics.noShows} no-shows</div>
           </motion.div>
         </div>
+
+        {/* Dentist Performance */}
+        {selectedDentist === 'all' && Object.keys(dentistMetrics).length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="card p-6 bg-white dark:bg-gray-800 mb-8"
+          >
+            <h2 className="text-2xl font-display font-bold text-gray-800 dark:text-gray-100 mb-6">Dentist Performance</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {Object.entries(dentistMetrics).map(([dentist, metrics]) => (
+                <div key={dentist} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div className="font-semibold text-gray-800 dark:text-gray-100 mb-3">{dentist}</div>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Appointments:</span>
+                      <span className="font-semibold text-gray-800 dark:text-gray-100">{metrics.appointments}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Revenue:</span>
+                      <span className="font-semibold text-gray-800 dark:text-gray-100">R{metrics.revenue.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">No-Shows:</span>
+                      <span className="font-semibold text-gray-800 dark:text-gray-100">{metrics.noShows}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Hourly Busyness Chart */}

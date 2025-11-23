@@ -64,3 +64,47 @@ export interface Appointment {
   deposit: number
 }
 
+export interface Patient {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  idNumber?: string
+  dateOfBirth?: string
+  address?: string
+  medicalAid?: string
+  medicalAidNumber?: string
+  allergies?: string[]
+  notes?: string
+  createdAt: string
+  lastVisit?: string
+  totalVisits: number
+  totalSpent: number
+}
+
+export interface PatientHistory {
+  id: string
+  patientId: string
+  appointmentId: string
+  date: string
+  service: string
+  dentist: string
+  amount: number
+  deposit: number
+  status: 'completed' | 'cancelled' | 'no-show'
+  notes?: string
+  treatmentNotes?: string
+}
+
+export interface PaymentRecord {
+  id: string
+  patientId: string
+  appointmentId: string
+  date: string
+  amount: number
+  deposit: number
+  method: 'ozow' | 'payfast' | 'cash' | 'card' | 'medical-aid'
+  status: 'paid' | 'pending' | 'refunded'
+}
+

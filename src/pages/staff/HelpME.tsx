@@ -267,7 +267,7 @@ const HelpME = () => {
                   setInput(question)
                   inputRef.current?.focus()
                 }}
-                className="px-3 py-2 sm:px-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors min-h-[44px]"
+                className="px-3 py-2 sm:px-4 bg-white dark:bg-gray-800 border-2 border-gray-800 rounded-lg text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors min-h-[44px]"
               >
                 {question}
               </motion.button>
