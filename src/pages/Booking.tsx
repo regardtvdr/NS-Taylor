@@ -91,7 +91,7 @@ const Booking = () => {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 pb-20">
+    <div className="min-h-screen bg-gray-50 py-6 md:py-12 pb-16 md:pb-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
         {/* Stepper */}
         <BookingStepper currentStep={currentStep} steps={STEPS} />
@@ -103,7 +103,7 @@ const Booking = () => {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
-          className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 md:p-10"
+          className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-6 md:p-8 lg:p-10"
         >
           <AnimatePresence mode="wait">
             {currentStep === 1 && (
@@ -146,11 +146,11 @@ const Booking = () => {
           </AnimatePresence>
 
           {/* Navigation */}
-          <div className="flex items-center justify-between mt-10 pt-6 border-t border-gray-100">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-0 mt-6 md:mt-10 pt-4 md:pt-6 border-t border-gray-100">
             <button
               onClick={handleBack}
               disabled={currentStep === 1}
-              className={`flex items-center space-x-2 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+              className={`flex items-center justify-center space-x-2 px-4 sm:px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
                 currentStep === 1
                   ? 'text-gray-300 cursor-not-allowed'
                   : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
@@ -163,7 +163,7 @@ const Booking = () => {
             <button
               onClick={handleNext}
               disabled={!canProceed()}
-              className={`btn-primary flex items-center space-x-2 text-sm ${
+              className={`btn-primary flex items-center justify-center space-x-2 text-sm w-full sm:w-auto ${
                 !canProceed() ? 'opacity-40 cursor-not-allowed' : ''
               }`}
             >
@@ -178,9 +178,9 @@ const Booking = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mt-6 bg-gray-50 border border-gray-200 rounded-md p-3 text-center"
+          className="mt-4 md:mt-6 bg-gray-50 border border-gray-200 rounded-md p-3 text-center"
         >
-          <p className="font-medium text-xs text-gray-700">
+          <p className="font-medium text-xs sm:text-sm text-gray-700">
             🔒 Secure your appointment with just R{DEPOSIT_AMOUNT} deposit
           </p>
         </motion.div>

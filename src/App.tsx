@@ -11,6 +11,7 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Location from './pages/Location'
 import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsOfService from './pages/TermsOfService'
 import Team from './pages/Team'
 import Login from './pages/staff/Login'
 import StaffDashboard from './pages/staff/StaffDashboard'
@@ -72,6 +73,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/location" element={<Location />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
           <Route path="/dashboard" element={<Navigate to="/staff/login" replace />} />
         </Route>
       </Routes>

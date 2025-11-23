@@ -13,16 +13,16 @@ const PaymentStep = ({ selectedMethod, onSelect, servicePrice }: PaymentStepProp
   const [cardFlipped, setCardFlipped] = useState(false)
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       <div>
-        <h2 className="text-2xl font-display font-semibold text-gray-800 mb-1.5 tracking-tight">
+        <h2 className="text-xl md:text-2xl font-display font-semibold text-gray-800 mb-1.5 tracking-tight">
           Secure Payment
         </h2>
-        <p className="text-sm text-gray-500">Pay your R{DEPOSIT_AMOUNT} deposit to secure your appointment</p>
+        <p className="text-xs md:text-sm text-gray-500">Pay your R{DEPOSIT_AMOUNT} deposit to secure your appointment</p>
       </div>
 
       {/* Payment Summary */}
-      <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+      <div className="bg-gray-50 rounded-lg p-4 md:p-6 border border-gray-200">
         <div className="flex items-center justify-between mb-4">
           <span className="text-gray-600">Service Total</span>
           <span className="text-xl font-bold text-gray-900">R{servicePrice}</span>
@@ -50,12 +50,12 @@ const PaymentStep = ({ selectedMethod, onSelect, servicePrice }: PaymentStepProp
 
       {/* Payment Methods */}
       <div>
-        <h3 className="font-semibold text-gray-800 mb-4">Choose Payment Method</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h3 className="text-sm md:text-base font-semibold text-gray-800 mb-3 md:mb-4">Choose Payment Method</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
           {/* Ozow */}
           <motion.button
             onClick={() => onSelect('ozow')}
-            className={`relative p-6 rounded-lg border transition-all duration-300 ${
+            className={`relative p-4 md:p-6 rounded-lg border transition-all duration-300 ${
               selectedMethod === 'ozow'
                 ? 'border-gray-600 bg-gray-50 scale-[1.02]'
                 : 'border-gray-200 bg-white hover:border-gray-400'
@@ -67,19 +67,19 @@ const PaymentStep = ({ selectedMethod, onSelect, servicePrice }: PaymentStepProp
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute top-4 right-4 w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center"
+                className="absolute top-2 right-2 md:top-4 md:right-4 w-5 h-5 md:w-6 md:h-6 bg-gray-800 rounded-full flex items-center justify-center"
               >
-                <Check className="w-4 h-4 text-white" />
+                <Check className="w-3 h-3 md:w-4 md:h-4 text-white" />
               </motion.div>
             )}
-            <div className="text-2xl font-bold text-gray-900 mb-2">Ozow</div>
-            <p className="text-sm text-gray-600">Instant EFT, Credit Card, Debit Card</p>
+            <div className="text-xl md:text-2xl font-bold text-gray-900 mb-1 md:mb-2">Ozow</div>
+            <p className="text-xs md:text-sm text-gray-600">Instant EFT, Credit Card, Debit Card</p>
           </motion.button>
 
           {/* PayFast */}
           <motion.button
             onClick={() => onSelect('payfast')}
-            className={`relative p-6 rounded-lg border transition-all duration-300 ${
+            className={`relative p-4 md:p-6 rounded-lg border transition-all duration-300 ${
               selectedMethod === 'payfast'
                 ? 'border-gray-600 bg-gray-50 scale-[1.02]'
                 : 'border-gray-200 bg-white hover:border-gray-400'
@@ -91,13 +91,13 @@ const PaymentStep = ({ selectedMethod, onSelect, servicePrice }: PaymentStepProp
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute top-4 right-4 w-6 h-6 bg-gray-800 rounded-full flex items-center justify-center"
+                className="absolute top-2 right-2 md:top-4 md:right-4 w-5 h-5 md:w-6 md:h-6 bg-gray-800 rounded-full flex items-center justify-center"
               >
-                <Check className="w-4 h-4 text-white" />
+                <Check className="w-3 h-3 md:w-4 md:h-4 text-white" />
               </motion.div>
             )}
-            <div className="text-2xl font-bold text-gray-900 mb-2">PayFast</div>
-            <p className="text-sm text-gray-600">Credit Card, Debit Card, EFT</p>
+            <div className="text-xl md:text-2xl font-bold text-gray-900 mb-1 md:mb-2">PayFast</div>
+            <p className="text-xs md:text-sm text-gray-600">Credit Card, Debit Card, EFT</p>
           </motion.button>
         </div>
       </div>
@@ -148,17 +148,17 @@ const PaymentStep = ({ selectedMethod, onSelect, servicePrice }: PaymentStepProp
       )}
 
       {/* Trust Badges */}
-      <div className="flex flex-wrap items-center justify-center gap-6 pt-6 border-t border-gray-200">
-        <div className="flex items-center space-x-2 text-sm text-gray-600">
-          <Shield className="w-4 h-4 text-gray-700" />
+      <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6 pt-4 md:pt-6 border-t border-gray-200">
+        <div className="flex items-center space-x-1.5 md:space-x-2 text-xs md:text-sm text-gray-600">
+          <Shield className="w-3 h-3 md:w-4 md:h-4 text-gray-700 flex-shrink-0" />
           <span>SSL Secured</span>
         </div>
-        <div className="flex items-center space-x-2 text-sm text-gray-600">
-          <Lock className="w-4 h-4 text-gray-700" />
+        <div className="flex items-center space-x-1.5 md:space-x-2 text-xs md:text-sm text-gray-600">
+          <Lock className="w-3 h-3 md:w-4 md:h-4 text-gray-700 flex-shrink-0" />
           <span>No Credit Card Required</span>
         </div>
-        <div className="flex items-center space-x-2 text-sm text-gray-600">
-          <Check className="w-4 h-4 text-gray-700" />
+        <div className="flex items-center space-x-1.5 md:space-x-2 text-xs md:text-sm text-gray-600">
+          <Check className="w-3 h-3 md:w-4 md:h-4 text-gray-700 flex-shrink-0" />
           <span>Instant Confirmation</span>
         </div>
       </div>

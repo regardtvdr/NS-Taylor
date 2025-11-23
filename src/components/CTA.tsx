@@ -6,7 +6,7 @@ import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
 
 const CTA = () => {
   return (
-    <section className="py-20 bg-gray-900 relative overflow-hidden">
+    <section className="py-12 md:py-16 lg:py-20 bg-gray-900 relative overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -15,24 +15,24 @@ const CTA = () => {
           transition={{ duration: 0.8 }}
           className="text-center max-w-4xl mx-auto"
         >
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-6 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white mb-4 md:mb-6 tracking-tight px-2">
             Ready to Transform Your Smile?
           </h2>
-          <p className="text-lg md:text-xl text-gray-100 mb-12 font-light leading-relaxed max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-100 mb-8 md:mb-12 font-light leading-relaxed max-w-3xl mx-auto px-4">
             Book your appointment today and experience premium dental care.
             Secure your slot with just a R{DEPOSIT_AMOUNT} deposit.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2, duration: 0.6 }}
-              className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20"
+              className="bg-white/10 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/20"
             >
-              <Shield className="w-6 h-6 text-gray-300 mx-auto mb-3" />
-              <h3 className="font-semibold mb-2 text-sm text-white">SSL Secured</h3>
+              <Shield className="w-5 h-5 md:w-6 md:h-6 text-gray-300 mx-auto mb-2 md:mb-3" />
+              <h3 className="font-semibold mb-1 md:mb-2 text-xs md:text-sm text-white">SSL Secured</h3>
               <p className="text-xs text-gray-200">Your data is protected</p>
             </motion.div>
 
@@ -41,10 +41,10 @@ const CTA = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20"
+              className="bg-white/10 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/20"
             >
-              <Clock className="w-6 h-6 text-gray-300 mx-auto mb-3" />
-              <h3 className="font-semibold mb-2 text-sm text-white">Quick Booking</h3>
+              <Clock className="w-5 h-5 md:w-6 md:h-6 text-gray-300 mx-auto mb-2 md:mb-3" />
+              <h3 className="font-semibold mb-1 md:mb-2 text-xs md:text-sm text-white">Quick Booking</h3>
               <p className="text-xs text-gray-200">Book in under 2 minutes</p>
             </motion.div>
 
@@ -53,10 +53,10 @@ const CTA = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.6, duration: 0.6 }}
-              className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20"
+              className="bg-white/10 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/20"
             >
-              <CheckCircle className="w-6 h-6 text-gray-300 mx-auto mb-3" />
-              <h3 className="font-semibold mb-2 text-sm text-white">42% Fewer No-Shows</h3>
+              <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-gray-300 mx-auto mb-2 md:mb-3" />
+              <h3 className="font-semibold mb-1 md:mb-2 text-xs md:text-sm text-white">42% Fewer No-Shows</h3>
               <p className="text-xs text-gray-200">Deposit system works</p>
             </motion.div>
           </div>
@@ -66,17 +66,17 @@ const CTA = () => {
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            <Link to="/booking" className="inline-block">
+            <Link to="/booking" className="inline-block w-full sm:w-auto">
               <InteractiveHoverButton 
                 text="Book Your Appointment Now" 
                 variant="primary"
-                className="px-8 py-4 w-auto min-w-[280px]"
+                className="px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto min-w-[280px] text-base sm:text-lg"
                 as="div"
               />
             </Link>
           </motion.div>
 
-          <p className="mt-6 text-sm text-gray-300">
+          <p className="mt-4 md:mt-6 text-xs sm:text-sm text-gray-300 px-4">
             No credit card required • Instant confirmation • Cancel anytime
           </p>
         </motion.div>

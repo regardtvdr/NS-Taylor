@@ -103,16 +103,16 @@ const PatientDetails = ({ data, onChange }: PatientDetailsProps) => {
   }, [])
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       <div>
-        <h2 className="text-2xl font-display font-semibold text-gray-800 mb-1.5 tracking-tight">
+        <h2 className="text-xl md:text-2xl font-display font-semibold text-gray-800 mb-1.5 tracking-tight">
           Patient Details
         </h2>
-        <p className="text-sm text-gray-500">Please provide your contact information</p>
+        <p className="text-xs md:text-sm text-gray-500">Please provide your contact information</p>
       </div>
 
       <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
           <InputField
             label="First Name"
             name="firstName"
@@ -176,9 +176,9 @@ const PatientDetails = ({ data, onChange }: PatientDetailsProps) => {
       </div>
 
       {/* Reminder Preferences */}
-      <div className="mt-8 p-6 bg-gray-50 rounded-card">
-        <h3 className="font-semibold text-gray-800 mb-4">Reminder Preferences</h3>
-        <div className="space-y-3">
+      <div className="mt-6 md:mt-8 p-4 md:p-6 bg-gray-50 rounded-card">
+        <h3 className="text-sm md:text-base font-semibold text-gray-800 mb-3 md:mb-4">Reminder Preferences</h3>
+        <div className="space-y-2.5 md:space-y-3">
           <label className="flex items-center space-x-3 cursor-pointer">
             <input
               type="checkbox"

@@ -56,29 +56,29 @@ const BookingConfirmation = () => {
   if (!bookingData) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 pb-20">
+    <div className="min-h-screen bg-gray-50 py-6 md:py-12 pb-16 md:pb-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="card p-8 md:p-12 text-center"
+          className="card p-4 sm:p-6 md:p-8 lg:p-12 text-center"
         >
           {/* Success Icon */}
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-              className="w-20 h-20 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center mx-auto mb-6"
+              className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6"
             >
-              <CheckCircle className="w-12 h-12 text-white" />
+              <CheckCircle className="w-10 h-10 md:w-12 md:h-12 text-white" />
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-4xl md:text-5xl font-display font-bold text-gray-800 mb-4"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-gray-800 mb-3 md:mb-4"
             >
               Booking Confirmed!
             </motion.h1>
@@ -87,7 +87,7 @@ const BookingConfirmation = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-xl text-gray-600 mb-8"
+            className="text-base md:text-lg lg:text-xl text-gray-600 mb-6 md:mb-8 px-2"
           >
             Your appointment has been successfully booked. We've sent a confirmation email to{' '}
             <span className="font-semibold text-gray-800">{bookingData.patientDetails.email}</span>
@@ -98,9 +98,9 @@ const BookingConfirmation = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-gradient-to-br bg-gray-50 border border-gray-200 rounded-card p-6 mb-8 text-left"
+            className="bg-gradient-to-br bg-gray-50 border border-gray-200 rounded-card p-4 md:p-6 mb-6 md:mb-8 text-left"
           >
-            <h2 className="text-2xl font-display font-bold text-gray-800 mb-6">
+            <h2 className="text-xl md:text-2xl font-display font-bold text-gray-800 mb-4 md:mb-6">
               Appointment Details
             </h2>
 
@@ -236,14 +236,14 @@ const BookingConfirmation = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 md:gap-4"
           >
-            <button className="btn-secondary flex items-center space-x-2">
-              <Download className="w-5 h-5" />
+            <button className="btn-secondary flex items-center justify-center space-x-2 w-full sm:w-auto">
+              <Download className="w-4 h-4 md:w-5 md:h-5" />
               <span>Download Confirmation</span>
             </button>
-            <Link to="/" className="btn-primary flex items-center space-x-2">
-              <Home className="w-5 h-5" />
+            <Link to="/" className="btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto">
+              <Home className="w-4 h-4 md:w-5 md:h-5" />
               <span>Back to Home</span>
             </Link>
           </motion.div>

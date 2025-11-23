@@ -35,9 +35,9 @@ const Location = () => {
       </section>
 
       {/* Map Section */}
-      <section className="relative py-12 bg-white z-10">
+      <section className="relative py-8 md:py-12 bg-white z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
             {/* Map */}
             <div className="lg:col-span-2">
               <motion.div
@@ -70,19 +70,19 @@ const Location = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.6 }}
-                className="bg-white rounded-lg border border-gray-200 p-6 space-y-6"
+                className="bg-white rounded-lg border border-gray-200 p-4 md:p-6 space-y-4 md:space-y-6"
               >
                 <div>
-                  <h2 className="text-xl font-display font-semibold text-gray-800 mb-4 tracking-tight">
+                  <h2 className="text-lg md:text-xl font-display font-semibold text-gray-800 mb-3 md:mb-4 tracking-tight">
                     Contact Information
                   </h2>
                 </div>
 
-                <div className="space-y-5">
+                <div className="space-y-4 md:space-y-5">
                   {/* Address */}
-                  <div className="flex items-start space-x-3">
-                    <div className="w-10 h-10 bg-gray-50 rounded-md flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-5 h-5 text-gray-700" />
+                  <div className="flex items-start space-x-2 md:space-x-3">
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-50 rounded-md flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900 mb-1">Address</h3>
@@ -95,9 +95,9 @@ const Location = () => {
                   </div>
 
                   {/* Phone */}
-                  <div className="flex items-start space-x-3">
-                    <div className="w-10 h-10 bg-gray-50 rounded-md flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-5 h-5 text-gray-700" />
+                  <div className="flex items-start space-x-2 md:space-x-3">
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-50 rounded-md flex items-center justify-center flex-shrink-0">
+                      <Phone className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900 mb-1">Phone</h3>
@@ -107,9 +107,9 @@ const Location = () => {
                   </div>
 
                   {/* Email */}
-                  <div className="flex items-start space-x-3">
-                    <div className="w-10 h-10 bg-gray-50 rounded-md flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-5 h-5 text-gray-700" />
+                  <div className="flex items-start space-x-2 md:space-x-3">
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-50 rounded-md flex items-center justify-center flex-shrink-0">
+                      <Mail className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900 mb-1">Email</h3>
@@ -118,9 +118,9 @@ const Location = () => {
                   </div>
 
                   {/* Hours */}
-                  <div className="flex items-start space-x-3">
-                    <div className="w-10 h-10 bg-gray-50 rounded-md flex items-center justify-center flex-shrink-0">
-                      <Clock className="w-5 h-5 text-gray-700" />
+                  <div className="flex items-start space-x-2 md:space-x-3">
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-50 rounded-md flex items-center justify-center flex-shrink-0">
+                      <Clock className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900 mb-1">Business Hours</h3>
@@ -152,7 +152,7 @@ const Location = () => {
       </section>
 
       {/* Additional Info Section */}
-      <section className="relative py-12 pb-20 bg-white z-10">
+      <section className="relative py-8 md:py-12 pb-16 md:pb-20 bg-white z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -161,11 +161,11 @@ const Location = () => {
             transition={{ duration: 0.6 }}
             className="max-w-4xl mx-auto"
           >
-            <h2 className="text-2xl font-display font-semibold text-gray-800 mb-6 text-center tracking-tight">
+            <h2 className="text-xl md:text-2xl font-display font-semibold text-gray-800 mb-4 md:mb-6 text-center tracking-tight">
               Getting Here
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <h3 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-wide">
                   By Car

@@ -31,12 +31,12 @@ const DateTimeSelection = ({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       <div>
-        <h2 className="text-2xl font-display font-semibold text-gray-800 mb-1.5 tracking-tight">
+        <h2 className="text-xl md:text-2xl font-display font-semibold text-gray-800 mb-1.5 tracking-tight">
           Choose Date & Time
         </h2>
-        <p className="text-sm text-gray-500">Select your preferred appointment slot</p>
+        <p className="text-xs md:text-sm text-gray-500">Select your preferred appointment slot</p>
       </div>
 
       {/* Date Selection */}
@@ -46,11 +46,11 @@ const DateTimeSelection = ({
         </label>
         <button
           onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-          className="w-full p-3.5 border border-gray-200 rounded-md flex items-center justify-between hover:border-gray-400 transition-colors bg-white text-left focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-500"
+          className="w-full p-3 md:p-3.5 border border-gray-200 rounded-md flex items-center justify-between hover:border-gray-400 transition-colors bg-white text-left focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-gray-500"
         >
-          <div className="flex items-center space-x-2.5">
-            <Calendar className="w-4 h-4 text-gray-400" />
-            <span className={selectedDate ? 'text-gray-800 font-medium text-sm' : 'text-gray-400 text-sm'}>
+          <div className="flex items-center space-x-2 md:space-x-2.5 min-w-0 flex-1">
+            <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <span className={`truncate ${selectedDate ? 'text-gray-800 font-medium text-xs md:text-sm' : 'text-gray-400 text-xs md:text-sm'}`}>
               {selectedDate ? format(selectedDate, 'EEEE, MMMM d, yyyy') : 'Select a date'}
             </span>
           </div>
@@ -62,7 +62,7 @@ const DateTimeSelection = ({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="mt-3 bg-white rounded-lg shadow-lg p-4 border border-gray-200 calendar-wrapper"
+              className="mt-3 bg-white rounded-lg shadow-lg p-3 md:p-4 border border-gray-200 calendar-wrapper overflow-x-auto"
             >
               <DayPicker
                 mode="single"
@@ -174,7 +174,7 @@ const DateTimeSelection = ({
           <label className="block text-sm font-semibold text-gray-800 mb-3">
             Available Times
           </label>
-          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-3">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 md:gap-3">
             {timeSlots.map((time) => {
               const status = getSlotStatus(time)
               const isSelected = selectedTime === time
@@ -184,7 +184,7 @@ const DateTimeSelection = ({
                   key={time}
                   onClick={() => onTimeSelect(time)}
                   disabled={status === 'unavailable'}
-                  className={`relative p-2.5 rounded-md border transition-all duration-200 text-center ${
+                  className={`relative p-2 md:p-2.5 rounded-md border transition-all duration-200 text-center ${
                     isSelected
                       ? 'border-gray-700 bg-gray-100 text-gray-900'
                       : status === 'available'
@@ -196,7 +196,7 @@ const DateTimeSelection = ({
                   whileHover={status !== 'unavailable' && !isSelected ? { scale: 1.05, y: -2 } : {}}
                   whileTap={status !== 'unavailable' ? { scale: 0.95 } : {}}
                 >
-                  <span className="text-sm font-semibold">{time}</span>
+                  <span className="text-xs md:text-sm font-semibold">{time}</span>
                   {status === 'available' && !isSelected && (
                     <div className="absolute top-1.5 right-1.5">
                       <Circle className="w-2 h-2 text-green-500 fill-green-500" />

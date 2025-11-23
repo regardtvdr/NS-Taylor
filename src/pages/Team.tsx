@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import { DENTISTS } from '../utils/constants'
 import { AnimatedTestimonials } from '../components/ui/AnimatedTestimonials'
 import { InteractiveHoverButton } from '../components/ui/InteractiveHoverButton'
+import { AnimatedGridPattern } from '../components/ui/animated-grid-pattern'
+import { cn } from '../lib/utils'
 
 const Team = () => {
   // Convert dentists to testimonials format for the animated component
@@ -44,8 +46,18 @@ const Team = () => {
       </section>
 
       {/* Animated Testimonials Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 bg-white relative overflow-hidden">
+        <AnimatedGridPattern
+          numSquares={30}
+          maxOpacity={0.6}
+          duration={3}
+          repeatDelay={1}
+          className={cn(
+            "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
+            "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
+          )}
+        />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

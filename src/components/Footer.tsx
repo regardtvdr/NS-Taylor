@@ -4,8 +4,8 @@ import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from 'lucide-react'
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white border-0 outline-none overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 border-0 outline-none">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 border-0 outline-none">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Brand */}
           <div>
             <h3 className="text-xl font-display font-bold mb-4">Premium Dental</h3>
@@ -56,9 +56,9 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-gray-300 transition-colors">
+                <Link to="/terms" className="text-gray-400 hover:text-teal-400 transition-colors">
                   Terms of Service
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

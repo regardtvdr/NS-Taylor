@@ -9,7 +9,7 @@ const Testimonials = () => {
   const { ref, isInView } = useScrollAnimation()
 
   return (
-    <section ref={ref} className="py-20 bg-white relative overflow-hidden">
+    <section ref={ref} className="py-12 md:py-16 lg:py-20 bg-white relative overflow-hidden">
       <AnimatedGridPattern
         numSquares={30}
         maxOpacity={0.6}
@@ -25,24 +25,24 @@ const Testimonials = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-10 md:mb-12 lg:mb-16"
         >
-          <h2 className="section-title mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-gray-800 tracking-tight mb-3 md:mb-4">
             What Our Patients Say
           </h2>
-          <p className="section-subtitle max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 font-normal leading-relaxed max-w-2xl mx-auto px-4">
             Don't just take our word for it - hear from our satisfied patients
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
           {REVIEWS.map((review, index) => (
             <motion.div
               key={review.id}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: index * 0.1, duration: 0.6 }}
-              className="bg-white rounded-lg shadow-sm hover:shadow-md border-2 border-gray-900 p-6 relative"
+              className="bg-white rounded-lg shadow-sm hover:shadow-md border-2 border-gray-900 p-4 md:p-6 relative"
             >
               <Quote className="w-6 h-6 text-gray-300 absolute top-4 right-4" />
               

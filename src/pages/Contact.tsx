@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react'
+import { AnimatedGridPattern } from '../components/ui/animated-grid-pattern'
+import { cn } from '../lib/utils'
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -48,9 +50,19 @@ const Contact = () => {
       </section>
 
       {/* Main Content Section */}
-      <section className="relative py-12 pb-20 bg-white z-10">
+      <section className="relative py-8 md:py-12 pb-16 md:pb-20 bg-white z-10 overflow-hidden">
+        <AnimatedGridPattern
+          numSquares={30}
+          maxOpacity={0.6}
+          duration={3}
+          repeatDelay={1}
+          className={cn(
+            "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
+            "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
+          )}
+        />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 max-w-6xl mx-auto">
             {/* Contact Info */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -60,13 +72,13 @@ const Contact = () => {
               className="space-y-8"
             >
             <div>
-              <h2 className="text-2xl font-display font-bold text-gray-800 mb-6">
+              <h2 className="text-xl md:text-2xl font-display font-bold text-gray-800 mb-4 md:mb-6">
                 Contact Information
               </h2>
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-6 h-6 text-gray-700" />
+              <div className="space-y-4 md:space-y-6">
+                <div className="flex items-start space-x-3 md:space-x-4">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-800 mb-1">Phone</h3>
@@ -75,9 +87,9 @@ const Contact = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-6 h-6 text-gray-700" />
+                <div className="flex items-start space-x-3 md:space-x-4">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-800 mb-1">Email</h3>
@@ -86,9 +98,9 @@ const Contact = () => {
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-6 h-6 text-gray-700" />
+                <div className="flex items-start space-x-3 md:space-x-4">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-800 mb-1">Address</h3>
@@ -102,12 +114,12 @@ const Contact = () => {
               </div>
             </div>
 
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="font-semibold text-gray-800 mb-3">Emergency Contact</h3>
-                <p className="text-gray-600 mb-2">
+              <div className="bg-white rounded-lg border-2 border-red-500 p-4 md:p-6">
+                <h3 className="text-sm md:text-base font-semibold text-gray-800 mb-2 md:mb-3">Emergency Contact</h3>
+                <p className="text-xs md:text-sm text-gray-600 mb-2">
                   For dental emergencies outside business hours, please call:
                 </p>
-                <p className="text-xl font-bold text-gray-700">+27 11 123 4567</p>
+                <p className="text-lg md:text-xl font-bold text-gray-700">+27 11 123 4567</p>
               </div>
             </motion.div>
 
@@ -117,9 +129,9 @@ const Contact = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="bg-white rounded-lg border border-gray-200 p-8"
+              className="bg-white rounded-lg border-2 border-gray-800 p-4 md:p-6 lg:p-8"
             >
-            <h2 className="text-2xl font-display font-bold text-gray-800 mb-6">
+            <h2 className="text-xl md:text-2xl font-display font-bold text-gray-800 mb-4 md:mb-6">
               Send us a Message
             </h2>
 

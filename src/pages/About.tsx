@@ -3,6 +3,8 @@ import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import { Award, Users, Heart, Shield } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { InteractiveHoverButton } from '../components/ui/InteractiveHoverButton'
+import { AnimatedGridPattern } from '../components/ui/animated-grid-pattern'
+import { cn } from '../lib/utils'
 
 const About = () => {
   const { ref, isInView } = useScrollAnimation()
@@ -82,8 +84,18 @@ const About = () => {
       </section>
 
       {/* Features Grid */}
-      <section ref={ref} className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section ref={ref} className="py-20 bg-gray-50 relative overflow-hidden">
+        <AnimatedGridPattern
+          numSquares={30}
+          maxOpacity={0.6}
+          duration={3}
+          repeatDelay={1}
+          className={cn(
+            "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
+            "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
+          )}
+        />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -104,7 +116,7 @@ const About = () => {
                   initial={{ opacity: 0, y: 30 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: index * 0.1, duration: 0.6 }}
-                  className="card p-6 text-center"
+                  className="card p-6 text-center border-2 border-gray-800"
                 >
                   <div className="w-16 h-16 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Icon className="w-8 h-8 text-white" />
