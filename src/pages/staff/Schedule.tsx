@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams } from 'react-router-dom'
 import { Search, Calendar, Clock, User, Phone, Edit2, Trash2, X, AlertTriangle, Plus, History } from 'lucide-react'
-import { format, parseISO, addDays, subDays, isSameDay } from 'date-fns'
+import { format, parseISO, isSameDay } from 'date-fns'
 import { DayPicker } from 'react-day-picker'
 import { generateTimeSlots } from '../../utils/dateUtils'
 import { useToast } from '../../contexts/ToastContext'
@@ -11,6 +11,8 @@ import PatientProfileModal from '../../components/staff/PatientProfileModal'
 import CreateBookingModal from '../../components/staff/CreateBookingModal'
 import BookingDetailModal from '../../components/staff/BookingDetailModal'
 import { Patient } from '../../types'
+import { useBookings } from '../../hooks/useBookings'
+import { usePatients } from '../../hooks/usePatients'
 import 'react-day-picker/dist/style.css'
 
 interface ScheduleAppointment {
@@ -47,6 +49,8 @@ const Schedule = () => {
   const initialViewMode = searchParams.get('view') === 'patients' ? 'patients' : 'appointments'
   const [viewMode, setViewMode] = useState<'appointments' | 'patients'>(initialViewMode)
   const { showToast } = useToast()
+  const { bookings, createBooking, updateBooking, deleteBooking } = useBookings()
+  const { patients } = usePatients()
 
   // Update viewMode when URL parameter changes
   useEffect(() => {
@@ -58,138 +62,27 @@ const Schedule = () => {
     }
   }, [searchParams])
 
-  // Mock appointments data - in a real app, this would come from an API
-  const [allAppointments, setAllAppointments] = useState<ScheduleAppointment[]>([
-    {
-      id: '1',
-      time: '08:00',
-      patient: 'Sarah Mitchell',
-      service: 'Teeth Cleaning & Polish',
-      dentist: 'Dr. Sarah Johnson',
-      depositPaid: true,
-      status: 'scheduled',
-      phone: '+27 82 123 4567',
-      email: 'sarah.mitchell@email.com',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '2',
-      time: '09:30',
-      patient: 'James Thompson',
-      service: 'Comprehensive Consultation',
-      dentist: 'Dr. Michael Chen',
-      depositPaid: true,
-      status: 'arrived',
-      phone: '+27 83 234 5678',
-      email: 'james.thompson@email.com',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '3',
-      time: '10:00',
-      patient: 'Emma Wilson',
-      service: 'Teeth Whitening',
-      dentist: 'Dr. Emily Williams',
-      depositPaid: true,
-      status: 'scheduled',
-      phone: '+27 84 345 6789',
-      email: 'emma.wilson@email.com',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '4',
-      time: '11:00',
-      patient: 'Michael Brown',
-      service: 'Root Canal Treatment',
-      dentist: 'Dr. Sarah Johnson',
-      depositPaid: false,
-      status: 'scheduled',
-      phone: '+27 85 456 7890',
-      email: 'michael.brown@email.com',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '5',
-      time: '13:30',
-      patient: 'Lisa Anderson',
-      service: 'Emergency Visit',
-      dentist: 'Dr. Michael Chen',
-      depositPaid: true,
-      status: 'scheduled',
-      phone: '+27 86 567 8901',
-      email: 'lisa.anderson@email.com',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '6',
-      time: '14:00',
-      patient: 'David Lee',
-      service: 'Dental Implant Consultation',
-      dentist: 'Dr. Emily Williams',
-      depositPaid: true,
-      status: 'no-show',
-      phone: '+27 87 678 9012',
-      email: 'david.lee@email.com',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '7',
-      time: '15:30',
-      patient: 'Jennifer Martinez',
-      service: 'Regular Checkup',
-      dentist: 'Dr. Sarah Johnson',
-      depositPaid: true,
-      status: 'scheduled',
-      phone: '+27 88 789 0123',
-      email: 'jennifer.martinez@email.com',
-      date: format(addDays(new Date(), 1), 'yyyy-MM-dd'),
-    },
-    {
-      id: '8',
-      time: '16:00',
-      patient: 'Robert Taylor',
-      service: 'Teeth Cleaning',
-      dentist: 'Dr. Michael Chen',
-      depositPaid: false,
-      status: 'scheduled',
-      phone: '+27 89 890 1234',
-      email: 'robert.taylor@email.com',
-      date: format(addDays(new Date(), 2), 'yyyy-MM-dd'),
-    },
-  ])
+  // Convert bookings to ScheduleAppointment format
+  const allAppointments = useMemo(() => {
+    return bookings.map(b => ({
+      id: b.id,
+      time: b.time,
+      patient: b.patient,
+      service: b.service,
+      dentist: b.dentist,
+      depositPaid: (b.deposit || 0) > 0,
+      status: b.status === 'confirmed' || b.status === 'pending' ? 'scheduled' as const : 
+              b.status === 'arrived' ? 'arrived' as const :
+              b.status === 'no-show' ? 'no-show' as const : 'completed' as const,
+      phone: b.phone,
+      email: b.email,
+      date: b.date,
+      total: b.total,
+    }))
+  }, [bookings])
 
-  // Generate patient database from appointments (mock - in production, this would come from API)
-  const allPatients = useMemo(() => {
-    const patientMap = new Map<string, Patient>()
-    
-    allAppointments.forEach(apt => {
-      const [firstName, ...lastNameParts] = apt.patient.split(' ')
-      const lastName = lastNameParts.join(' ')
-      const patientKey = `${firstName}-${lastName}-${apt.phone}`
-      
-      if (!patientMap.has(patientKey)) {
-        patientMap.set(patientKey, {
-          id: `PAT-${patientMap.size + 1}`,
-          firstName,
-          lastName,
-          email: apt.email || '',
-          phone: apt.phone || '',
-          createdAt: format(subDays(new Date(), 30), 'yyyy-MM-dd'),
-          lastVisit: apt.date,
-          totalVisits: 1,
-          totalSpent: 0,
-        })
-      } else {
-        const patient = patientMap.get(patientKey)!
-        patient.totalVisits++
-        if (apt.date > (patient.lastVisit || '')) {
-          patient.lastVisit = apt.date
-        }
-      }
-    })
-    
-    return Array.from(patientMap.values())
-  }, [allAppointments])
+  // Use patients from Firebase
+  const allPatients = patients
 
   // Get patient's appointment history
   const getPatientHistory = (patient: Patient): ScheduleAppointment[] => {
@@ -263,23 +156,23 @@ const Schedule = () => {
     setIsRescheduleModalOpen(true)
   }
 
-  const handleConfirmReschedule = () => {
+  const handleConfirmReschedule = async () => {
     if (!selectedAppointment || !rescheduleDate || !rescheduleTime) return
 
-    setAllAppointments((prev) =>
-      prev.map((apt) =>
-        apt.id === selectedAppointment.id
-          ? { ...apt, date: format(rescheduleDate, 'yyyy-MM-dd'), time: rescheduleTime }
-          : apt
-      )
-    )
-
-    // playSound('success')
-    showToast(`Appointment rescheduled to ${format(rescheduleDate, 'MMM d, yyyy')} at ${rescheduleTime}`, 'success')
-    setIsRescheduleModalOpen(false)
-    setSelectedAppointment(null)
-    setRescheduleDate(null)
-    setRescheduleTime('')
+    try {
+      await updateBooking(selectedAppointment.id, {
+        date: format(rescheduleDate, 'yyyy-MM-dd'),
+        time: rescheduleTime,
+      })
+      showToast(`Appointment rescheduled to ${format(rescheduleDate, 'MMM d, yyyy')} at ${rescheduleTime}`, 'success')
+      setIsRescheduleModalOpen(false)
+      setSelectedAppointment(null)
+      setRescheduleDate(null)
+      setRescheduleTime('')
+    } catch (error) {
+      console.error('Failed to reschedule appointment:', error)
+      showToast('Failed to reschedule appointment', 'error')
+    }
   }
 
   const handleDelete = (appointment: ScheduleAppointment) => {
@@ -287,14 +180,18 @@ const Schedule = () => {
     setIsDeleteModalOpen(true)
   }
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!selectedAppointment) return
 
-    const appointmentToDelete = selectedAppointment
-    setAllAppointments((prev) => prev.filter((apt) => apt.id !== appointmentToDelete.id))
-    showToast(`Appointment for ${appointmentToDelete.patient} deleted successfully`, 'success')
-    setIsDeleteModalOpen(false)
-    setSelectedAppointment(null)
+    try {
+      await deleteBooking(selectedAppointment.id)
+      showToast(`Appointment for ${selectedAppointment.patient} deleted successfully`, 'success')
+      setIsDeleteModalOpen(false)
+      setSelectedAppointment(null)
+    } catch (error) {
+      console.error('Failed to delete appointment:', error)
+      showToast('Failed to delete appointment', 'error')
+    }
   }
 
   const getStatusColor = (status: string) => {
@@ -1119,25 +1016,28 @@ const Schedule = () => {
           setIsCreateBookingOpen(false)
           // Keep selectedPatient so user can try booking again if they cancel
         }}
-        onSave={(booking) => {
-          // Add new appointment
-          const newAppointment: ScheduleAppointment = {
-            id: booking.id,
-            time: booking.time,
-            patient: booking.patient,
-            service: booking.service,
-            dentist: booking.dentist,
-            depositPaid: false,
-            status: 'scheduled',
-            phone: booking.phone,
-            email: booking.email,
-            date: booking.date,
+        onSave={async (booking) => {
+          try {
+            await createBooking({
+              patient: booking.patient,
+              email: booking.email,
+              phone: booking.phone,
+              service: booking.service,
+              dentist: booking.dentist,
+              date: booking.date,
+              time: booking.time,
+              status: 'confirmed',
+              deposit: booking.deposit,
+              total: booking.total,
+            })
+            showToast('Appointment created successfully!', 'success')
+            setIsCreateBookingOpen(false)
+            setSelectedPatient(null)
+            setViewMode('appointments')
+          } catch (error) {
+            console.error('Failed to create appointment:', error)
+            showToast('Failed to create appointment', 'error')
           }
-          setAllAppointments((prev) => [...prev, newAppointment])
-          showToast('Appointment created successfully!', 'success')
-          setIsCreateBookingOpen(false)
-          setSelectedPatient(null)
-          setViewMode('appointments')
         }}
         initialDate={undefined}
         initialTime={undefined}
