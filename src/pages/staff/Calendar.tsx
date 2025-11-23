@@ -134,10 +134,11 @@ const Calendar = () => {
     return getBookingCount(date) > 0
   }
 
-  // Check if date is blacklisted/leave
+  // Check if date is blacklisted/leave for a specific dentist
   const isLeaveDay = (date: Date, dentist: string): boolean => {
+    if (!date) return false
     const dateStr = format(date, 'yyyy-MM-dd')
-    return leaveDays.some((leave) => leave.date === dateStr && (leave.dentist === dentist || selectedDentist === 'all'))
+    return leaveDays.some((leave) => leave.date === dateStr && leave.dentist === dentist)
   }
 
   // Check if date is in the past
@@ -199,16 +200,32 @@ const Calendar = () => {
     setSelectedTimeSlot(null)
   }
 
-  const handleAddLeave = (date: Date, dentist: string) => {
+  const handleAddLeave = (date: Date | null, dentist: string) => {
+    if (!date) {
+      showToast('Please select a date first', 'warning')
+      return
+    }
+    
+    if (!dentist || dentist === 'all') {
+      showToast('Please select a specific dentist', 'warning')
+      return
+    }
+    
     const dateStr = format(date, 'yyyy-MM-dd')
     const existingLeave = leaveDays.find((l) => l.date === dateStr && l.dentist === dentist)
     
     if (existingLeave) {
       setLeaveDays((prev) => prev.filter((l) => !(l.date === dateStr && l.dentist === dentist)))
-      showToast('Leave day removed', 'info')
+      showToast(`${dentist} leave day removed`, 'info')
     } else {
-      setLeaveDays((prev) => [...prev, { date: dateStr, dentist, reason: 'Leave' }])
-      showToast('Leave day added', 'success')
+      // Prevent duplicate leave days
+      const alreadyExists = leaveDays.some((l) => l.date === dateStr && l.dentist === dentist)
+      if (!alreadyExists) {
+        setLeaveDays((prev) => [...prev, { date: dateStr, dentist, reason: 'Leave' }])
+        showToast(`${dentist} marked on leave for ${format(date, 'MMM d, yyyy')}`, 'success')
+      } else {
+        showToast('Leave day already exists', 'warning')
+      }
     }
     // playSound('click')
   }
@@ -423,40 +440,53 @@ const Calendar = () => {
                   </div>
 
                   {/* Leave Management */}
-                  <div className="mb-6 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                    {selectedDentist === 'all' ? (
-                      <div className="space-y-2">
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Select a dentist to manage leave days</p>
-                        {DENTISTS.map((dentist) => {
-                          const isOnLeave = isLeaveDay(selectedDate, dentist.name)
-                          return (
-                            <button
-                              key={dentist.id}
-                              onClick={() => handleAddLeave(selectedDate, dentist.name)}
-                              className={`w-full py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
-                                isOnLeave
-                                  ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800'
-                                  : 'bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-500'
-                              }`}
-                            >
-                              {isOnLeave ? `Remove ${dentist.name} Leave` : `Mark ${dentist.name} Leave`}
-                            </button>
-                          )
-                        })}
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => handleAddLeave(selectedDate, selectedDentist)}
-                        className={`w-full py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
-                          isLeaveDay(selectedDate, selectedDentist)
-                            ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800'
-                            : 'bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-500'
-                        }`}
-                      >
-                        {isLeaveDay(selectedDate, selectedDentist) ? 'Remove Leave Day' : 'Mark as Leave Day'}
-                      </button>
-                    )}
-                  </div>
+                  {selectedDate && (
+                    <div className="mb-6 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                        Leave Management - {format(selectedDate, 'MMM d, yyyy')}
+                      </h3>
+                      {selectedDentist === 'all' ? (
+                        <div className="space-y-2">
+                          <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Select a dentist to manage leave days</p>
+                          {DENTISTS.map((dentist) => {
+                            const isOnLeave = isLeaveDay(selectedDate, dentist.name)
+                            return (
+                              <button
+                                key={dentist.id}
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                  handleAddLeave(selectedDate, dentist.name)
+                                }}
+                                className={`w-full py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
+                                  isOnLeave
+                                    ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800'
+                                    : 'bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-500'
+                                }`}
+                              >
+                                {isOnLeave ? `Remove ${dentist.name} Leave` : `Mark ${dentist.name} Leave`}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            handleAddLeave(selectedDate, selectedDentist)
+                          }}
+                          className={`w-full py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
+                            isLeaveDay(selectedDate, selectedDentist)
+                              ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 hover:bg-red-200 dark:hover:bg-red-800'
+                              : 'bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-500'
+                          }`}
+                        >
+                          {isLeaveDay(selectedDate, selectedDentist) ? 'Remove Leave Day' : 'Mark as Leave Day'}
+                        </button>
+                      )}
+                    </div>
+                  )}
 
                   {/* Time Slots */}
                   <div className="space-y-2 max-h-[600px] overflow-y-auto">

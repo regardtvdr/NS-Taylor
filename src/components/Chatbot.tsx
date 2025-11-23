@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageCircle, X, Send, Bot, User } from 'lucide-react'
-import { DEPOSIT_AMOUNT, DENTISTS, SERVICES } from '../utils/constants'
+import { DEPOSIT_AMOUNT, DENTISTS } from '../utils/constants'
 
 interface Message {
   id: string
@@ -116,6 +116,12 @@ const Chatbot = () => {
       lowerMessage.includes('need to see') ||
       lowerMessage.includes('when can i')
     ) {
+      if (lowerMessage.includes('recurring') || lowerMessage.includes('repeat') || lowerMessage.includes('regular') || lowerMessage.includes('every week') || lowerMessage.includes('every month') || lowerMessage.includes('regular appointment')) {
+        return "Yes! We offer recurring appointments for patients who need regular visits. When booking, you can set up appointments to repeat daily, weekly, monthly, or yearly. This is perfect for regular cleanings, orthodontic adjustments, or ongoing treatments. The system will automatically schedule your appointments based on your preference. Just let our staff know when you book, or call us at +27 11 123 4567 to set up recurring appointments."
+      }
+      if (lowerMessage.includes('returning') || lowerMessage.includes('been here before') || lowerMessage.includes('previous patient') || lowerMessage.includes('regular patient')) {
+        return "Welcome back! If you've booked with us before, our staff can quickly find your information to make booking faster. When you call us at +27 11 123 4567, they can pull up your previous appointments and medical history to streamline the process. You can also book online again - just use the same contact information, and we'll have your details on file."
+      }
       if (lowerMessage.includes('how') || lowerMessage.includes('where') || lowerMessage.includes('what do i')) {
         return "Booking an appointment is easy! Here's how: 1) Click the 'Book Appointment' button at the top of the page, 2) Choose the service you need (like cleaning, consultation, etc.), 3) Select your preferred dentist, 4) Pick a date and time that works for you, 5) Fill in your name, email, and phone number, 6) Pay a small R50 deposit to secure your appointment. The whole process takes just a few minutes. Would you like help with any specific step?"
       }
@@ -304,7 +310,7 @@ const Chatbot = () => {
 
     // General help
     if (lowerMessage.includes('help') || lowerMessage.includes('stuck') || lowerMessage.includes('problem') || lowerMessage.includes('issue')) {
-      return "I'm here to help! You can ask me about: booking appointments, our services, pricing, location, operating hours, contact information, or anything else about our practice. What would you like to know?"
+      return "I'm here to help! You can ask me about: booking appointments (including recurring appointments for regular visits), our services, pricing, location, operating hours, contact information, returning patient benefits, or anything else about our practice. What would you like to know?"
     }
 
     // Confirmation/Yes responses
@@ -538,7 +544,10 @@ const Chatbot = () => {
       lowerMessage.includes('how does booking work') ||
       lowerMessage.includes('walkthrough')
     ) {
-      return "The booking process has 5 simple steps: 1) Choose your service (cleaning, consultation, etc.), 2) Select your preferred dentist (or we can assign one), 3) Pick a date and time from available slots, 4) Enter your contact details (name, email, phone), 5) Pay the R50 deposit to secure your appointment. You'll receive a confirmation email with all the details. The whole process takes just a few minutes!"
+      if (lowerMessage.includes('recurring') || lowerMessage.includes('repeat')) {
+        return "For recurring appointments, the process is: 1) Choose your service, 2) Select your dentist, 3) Pick your first appointment date and time, 4) Choose how often you want to repeat (daily, weekly, monthly, or yearly), 5) Set when the recurring appointments should end (never, on a specific date, or after a certain number of visits), 6) Enter your contact details, 7) Pay the R50 deposit. The system will automatically schedule all your future appointments based on your preferences!"
+      }
+      return "The booking process has 5 simple steps: 1) Choose your service (cleaning, consultation, etc.), 2) Select your preferred dentist (or we can assign one), 3) Pick a date and time from available slots, 4) Enter your contact details (name, email, phone), 5) Pay the R50 deposit to secure your appointment. You'll receive a confirmation email with all the details. The whole process takes just a few minutes! For regular visits, you can also set up recurring appointments."
     }
 
     // Specific service questions
@@ -574,11 +583,14 @@ const Chatbot = () => {
       lowerMessage.includes('24 hours') ||
       lowerMessage.includes('no show')
     ) {
+      if (lowerMessage.includes('recurring') || lowerMessage.includes('repeat')) {
+        return "For recurring appointments, you can cancel individual appointments or the entire series. Individual cancellations follow our standard policy: more than 24 hours notice = full refund of deposit, less than 24 hours = deposit forfeited. To cancel a recurring series, contact us at +27 11 123 4567 at least 24 hours before the next scheduled appointment."
+      }
       return "Our cancellation policy: Appointments cancelled more than 24 hours in advance receive a full refund of the R50 deposit. Cancellations made less than 24 hours before the appointment, or no-shows, result in forfeiture of the deposit. You can reschedule free of charge up to 24 hours before your appointment. Use the cancellation link in your confirmation email to manage your appointment."
     }
 
     // Default response (more helpful and conversational)
-    return "I want to make sure I help you properly. Could you tell me a bit more about what you're looking for? I can help with: booking an appointment (I can walk you through it step by step), our services and what we offer, pricing and costs, finding our location, our opening hours, our team of dentists, contact information, privacy and terms, or anything else about our practice. What would be most helpful for you?"
+    return "I want to make sure I help you properly. Could you tell me a bit more about what you're looking for? I can help with: booking an appointment (including setting up recurring appointments for regular visits), our services and what we offer, pricing and costs, finding our location, our opening hours, our team of dentists, contact information, privacy and terms, returning patient information, or anything else about our practice. What would be most helpful for you?"
   }
 
   const handleSendMessage = (e: React.FormEvent) => {

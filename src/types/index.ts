@@ -108,3 +108,24 @@ export interface PaymentRecord {
   status: 'paid' | 'pending' | 'refunded'
 }
 
+export type RecurrenceFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'none'
+
+export interface RecurrencePattern {
+  frequency: RecurrenceFrequency
+  interval: number // Every X days/weeks/months
+  endDate?: string // End date for recurrence (YYYY-MM-DD)
+  occurrences?: number // Number of occurrences
+  daysOfWeek?: number[] // For weekly: [0=Sunday, 1=Monday, etc.]
+  dayOfMonth?: number // For monthly: day of month (1-31)
+  weekOfMonth?: number // For monthly: which week (1-4, -1 for last)
+}
+
+export interface RecurringAppointment {
+  seriesId: string // Unique ID for the recurring series
+  pattern: RecurrencePattern
+  startDate: string
+  endDate?: string
+  totalOccurrences?: number
+  createdOccurrences: number
+}
+

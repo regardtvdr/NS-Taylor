@@ -33,7 +33,9 @@ const PatientSearch = ({ patients, onSelect, placeholder = "Search patients by n
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        // Only close the dropdown, don't clear the search term
         setIsOpen(false)
+        setFocusedIndex(-1)
       }
     }
 
@@ -43,7 +45,8 @@ const PatientSearch = ({ patients, onSelect, placeholder = "Search patients by n
 
   const handleSelect = (patient: Patient) => {
     onSelect(patient)
-    setSearchTerm('')
+    // Keep search term so user can see what they searched for
+    // setSearchTerm('')
     setIsOpen(false)
     setFocusedIndex(-1)
   }

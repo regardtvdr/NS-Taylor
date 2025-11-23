@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, User, Mail, Phone, Calendar, Clock, DollarSign, MapPin, FileText, CreditCard } from 'lucide-react'
+import { X, User, Mail, Phone, Calendar, Clock, DollarSign, MapPin, FileText, CreditCard, Repeat } from 'lucide-react'
 import { format } from 'date-fns'
 
 interface BookingDetail {
@@ -16,6 +16,14 @@ interface BookingDetail {
   total: number
   notes?: string
   createdAt?: string
+  isRecurring?: boolean
+  recurrence?: {
+    frequency: string
+    interval: number
+    endDate?: string
+    occurrences?: number
+  }
+  seriesId?: string
 }
 
 interface BookingDetailModalProps {
@@ -155,6 +163,20 @@ const BookingDetailModal = ({ isOpen, onClose, booking }: BookingDetailModalProp
                     <p className="font-semibold text-gray-800 dark:text-gray-100">{booking.time}</p>
                   </div>
                 </div>
+                {booking.isRecurring && booking.recurrence && (
+                  <div className="flex items-start space-x-3">
+                    <Repeat className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-1" />
+                    <div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Recurrence</p>
+                      <p className="font-semibold text-gray-800 dark:text-gray-100">
+                        {booking.recurrence.frequency.charAt(0).toUpperCase() + booking.recurrence.frequency.slice(1)}
+                        {booking.recurrence.interval > 1 && ` (Every ${booking.recurrence.interval})`}
+                        {booking.recurrence.endDate && ` until ${format(new Date(booking.recurrence.endDate), 'MMM d, yyyy')}`}
+                        {booking.recurrence.occurrences && ` (${booking.recurrence.occurrences} times)`}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

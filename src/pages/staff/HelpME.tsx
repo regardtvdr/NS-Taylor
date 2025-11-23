@@ -43,13 +43,18 @@ const HelpME = () => {
       'You can see a mini calendar with booking indicators - dots show days with appointments.',
       'The "Next 7 Appointments" section shows upcoming appointments with quick action buttons.',
       'Use the calendar to navigate to different dates and see booking counts.',
+      'The "Find Patient" button takes you directly to the patient search on the Manage page for quick booking of returning patients.',
+      'The "Create Booking" button opens the booking modal for new appointments.',
     ],
     booking: [
-      'To create a booking, click "Add Walk-In" or use the quick book buttons on the Calendar page.',
-      'The booking form has 3 steps: Patient Information, Service & Dentist Selection, and Date/Time Selection.',
+      'To create a booking, click "Create Booking" on the Dashboard or "Add Walk-In" on the Calendar page.',
+      'The booking form has 3 steps: Patient Information, Service & Dentist Selection, and Date/Time/Payment Selection.',
       'You can select multiple consecutive time slots (1x, 2x, or 3x) for longer procedures.',
       'Select a service from the dropdown and choose which dentist the patient wants to see.',
       'After selecting a date, choose a start time and duration. The system will book consecutive slots automatically.',
+      'For returning patients, use the "Find Patient" feature on the Dashboard or Manage page - their details will auto-fill.',
+      'You can set up recurring appointments (daily, weekly, monthly, yearly) in Step 3 of the booking form.',
+      'The system will detect scheduling conflicts and warn you if a time slot is already booked.',
     ],
     today: [
       'The Today page shows all appointments for today in a timeline view.',
@@ -69,18 +74,30 @@ const HelpME = () => {
       'Days with bookings show dots - more dots mean more appointments.',
     ],
     manage: [
-      'The Manage page (formerly Schedule) lets you search, reschedule, and delete appointments.',
-      'Use the search bar to find appointments by patient name, service, dentist, phone, or email.',
+      'The Manage page lets you search, reschedule, and delete appointments, plus find and book for returning patients.',
+      'Use the view toggle to switch between "Appointments" and "Find Patient" modes.',
+      'In "Appointments" mode: Use the search bar to find appointments by patient name, service, dentist, phone, or email.',
       'Filter by date using the calendar picker, or leave it as "All Dates" to see everything.',
       'Click the reschedule button (pencil icon) to change an appointment\'s date or time.',
       'Click the delete button (trash icon) to remove an appointment - you\'ll be asked to confirm.',
       'Each appointment card shows patient info, service, dentist, date, time, and deposit status.',
+      'In "Find Patient" mode: Search for returning patients by name, phone, or email.',
+      'When you select a patient, their profile card appears with contact info and a "Quick Book" button.',
+      'Click "Quick Book" to open the booking modal with patient details pre-filled, saving time.',
+      'Click "View Profile" to see the patient\'s full history, including past appointments and payments.',
+      'The patient selection persists even if you click outside - only the X button clears it.',
     ],
     analytics: [
-      'The Analytics page shows graphs and charts about appointment data.',
+      'The Analytics page shows comprehensive graphs, charts, and metrics about appointment data.',
+      'Use the date range buttons (Today, This Week, This Month, Custom) to filter the data.',
+      'Custom date range lets you select any start and end date for detailed analysis.',
       'You can see hourly breakdowns of how busy each dentist will be.',
-      'A pie chart shows the types of appointments scheduled for the day.',
-      'Use the dentist dropdown to filter analytics by specific dentist.',
+      'A pie chart shows the types of appointments scheduled for the selected period.',
+      'Revenue metrics show: Total Revenue, Average Revenue per Appointment, Total Deposits, and No-Show Rate.',
+      'Dentist Performance metrics show per-dentist statistics including appointments, revenue, and no-show rates.',
+      'Use the dentist dropdown to filter analytics by specific dentist or view all.',
+      'Export your data as CSV or JSON using the export buttons for external analysis.',
+      'Summary cards show key metrics at a glance: Total Appointments, Revenue, Deposits, and No-Shows.',
     ],
     'multi-slot': [
       'When creating a booking, you can select 1x, 2x, or 3x duration buttons.',
@@ -88,6 +105,45 @@ const HelpME = () => {
       'After selecting duration, click a start time - the system will automatically book consecutive slots.',
       'Selected slots are highlighted in blue, with the start slot marked with a green checkmark.',
       'This is useful for longer procedures like root canals or comprehensive consultations.',
+    ],
+    'recurring': [
+      'Recurring appointments let you schedule appointments that repeat automatically.',
+      'In Step 3 of the booking form, toggle "Recurring Appointment" to enable this feature.',
+      'Choose the frequency: Daily, Weekly, Monthly, or Yearly.',
+      'Set the interval (e.g., every 2 weeks, every 3 months).',
+      'For weekly appointments, select which days of the week (Monday, Tuesday, etc.).',
+      'Set when it ends: Never, On a specific date, or After X occurrences.',
+      'The system will show a preview of upcoming appointments before you confirm.',
+      'Each recurring appointment can be managed individually - you can cancel or reschedule single instances.',
+      'Recurring appointments are perfect for regular cleanings, orthodontic adjustments, or ongoing treatments.',
+    ],
+    'patient-search': [
+      'The "Find Patient" feature helps you quickly locate returning patients for faster booking.',
+      'Access it from the Dashboard "Find Patient" button or the "Find Patient" tab on the Manage page.',
+      'Type the patient\'s name, phone number, or email to search.',
+      'The search works in real-time as you type, showing matching patients.',
+      'Click on a patient from the results to view their profile card.',
+      'The profile card shows contact info, appointment history, and payment records.',
+      'Click "Quick Book" to open the booking modal with all patient details pre-filled.',
+      'This saves time - no need to re-enter information for returning patients.',
+      'The patient selection stays active even if you click outside - use the X button to clear it.',
+      'You can view full patient history including past appointments, services, and payments.',
+    ],
+    'conflict-detection': [
+      'The system automatically detects scheduling conflicts when booking appointments.',
+      'If you try to book a time slot that\'s already taken, you\'ll see a warning message.',
+      'Conflicts are checked for the same dentist at the same date and time.',
+      'The system prevents double-booking to ensure smooth scheduling.',
+      'If you see a conflict warning, choose a different time slot or dentist.',
+      'This feature helps maintain accurate schedules and prevents overbooking.',
+    ],
+    'export': [
+      'The Analytics page allows you to export appointment data for external analysis.',
+      'Click the "Export CSV" button to download data as a spreadsheet-compatible file.',
+      'Click the "Export JSON" button to download data in JSON format for developers.',
+      'Exports include all appointment details: patient, service, dentist, date, time, status, and payment info.',
+      'The export respects your current date range filter and dentist selection.',
+      'Use exports for creating custom reports, sharing with accountants, or data analysis.',
     ],
     leave: [
       'On the Calendar page, select a dentist from the dropdown.',
@@ -153,6 +209,22 @@ const HelpME = () => {
       return `Here's how the Manage page works:\n\n${knowledgeBase.manage.join('\n\n')}`
     }
 
+    if (lowerMessage.includes('recurring') || lowerMessage.includes('repeat') || lowerMessage.includes('regular appointment')) {
+      return `Here's how recurring appointments work:\n\n${knowledgeBase.recurring.join('\n\n')}`
+    }
+
+    if (lowerMessage.includes('find patient') || lowerMessage.includes('patient search') || lowerMessage.includes('returning patient') || lowerMessage.includes('quick book')) {
+      return `Here's how the Find Patient feature works:\n\n${knowledgeBase['patient-search'].join('\n\n')}`
+    }
+
+    if (lowerMessage.includes('conflict') || lowerMessage.includes('double book') || lowerMessage.includes('overbook')) {
+      return `Here's how conflict detection works:\n\n${knowledgeBase['conflict-detection'].join('\n\n')}`
+    }
+
+    if (lowerMessage.includes('export') || lowerMessage.includes('download') || lowerMessage.includes('csv') || lowerMessage.includes('json')) {
+      return `Here's how data export works:\n\n${knowledgeBase.export.join('\n\n')}`
+    }
+
     if (lowerMessage.includes('analytics') || lowerMessage.includes('graph') || lowerMessage.includes('chart') || lowerMessage.includes('statistics')) {
       return `Here's how Analytics works:\n\n${knowledgeBase.analytics.join('\n\n')}`
     }
@@ -174,15 +246,15 @@ const HelpME = () => {
     }
 
     if (lowerMessage.includes('how do i') || lowerMessage.includes('how to') || lowerMessage.includes('help')) {
-      return `I can help you with:\n\n• Creating bookings\n• Managing appointments (Today page)\n• Using the Calendar\n• Rescheduling appointments\n• Deleting appointments\n• Managing leave days\n• Multi-slot bookings\n• Using Analytics\n• Navigation\n\nWhat specific feature would you like to know about?`
+      return `I can help you with:\n\n• Creating bookings (including recurring appointments)\n• Finding and booking for returning patients\n• Managing appointments (Today page)\n• Using the Calendar\n• Rescheduling appointments\n• Deleting appointments\n• Managing leave days\n• Multi-slot bookings\n• Using Analytics (with date ranges and exports)\n• Patient profiles and history\n• Conflict detection\n• Navigation\n\nWhat specific feature would you like to know about?`
     }
 
     if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
-      return "Hello! I'm here to help you navigate the staff portal. You can ask me about:\n\n• How to create bookings\n• Using the Dashboard\n• Managing today's appointments\n• Calendar features\n• Rescheduling or deleting appointments\n• And much more!\n\nWhat would you like to know?"
+      return "Hello! I'm here to help you navigate the staff portal. You can ask me about:\n\n• How to create bookings (including recurring appointments)\n• Finding and booking for returning patients\n• Using the Dashboard\n• Managing today's appointments\n• Calendar features\n• Analytics and reporting (with date ranges and exports)\n• Rescheduling or deleting appointments\n• Patient profiles and history\n• And much more!\n\nWhat would you like to know?"
     }
 
     // Default response
-    return `I understand you're asking about "${userMessage}". Let me help you with that!\n\nHere are some things I can help with:\n\n• Dashboard features and metrics\n• Creating and managing bookings\n• Using the Today page\n• Calendar navigation and booking\n• Rescheduling appointments\n• Deleting appointments\n• Managing leave days\n• Multi-slot bookings\n• Analytics and reports\n\nTry asking something like:\n• "How do I create a booking?"\n• "How does the calendar work?"\n• "How do I reschedule an appointment?"\n• "What is multi-slot booking?"`
+    return `I understand you're asking about "${userMessage}". Let me help you with that!\n\nHere are some things I can help with:\n\n• Dashboard features and metrics\n• Creating and managing bookings (including recurring appointments)\n• Finding and booking for returning patients\n• Using the Today page\n• Calendar navigation and booking\n• Rescheduling appointments\n• Deleting appointments\n• Managing leave days\n• Multi-slot bookings\n• Analytics and reports (with date ranges, revenue metrics, and exports)\n• Patient profiles and history\n• Conflict detection\n\nTry asking something like:\n• "How do I create a booking?"\n• "How do I find a returning patient?"\n• "How do recurring appointments work?"\n• "How does the calendar work?"\n• "How do I export analytics data?"\n• "What is multi-slot booking?"`
   }
 
   const handleSend = async () => {
@@ -222,10 +294,11 @@ const HelpME = () => {
 
   const quickQuestions = [
     'How do I create a booking?',
+    'How do I find a returning patient?',
+    'How do recurring appointments work?',
     'How does the calendar work?',
+    'How do I export analytics data?',
     'How do I reschedule an appointment?',
-    'What is multi-slot booking?',
-    'How do I manage leave days?',
   ]
 
   return (

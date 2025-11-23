@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Calendar, DollarSign, CreditCard, TrendingUp, Clock, User, Plus, Phone, MessageCircle, CheckCircle } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Calendar, DollarSign, CreditCard, TrendingUp, Clock, User, Plus, Phone, MessageCircle, CheckCircle, Search } from 'lucide-react'
 import { DayPicker } from 'react-day-picker'
 import { format, isSameDay, parseISO } from 'date-fns'
 import CreateBookingModal from '../../components/staff/CreateBookingModal'
@@ -23,6 +24,7 @@ interface Booking {
 }
 
 const StaffDashboard = () => {
+  const navigate = useNavigate()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const { showToast } = useToast()
@@ -214,18 +216,32 @@ const StaffDashboard = () => {
             </h1>
             <p className="text-gray-600 dark:text-gray-400">Here's what's happening today</p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              setIsCreateModalOpen(true)
-              // playSound('click')
-            }}
-            className="btn-staff-primary flex items-center space-x-2 shadow-lg"
-          >
-            <Plus className="w-5 h-5" />
-            <span>Create Booking</span>
-          </motion.button>
+          <div className="flex items-center space-x-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                navigate('/staff/schedule?view=patients')
+                // playSound('click')
+              }}
+              className="flex items-center space-x-2 shadow-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border-2 border-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 font-semibold py-3.5 px-6 rounded-button transition-all duration-300"
+            >
+              <Search className="w-5 h-5" />
+              <span>Find Patient</span>
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                setIsCreateModalOpen(true)
+                // playSound('click')
+              }}
+              className="btn-staff-primary flex items-center space-x-2 shadow-lg"
+            >
+              <Plus className="w-5 h-5" />
+              <span>Create Booking</span>
+            </motion.button>
+          </div>
         </motion.div>
 
         {/* 4 Huge Animated Metric Cards */}

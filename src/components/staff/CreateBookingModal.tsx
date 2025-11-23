@@ -4,8 +4,9 @@ import { X, User, Mail, Phone, Calendar, Clock, DollarSign } from 'lucide-react'
 import { DayPicker } from 'react-day-picker'
 import { format } from 'date-fns'
 import { SERVICES, DENTISTS } from '../../utils/constants'
-import { Service, Dentist } from '../../types'
+import { Service, Dentist, RecurrencePattern } from '../../types'
 import { generateTimeSlots } from '../../utils/dateUtils'
+import RecurrenceSelector from './RecurrenceSelector'
 import 'react-day-picker/dist/style.css'
 
 interface CreateBookingModalProps {
@@ -15,14 +16,20 @@ interface CreateBookingModalProps {
   initialDate?: string
   initialTime?: string
   initialDentist?: string
+  initialPatient?: {
+    firstName: string
+    lastName: string
+    email: string
+    phone: string
+  }
 }
 
-const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime, initialDentist }: CreateBookingModalProps) => {
+const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime, initialDentist, initialPatient }: CreateBookingModalProps) => {
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState({
-    patientName: '',
-    patientEmail: '',
-    patientPhone: '',
+    patientName: initialPatient ? `${initialPatient.firstName} ${initialPatient.lastName}` : '',
+    patientEmail: initialPatient?.email || '',
+    patientPhone: initialPatient?.phone || '',
     service: null as Service | null,
     dentist: initialDentist ? DENTISTS.find(d => d.name === initialDentist) || null : null as Dentist | null,
     date: initialDate ? new Date(initialDate) : null as Date | null,
@@ -32,6 +39,7 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
     depositPaid: false,
     depositAmount: 50,
     notes: '',
+    recurrence: null as RecurrencePattern | null,
   })
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
@@ -55,6 +63,16 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
   // Update form when initial values change
   useEffect(() => {
     if (isOpen) {
+      if (initialPatient) {
+        setFormData(prev => ({
+          ...prev,
+          patientName: `${initialPatient.firstName} ${initialPatient.lastName}`,
+          patientEmail: initialPatient.email,
+          patientPhone: initialPatient.phone,
+        }))
+        // Auto-advance to step 2 if patient is pre-filled
+        setStep(2)
+      }
       if (initialDate) {
         setFormData(prev => ({ ...prev, date: new Date(initialDate) }))
       }
@@ -70,13 +88,13 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
         }
       }
     }
-  }, [isOpen, initialDate, initialTime, initialDentist, formData.date])
+  }, [isOpen, initialDate, initialTime, initialDentist, initialPatient, formData.date])
 
   const resetForm = () => {
     setFormData({
-      patientName: '',
-      patientEmail: '',
-      patientPhone: '',
+      patientName: initialPatient ? `${initialPatient.firstName} ${initialPatient.lastName}` : '',
+      patientEmail: initialPatient?.email || '',
+      patientPhone: initialPatient?.phone || '',
       service: null,
       dentist: initialDentist ? DENTISTS.find(d => d.name === initialDentist) || null : null,
       date: initialDate ? new Date(initialDate) : null,
@@ -86,8 +104,9 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
       depositPaid: false,
       depositAmount: 50,
       notes: '',
+      recurrence: null,
     })
-    setStep(1)
+    setStep(initialPatient ? 2 : 1) // Auto-advance to step 2 if patient is pre-filled
     setIsCalendarOpen(false)
   }
 
@@ -135,6 +154,8 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
         deposit: formData.depositPaid ? formData.depositAmount : 0,
         total: formData.service.price,
         notes: formData.notes,
+        recurrence: formData.recurrence,
+        isRecurring: formData.recurrence !== null,
       })
       resetForm()
       onClose()
@@ -633,6 +654,15 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, initialDate, initialTime,
                       Select a start time. The booking will span {formData.slotCount} consecutive slot{formData.slotCount > 1 ? 's' : ''} ({formData.slotCount * 30} minutes).
                     </p>
                   </div>
+                )}
+
+                {/* Recurrence Selector */}
+                {formData.date && formData.time && (
+                  <RecurrenceSelector
+                    startDate={formData.date}
+                    value={formData.recurrence}
+                    onChange={(pattern) => setFormData({ ...formData, recurrence: pattern })}
+                  />
                 )}
 
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 space-y-3">
