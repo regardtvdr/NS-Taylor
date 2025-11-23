@@ -4,107 +4,31 @@ import { CheckCircle, XCircle, Clock, User, Search, Calendar } from 'lucide-reac
 import { format } from 'date-fns'
 import { useToast } from '../../contexts/ToastContext'
 import { DENTISTS } from '../../utils/constants'
-
-interface CheckInAppointment {
-  id: string
-  time: string
-  patient: string
-  service: string
-  dentist: string
-  status: 'scheduled' | 'arrived' | 'no-show'
-  phone?: string
-  email?: string
-  date: string
-}
+import { useBookings } from '../../hooks/useBookings'
 
 const CheckIn = () => {
   const { showToast } = useToast()
   const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [searchQuery, setSearchQuery] = useState('')
   const [filterDentist, setFilterDentist] = useState<string>('all')
-
-  const [appointments, setAppointments] = useState<CheckInAppointment[]>([
-    {
-      id: '1',
-      time: '08:00',
-      patient: 'Sarah Mitchell',
-      service: 'Teeth Cleaning & Polish',
-      dentist: 'Dr. Sarah Johnson',
-      status: 'scheduled',
-      phone: '+27 82 123 4567',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '2',
-      time: '09:15',
-      patient: 'James Thompson',
-      service: 'Comprehensive Consultation',
-      dentist: 'Dr. Michael Chen',
-      status: 'arrived',
-      phone: '+27 83 234 5678',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '3',
-      time: '10:00',
-      patient: 'Emma Wilson',
-      service: 'Teeth Whitening',
-      dentist: 'Dr. Emily Williams',
-      status: 'scheduled',
-      phone: '+27 84 345 6789',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '4',
-      time: '11:30',
-      patient: 'Michael Brown',
-      service: 'Root Canal Treatment',
-      dentist: 'Dr. Sarah Johnson',
-      status: 'scheduled',
-      phone: '+27 85 456 7890',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '5',
-      time: '13:00',
-      patient: 'Lisa Anderson',
-      service: 'Emergency Visit',
-      dentist: 'Dr. Michael Chen',
-      status: 'scheduled',
-      phone: '+27 86 567 8901',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '6',
-      time: '14:30',
-      patient: 'David Lee',
-      service: 'Dental Implant Consultation',
-      dentist: 'Dr. Emily Williams',
-      status: 'no-show',
-      phone: '+27 87 678 9012',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '7',
-      time: '15:45',
-      patient: 'Jennifer Martinez',
-      service: 'Teeth Cleaning & Polish',
-      dentist: 'Dr. Sarah Johnson',
-      status: 'scheduled',
-      phone: '+27 88 789 0123',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-    {
-      id: '8',
-      time: '16:00',
-      patient: 'Robert Taylor',
-      service: 'Comprehensive Consultation',
-      dentist: 'Dr. Michael Chen',
-      status: 'scheduled',
-      phone: '+27 89 890 1234',
-      date: format(new Date(), 'yyyy-MM-dd'),
-    },
-  ])
+  const { bookings, updateBookingStatus } = useBookings()
+  
+  // Convert bookings to appointments for the selected date
+  const appointments = useMemo(() => {
+    return bookings
+      .filter(b => b.date === selectedDate && (b.status === 'confirmed' || b.status === 'pending' || b.status === 'arrived' || b.status === 'no-show'))
+      .map(b => ({
+        id: b.id,
+        time: b.time,
+        patient: b.patient,
+        service: b.service,
+        dentist: b.dentist,
+        status: b.status === 'confirmed' || b.status === 'pending' ? 'scheduled' as const : b.status === 'arrived' ? 'arrived' as const : 'no-show' as const,
+        phone: b.phone,
+        email: b.email,
+        date: b.date,
+      }))
+  }, [bookings, selectedDate])
 
   // Filter appointments by date, search query, and dentist
   const filteredAppointments = useMemo(() => {
@@ -128,27 +52,33 @@ const CheckIn = () => {
 
   // Group appointments by dentist
   const appointmentsByDentist = useMemo(() => {
-    const grouped: Record<string, CheckInAppointment[]> = {}
+    const grouped: Record<string, typeof appointments> = {}
     DENTISTS.forEach((dentist) => {
       grouped[dentist.name] = filteredAppointments.filter((apt) => apt.dentist === dentist.name)
     })
     return grouped
   }, [filteredAppointments])
 
-  const handleMarkArrived = (id: string) => {
-    setAppointments((prev) =>
-      prev.map((apt) => (apt.id === id ? { ...apt, status: 'arrived' as const } : apt))
-    )
-    const apt = appointments.find((a) => a.id === id)
-    showToast(`${apt?.patient} marked as arrived! 🎉`, 'success')
+  const handleMarkArrived = async (id: string) => {
+    try {
+      await updateBookingStatus(id, 'arrived')
+      const apt = appointments.find((a) => a.id === id)
+      showToast(`${apt?.patient} marked as arrived! 🎉`, 'success')
+    } catch (error) {
+      console.error('Failed to update booking status:', error)
+      showToast('Failed to mark as arrived', 'error')
+    }
   }
 
-  const handleMarkNoShow = (id: string) => {
-    setAppointments((prev) =>
-      prev.map((apt) => (apt.id === id ? { ...apt, status: 'no-show' as const } : apt))
-    )
-    const apt = appointments.find((a) => a.id === id)
-    showToast(`${apt?.patient} marked as no-show`, 'warning')
+  const handleMarkNoShow = async (id: string) => {
+    try {
+      await updateBookingStatus(id, 'no-show')
+      const apt = appointments.find((a) => a.id === id)
+      showToast(`${apt?.patient} marked as no-show`, 'warning')
+    } catch (error) {
+      console.error('Failed to update booking status:', error)
+      showToast('Failed to mark as no-show', 'error')
+    }
   }
 
   const getStatusColor = (status: string) => {

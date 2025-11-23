@@ -6,18 +6,8 @@ import { DENTISTS } from '../../utils/constants'
 import CreateBookingModal from '../../components/staff/CreateBookingModal'
 import BookingDetailModal from '../../components/staff/BookingDetailModal'
 import { useToast } from '../../contexts/ToastContext'
-
-interface Booking {
-  id: string
-  patient: string
-  service: string
-  dentist: string
-  date: string
-  time: string
-  status: 'confirmed' | 'pending' | 'cancelled'
-  phone?: string
-  email?: string
-}
+import { useBookings } from '../../hooks/useBookings'
+import { BookingDetail } from '../../types'
 
 interface LeaveDay {
   date: string
@@ -32,53 +22,10 @@ const Calendar = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | null>(null)
   const [leaveDays, setLeaveDays] = useState<LeaveDay[]>([])
-  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const [selectedBooking, setSelectedBooking] = useState<BookingDetail | null>(null)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const { showToast } = useToast()
-
-  // Mock bookings data
-  const [allBookings, setAllBookings] = useState<Booking[]>([
-    {
-      id: '1',
-      patient: 'Sarah Mitchell',
-      service: 'Teeth Cleaning',
-      dentist: 'Dr. Sarah Johnson',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '09:00',
-      status: 'confirmed',
-      phone: '+27 82 123 4567',
-    },
-    {
-      id: '2',
-      patient: 'James Thompson',
-      service: 'Consultation',
-      dentist: 'Dr. Michael Chen',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '10:30',
-      status: 'confirmed',
-      phone: '+27 83 234 5678',
-    },
-    {
-      id: '3',
-      patient: 'Emma Wilson',
-      service: 'Teeth Whitening',
-      dentist: 'Dr. Emily Williams',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '14:00',
-      status: 'confirmed',
-      phone: '+27 84 345 6789',
-    },
-    {
-      id: '4',
-      patient: 'Michael Brown',
-      service: 'Root Canal',
-      dentist: 'Dr. Sarah Johnson',
-      date: format(new Date(Date.now() + 86400000), 'yyyy-MM-dd'),
-      time: '11:00',
-      status: 'confirmed',
-      phone: '+27 85 456 7890',
-    },
-  ])
+  const { bookings: allBookings, createBooking } = useBookings()
 
   // Generate time slots (8 AM to 5 PM, 15-min intervals)
   const timeSlots = useMemo(() => {
@@ -107,7 +54,7 @@ const Calendar = () => {
 
   // Get bookings grouped by time slot
   const bookingsByTime = useMemo(() => {
-    const grouped: Record<string, Booking[]> = {}
+    const grouped: Record<string, BookingDetail[]> = {}
     dayBookings.forEach((booking) => {
       if (!grouped[booking.time]) {
         grouped[booking.time] = []
@@ -184,21 +131,26 @@ const Calendar = () => {
     // playSound('click')
   }
 
-  const handleCreateBooking = (newBooking: any) => {
-    const booking: Booking = {
-      id: newBooking.id,
-      patient: newBooking.patient,
-      service: newBooking.service,
-      dentist: newBooking.dentist,
-      date: newBooking.date || format(selectedDate!, 'yyyy-MM-dd'),
-      time: newBooking.time || selectedTimeSlot || '',
-      status: newBooking.status || 'confirmed',
-      phone: newBooking.phone,
+  const handleCreateBooking = async (newBooking: any) => {
+    try {
+      await createBooking({
+        patient: newBooking.patient,
+        email: newBooking.email,
+        phone: newBooking.phone,
+        service: newBooking.service,
+        dentist: newBooking.dentist,
+        date: newBooking.date || format(selectedDate!, 'yyyy-MM-dd'),
+        time: newBooking.time || selectedTimeSlot || '',
+        status: (newBooking.status || 'confirmed') as BookingDetail['status'],
+        deposit: newBooking.deposit,
+        total: newBooking.total,
+      })
+      showToast('Booking created successfully!', 'success')
+      setSelectedTimeSlot(null)
+    } catch (error) {
+      console.error('Failed to create booking:', error)
+      showToast('Failed to create booking', 'error')
     }
-    setAllBookings((prev) => [...prev, booking])
-    // playSound('success')
-    showToast('Booking created successfully!', 'success')
-    setSelectedTimeSlot(null)
   }
 
   const handleAddLeave = (date: Date | null, dentist: string) => {
@@ -620,9 +572,9 @@ const Calendar = () => {
           dentist: selectedBooking.dentist,
           date: selectedBooking.date,
           time: selectedBooking.time,
-          status: selectedBooking.status,
-          deposit: 0,
-          total: 0,
+          status: selectedBooking.status as 'confirmed' | 'pending' | 'cancelled' | 'completed' | 'arrived' | 'no-show',
+          deposit: selectedBooking.deposit || 0,
+          total: selectedBooking.total || 0,
         } : null}
       />
     </div>

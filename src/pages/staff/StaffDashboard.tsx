@@ -8,129 +8,30 @@ import CreateBookingModal from '../../components/staff/CreateBookingModal'
 import BookingDetailModal from '../../components/staff/BookingDetailModal'
 import { AnimatedCounter } from '../../components/ui/AnimatedCounter'
 import { useToast } from '../../contexts/ToastContext'
+import { useBookings } from '../../hooks/useBookings'
+import { BookingDetail } from '../../types'
 import 'react-day-picker/dist/style.css'
-
-interface Booking {
-  id: string
-  patient: string
-  service: string
-  time: string
-  dentist: string
-  status: 'confirmed' | 'pending' | 'arrived'
-  date?: string
-  phone?: string
-  email?: string
-  deposit?: number
-  total?: number
-}
 
 const StaffDashboard = () => {
   const navigate = useNavigate()
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const [selectedBooking, setSelectedBooking] = useState<BookingDetail | null>(null)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const { showToast } = useToast()
-
-  // Mock data - in production, this would come from Firestore
-  const [allBookings, setAllBookings] = useState<Booking[]>([
-    {
-      id: '1',
-      patient: 'Sarah Mitchell',
-      service: 'Teeth Cleaning',
-      time: '09:00',
-      dentist: 'Dr. Sarah Johnson',
-      status: 'confirmed',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      phone: '+27 82 123 4567',
-      deposit: 50,
-      total: 650,
-    },
-    {
-      id: '2',
-      patient: 'James Thompson',
-      service: 'Comprehensive Consultation',
-      time: '10:30',
-      dentist: 'Dr. Michael Chen',
-      status: 'confirmed',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      phone: '+27 83 234 5678',
-      deposit: 50,
-      total: 850,
-    },
-    {
-      id: '3',
-      patient: 'Emma Wilson',
-      service: 'Teeth Whitening',
-      time: '11:00',
-      dentist: 'Dr. Emily Williams',
-      status: 'pending',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      phone: '+27 84 345 6789',
-      deposit: 50,
-      total: 2500,
-    },
-    {
-      id: '4',
-      patient: 'Michael Brown',
-      service: 'Root Canal',
-      time: '13:00',
-      dentist: 'Dr. Sarah Johnson',
-      status: 'confirmed',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      phone: '+27 85 456 7890',
-      deposit: 50,
-      total: 3500,
-    },
-    {
-      id: '5',
-      patient: 'Lisa Anderson',
-      service: 'Emergency Visit',
-      time: '14:30',
-      dentist: 'Dr. Michael Chen',
-      status: 'arrived',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      phone: '+27 86 567 8901',
-      deposit: 50,
-      total: 950,
-    },
-    {
-      id: '6',
-      patient: 'David Lee',
-      service: 'Dental Implant Consultation',
-      time: '15:00',
-      dentist: 'Dr. Emily Williams',
-      status: 'confirmed',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      phone: '+27 87 678 9012',
-      deposit: 50,
-      total: 1200,
-    },
-    {
-      id: '7',
-      patient: 'Jennifer Martinez',
-      service: 'Regular Checkup',
-      time: '16:00',
-      dentist: 'Dr. Sarah Johnson',
-      status: 'confirmed',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      phone: '+27 88 789 0123',
-      deposit: 50,
-      total: 650,
-    },
-  ])
+  const { bookings: allBookings, createBooking, updateBookingStatus } = useBookings()
 
   // Calculate metrics
   const todayBookings = useMemo(() => {
     return allBookings.filter((b) => {
       if (!b.date) return false
       try {
-        return isSameDay(parseISO(b.date), new Date())
+        return isSameDay(parseISO(b.date), selectedDate)
       } catch {
         return false
       }
     })
-  }, [allBookings])
+  }, [allBookings, selectedDate])
 
   const metrics = useMemo(() => {
     const revenue = todayBookings.reduce((sum, b) => sum + (b.total || 0), 0)
@@ -173,32 +74,32 @@ const StaffDashboard = () => {
     return datesWithBookings.has(format(date, 'yyyy-MM-dd'))
   }
 
-  const handleCreateBooking = (newBooking: any) => {
-    const appointment: Booking = {
-      id: newBooking.id,
-      patient: newBooking.patient,
-      service: newBooking.service,
-      time: newBooking.time,
-      dentist: newBooking.dentist,
-      status: newBooking.status as 'confirmed' | 'pending',
-      date: newBooking.date || format(new Date(), 'yyyy-MM-dd'),
-      phone: newBooking.phone,
-      deposit: newBooking.deposit,
-      total: newBooking.total,
+  const handleCreateBooking = async (newBooking: any) => {
+    try {
+      await createBooking({
+        patient: newBooking.patient,
+        email: newBooking.email,
+        phone: newBooking.phone,
+        service: newBooking.service,
+        dentist: newBooking.dentist,
+        date: newBooking.date || format(new Date(), 'yyyy-MM-dd'),
+        time: newBooking.time,
+        status: (newBooking.status || 'confirmed') as BookingDetail['status'],
+        deposit: newBooking.deposit,
+        total: newBooking.total,
+      })
+    } catch (error) {
+      console.error('Failed to create booking:', error)
     }
-    setAllBookings((prev) => [...prev, appointment])
-    // playSound('success')
-    showToast('Booking created successfully!', 'success')
   }
 
-  const handleQuickAction = (action: 'call' | 'whatsapp' | 'arrived', bookingId: string) => {
-    // playSound('click')
+  const handleQuickAction = async (action: 'call' | 'whatsapp' | 'arrived', bookingId: string) => {
     if (action === 'arrived') {
-      setAllBookings((prev) =>
-        prev.map((b) => (b.id === bookingId ? { ...b, status: 'arrived' as const } : b))
-      )
-      // playSound('success')
-      showToast('Patient marked as arrived!', 'success')
+      try {
+        await updateBookingStatus(bookingId, 'arrived')
+      } catch (error) {
+        console.error('Failed to update booking status:', error)
+      }
     } else {
       showToast(`${action === 'call' ? 'Calling' : 'Opening WhatsApp'}...`, 'info')
     }
@@ -620,7 +521,7 @@ const StaffDashboard = () => {
           dentist: selectedBooking.dentist,
           date: selectedBooking.date || format(new Date(), 'yyyy-MM-dd'),
           time: selectedBooking.time,
-          status: selectedBooking.status === 'arrived' ? 'confirmed' : selectedBooking.status,
+          status: selectedBooking.status,
           deposit: selectedBooking.deposit || 0,
           total: selectedBooking.total || 0,
         } : null}

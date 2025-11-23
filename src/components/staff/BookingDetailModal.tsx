@@ -1,30 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, User, Mail, Phone, Calendar, Clock, FileText, CreditCard, Repeat } from 'lucide-react'
 import { format } from 'date-fns'
-
-interface BookingDetail {
-  id: string
-  patient: string
-  email: string
-  phone: string
-  service: string
-  dentist: string
-  date: string
-  time: string
-  status: 'confirmed' | 'pending' | 'cancelled' | 'completed'
-  deposit: number
-  total: number
-  notes?: string
-  createdAt?: string
-  isRecurring?: boolean
-  recurrence?: {
-    frequency: string
-    interval: number
-    endDate?: string
-    occurrences?: number
-  }
-  seriesId?: string
-}
+import { BookingDetail } from '../../types'
 
 interface BookingDetailModalProps {
   isOpen: boolean

@@ -143,6 +143,8 @@ export interface BookingDetail {
   total?: number
   isRecurring?: boolean
   recurrence?: RecurrencePattern
+  notes?: string
+  createdAt?: string
 }
 
 export interface ScheduleAppointment {

@@ -4,19 +4,8 @@ import { Calendar, BarChart3, TrendingUp, Users, Filter, Download, DollarSign, A
 import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns'
 import { DayPicker } from 'react-day-picker'
 import { DENTISTS } from '../../utils/constants'
+import { useBookings } from '../../hooks/useBookings'
 import 'react-day-picker/dist/style.css'
-
-interface Booking {
-  id: string
-  patient: string
-  service: string
-  dentist: string
-  date: string
-  time: string
-  status: 'confirmed' | 'pending' | 'cancelled' | 'completed'
-  deposit?: number
-  total?: number
-}
 
 type DateRangeType = 'today' | 'week' | 'month' | 'custom'
 
@@ -27,151 +16,7 @@ const Analytics = () => {
   const [customStartDate, setCustomStartDate] = useState<Date | null>(null)
   const [customEndDate, setCustomEndDate] = useState<Date | null>(null)
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
-
-  // Mock bookings data - in a real app, this would come from an API
-  const allBookings: Booking[] = [
-    {
-      id: 'BK-001',
-      patient: 'Sarah Mitchell',
-      service: 'Teeth Cleaning & Polish',
-      dentist: 'Dr. Sarah Johnson',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '08:00',
-      status: 'confirmed',
-    },
-    {
-      id: 'BK-002',
-      patient: 'James Thompson',
-      service: 'Comprehensive Consultation',
-      dentist: 'Dr. Michael Chen',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '09:00',
-      status: 'completed',
-      deposit: 50,
-      total: 850,
-    },
-    {
-      id: 'BK-003',
-      patient: 'Emma Wilson',
-      service: 'Teeth Whitening',
-      dentist: 'Dr. Emily Williams',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '09:30',
-      status: 'completed',
-      deposit: 50,
-      total: 2500,
-    },
-    {
-      id: 'BK-004',
-      patient: 'Michael Brown',
-      service: 'Root Canal Treatment',
-      dentist: 'Dr. Sarah Johnson',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '10:00',
-      status: 'completed',
-      deposit: 50,
-      total: 3500,
-    },
-    {
-      id: 'BK-005',
-      patient: 'Lisa Anderson',
-      service: 'Emergency Visit',
-      dentist: 'Dr. Michael Chen',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '10:30',
-      status: 'cancelled',
-      deposit: 50,
-      total: 950,
-    },
-    {
-      id: 'BK-006',
-      patient: 'David Lee',
-      service: 'Dental Implant Consultation',
-      dentist: 'Dr. Emily Williams',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '11:00',
-      status: 'completed',
-      deposit: 50,
-      total: 1200,
-    },
-    {
-      id: 'BK-007',
-      patient: 'Jennifer Martinez',
-      service: 'Teeth Cleaning & Polish',
-      dentist: 'Dr. Sarah Johnson',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '13:00',
-      status: 'completed',
-      deposit: 50,
-      total: 650,
-    },
-    {
-      id: 'BK-008',
-      patient: 'Robert Taylor',
-      service: 'Teeth Cleaning & Polish',
-      dentist: 'Dr. Michael Chen',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '13:30',
-      status: 'completed',
-      deposit: 50,
-      total: 650,
-    },
-    {
-      id: 'BK-009',
-      patient: 'Amanda White',
-      service: 'Comprehensive Consultation',
-      dentist: 'Dr. Emily Williams',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '14:00',
-      status: 'completed',
-      deposit: 50,
-      total: 850,
-    },
-    {
-      id: 'BK-010',
-      patient: 'Chris Green',
-      service: 'Teeth Whitening',
-      dentist: 'Dr. Sarah Johnson',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '14:30',
-      status: 'cancelled',
-      deposit: 50,
-      total: 2500,
-    },
-    {
-      id: 'BK-011',
-      patient: 'Maria Garcia',
-      service: 'Root Canal Treatment',
-      dentist: 'Dr. Michael Chen',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '15:00',
-      status: 'completed',
-      deposit: 50,
-      total: 3500,
-    },
-    {
-      id: 'BK-012',
-      patient: 'John Smith',
-      service: 'Emergency Visit',
-      dentist: 'Dr. Emily Williams',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '15:30',
-      status: 'completed',
-      deposit: 50,
-      total: 950,
-    },
-    {
-      id: 'BK-013',
-      patient: 'Sarah Connor',
-      service: 'Teeth Cleaning & Polish',
-      dentist: 'Dr. Sarah Johnson',
-      date: format(new Date(), 'yyyy-MM-dd'),
-      time: '16:00',
-      status: 'completed',
-      deposit: 50,
-      total: 650,
-    },
-  ]
+  const { bookings: allBookings } = useBookings()
 
   // Calculate date range based on type
   const dateRange = useMemo(() => {
@@ -208,7 +53,7 @@ const Analytics = () => {
 
   // Group bookings by hour (only for today view)
   const bookingsByHour = useMemo(() => {
-    const grouped: Record<string, Booking[]> = {}
+    const grouped: Record<string, typeof allBookings> = {}
     
     // Initialize all hours from 8:00 to 17:00
     for (let hour = 8; hour < 18; hour++) {
@@ -377,7 +222,7 @@ const Analytics = () => {
   }
 
   // Enhanced Bar Chart Component
-  const BarChart = ({ data, maxValue }: { data: Record<string, Booking[]>, maxValue: number }) => {
+  const BarChart = ({ data, maxValue }: { data: Record<string, typeof allBookings>, maxValue: number }) => {
     return (
       <div className="space-y-4">
         {Object.entries(data).map(([hour, bookings], index) => {

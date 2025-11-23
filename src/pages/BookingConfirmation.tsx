@@ -5,18 +5,71 @@ import confetti from 'canvas-confetti'
 import { CheckCircle, Calendar, Clock, User, Mail, Phone, Download, Home, UserCircle } from 'lucide-react'
 import { BookingData } from '../types'
 import { formatDate } from '../utils/dateUtils'
+import { useBookings } from '../hooks/useBookings'
+import { usePatients } from '../hooks/usePatients'
+import { format } from 'date-fns'
 
 const BookingConfirmation = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const bookingData = location.state as BookingData | null
   const [confettiFired, setConfettiFired] = useState(false)
+  const [bookingSaved, setBookingSaved] = useState(false)
+  const { createBooking } = useBookings()
+  const { createPatient, searchPatients } = usePatients()
 
   useEffect(() => {
     if (!bookingData) {
       navigate('/booking')
       return
     }
+
+    // Save booking to Firebase
+    const saveBooking = async () => {
+      if (bookingSaved) return
+      
+      try {
+        // First, check if patient exists or create new patient
+        const [firstName, ...lastNameParts] = bookingData.patientDetails.firstName.split(' ')
+        const lastName = lastNameParts.join(' ') || bookingData.patientDetails.lastName
+        
+        const existingPatients = await searchPatients(bookingData.patientDetails.email)
+        const existingPatient = existingPatients.find(p => p.email === bookingData.patientDetails.email)
+        
+        if (!existingPatient) {
+          // Create new patient
+          await createPatient({
+            firstName: firstName,
+            lastName: lastName,
+            email: bookingData.patientDetails.email,
+            phone: bookingData.patientDetails.phone,
+            idNumber: bookingData.patientDetails.idNumber,
+          })
+        }
+
+        // Create booking
+        await createBooking({
+          patient: `${firstName} ${lastName}`,
+          email: bookingData.patientDetails.email,
+          phone: bookingData.patientDetails.phone,
+          service: bookingData.service?.name || '',
+          dentist: bookingData.dentist?.name || '',
+          date: bookingData.date ? format(bookingData.date, 'yyyy-MM-dd') : '',
+          time: bookingData.time,
+          status: 'confirmed',
+          deposit: bookingData.service?.price ? bookingData.service.price * 0.1 : 50,
+          total: bookingData.service?.price || 0,
+        })
+        
+        setBookingSaved(true)
+      } catch (error) {
+        console.error('Failed to save booking:', error)
+        // Still show confirmation even if save fails
+        setBookingSaved(true)
+      }
+    }
+
+    saveBooking()
 
     if (!confettiFired) {
       // Confetti explosion

@@ -9,12 +9,13 @@ import BookingDetailModal from '../../components/staff/BookingDetailModal'
 import PatientSearch from '../../components/staff/PatientSearch'
 import { DENTISTS } from '../../utils/constants'
 import { Patient } from '../../types'
+import { useBookings } from '../../hooks/useBookings'
+import { usePatients } from '../../hooks/usePatients'
 
-interface TodayAppointment {
+type TodayAppointment = {
   id: string
   time: string
   patient: string
-  patientPhoto?: string
   service: string
   dentist: string
   status: 'scheduled' | 'arrived' | 'no-show'
@@ -24,62 +25,26 @@ interface TodayAppointment {
 }
 
 const Today = () => {
-  const [appointments, setAppointments] = useState<TodayAppointment[]>([
-    {
-      id: '1',
-      time: '08:00',
-      patient: 'Sarah Mitchell',
-      service: 'Teeth Cleaning & Polish',
-      dentist: 'Dr. Sarah Johnson',
-      status: 'scheduled',
-      phone: '+27 82 123 4567',
-    },
-    {
-      id: '2',
-      time: '09:30',
-      patient: 'James Thompson',
-      service: 'Comprehensive Consultation',
-      dentist: 'Dr. Michael Chen',
-      status: 'arrived',
-      phone: '+27 83 234 5678',
-    },
-    {
-      id: '3',
-      time: '11:00',
-      patient: 'Emma Wilson',
-      service: 'Teeth Whitening',
-      dentist: 'Dr. Emily Williams',
-      status: 'scheduled',
-      phone: '+27 84 345 6789',
-    },
-    {
-      id: '4',
-      time: '13:30',
-      patient: 'Michael Brown',
-      service: 'Root Canal Treatment',
-      dentist: 'Dr. Sarah Johnson',
-      status: 'scheduled',
-      phone: '+27 85 456 7890',
-    },
-    {
-      id: '5',
-      time: '15:00',
-      patient: 'Lisa Anderson',
-      service: 'Emergency Visit',
-      dentist: 'Dr. Michael Chen',
-      status: 'scheduled',
-      phone: '+27 86 567 8901',
-    },
-    {
-      id: '6',
-      time: '16:30',
-      patient: 'David Lee',
-      service: 'Dental Implant Consultation',
-      dentist: 'Dr. Emily Williams',
-      status: 'no-show',
-      phone: '+27 87 678 9012',
-    },
-  ])
+  const { bookings, createBooking, updateBooking, updateBookingStatus } = useBookings()
+  const { patients, createPatient } = usePatients()
+  const today = format(new Date(), 'yyyy-MM-dd')
+  
+  // Convert bookings to appointments format for today
+  const appointments = useMemo(() => {
+    return bookings
+      .filter(b => b.date === today && (b.status === 'confirmed' || b.status === 'pending' || b.status === 'arrived' || b.status === 'no-show'))
+      .map(b => ({
+        id: b.id,
+        time: b.time,
+        patient: b.patient,
+        service: b.service,
+        dentist: b.dentist,
+        status: b.status === 'confirmed' || b.status === 'pending' ? 'scheduled' as const : b.status === 'arrived' ? 'arrived' as const : 'no-show' as const,
+        phone: b.phone,
+        email: b.email,
+        date: b.date,
+      }))
+  }, [bookings, today])
 
   const [draggedItem, setDraggedItem] = useState<string | null>(null)
   const [draggedPatient, setDraggedPatient] = useState<Patient | null>(null)
@@ -112,59 +77,7 @@ const Today = () => {
   })
   const { showToast } = useToast()
 
-  // Mock patients data - in production, this would come from an API
-  const [allPatients, setAllPatients] = useState<Patient[]>([
-    {
-      id: '1',
-      firstName: 'Sarah',
-      lastName: 'Mitchell',
-      email: 'sarah.mitchell@email.com',
-      phone: '+27 82 123 4567',
-      createdAt: '2024-01-15',
-      totalVisits: 5,
-      totalSpent: 3250,
-    },
-    {
-      id: '2',
-      firstName: 'James',
-      lastName: 'Thompson',
-      email: 'james.thompson@email.com',
-      phone: '+27 83 234 5678',
-      createdAt: '2024-02-01',
-      totalVisits: 3,
-      totalSpent: 2550,
-    },
-    {
-      id: '3',
-      firstName: 'Emma',
-      lastName: 'Wilson',
-      email: 'emma.wilson@email.com',
-      phone: '+27 84 345 6789',
-      createdAt: '2024-02-10',
-      totalVisits: 2,
-      totalSpent: 3100,
-    },
-    {
-      id: '4',
-      firstName: 'Michael',
-      lastName: 'Brown',
-      email: 'michael.brown@email.com',
-      phone: '+27 85 456 7890',
-      createdAt: '2024-01-20',
-      totalVisits: 4,
-      totalSpent: 14000,
-    },
-    {
-      id: '5',
-      firstName: 'Lisa',
-      lastName: 'Anderson',
-      email: 'lisa.anderson@email.com',
-      phone: '+27 86 567 8901',
-      createdAt: '2024-02-05',
-      totalVisits: 1,
-      totalSpent: 950,
-    },
-  ])
+  const allPatients = patients
 
   // Keyboard shortcuts
   useKeyboardShortcuts([
@@ -194,25 +107,21 @@ const Today = () => {
     },
   ])
 
-  const handleAction = (id: string, action: 'call' | 'whatsapp' | 'arrived' | 'no-show') => {
-    // playSound('click')
-    
+  const handleAction = async (id: string, action: 'call' | 'whatsapp' | 'arrived' | 'no-show') => {
     if (action === 'arrived') {
-      setAppointments((prev) =>
-        prev.map((apt) =>
-          apt.id === id ? { ...apt, status: 'arrived' as const } : apt
-        )
-      )
-      // playSound('success')
-      showToast('Patient marked as arrived! 🎉', 'success')
+      try {
+        await updateBookingStatus(id, 'arrived')
+        showToast('Patient marked as arrived! 🎉', 'success')
+      } catch (error) {
+        console.error('Failed to update booking status:', error)
+      }
     } else if (action === 'no-show') {
-      setAppointments((prev) =>
-        prev.map((apt) =>
-          apt.id === id ? { ...apt, status: 'no-show' as const } : apt
-        )
-      )
-      // playSound('error')
-      showToast('Marked as no-show', 'warning')
+      try {
+        await updateBookingStatus(id, 'no-show')
+        showToast('Marked as no-show', 'warning')
+      } catch (error) {
+        console.error('Failed to update booking status:', error)
+      }
     } else {
       const apt = appointments.find((a) => a.id === id)
       if (action === 'call') {
@@ -463,21 +372,21 @@ const Today = () => {
     showToast(`Time change pending for ${appointment.patient}. Please confirm.`, 'info')
   }
 
-  const handleConfirmTimeChange = () => {
+  const handleConfirmTimeChange = async () => {
     if (!pendingTimeChange) return
 
-    // Apply the time change
-    setAppointments((prev) =>
-      prev.map(apt =>
-        apt.id === pendingTimeChange.appointmentId
-          ? { ...apt, time: pendingTimeChange.newTime, dentist: pendingTimeChange.newDentist }
-          : apt
-      ).sort((a, b) => a.time.localeCompare(b.time))
-    )
-    
-    showToast(`Appointment moved to ${pendingTimeChange.newTime} with ${pendingTimeChange.newDentist}`, 'success')
-    setPendingTimeChange(null)
-    setPreviewSlot(null) // Clear preview when confirmed
+    try {
+      await updateBooking(pendingTimeChange.appointmentId, {
+        time: pendingTimeChange.newTime,
+        dentist: pendingTimeChange.newDentist,
+      })
+      showToast(`Appointment moved to ${pendingTimeChange.newTime} with ${pendingTimeChange.newDentist}`, 'success')
+      setPendingTimeChange(null)
+      setPreviewSlot(null)
+    } catch (error) {
+      console.error('Failed to update booking time:', error)
+      showToast('Failed to update appointment time', 'error')
+    }
   }
 
   const handleCancelTimeChange = () => {
@@ -532,19 +441,8 @@ const Today = () => {
   const handlePatientDrop = (timeSlot: string, dentist: string) => {
     if (!draggedPatient) return
 
-    // Create emergency booking
+    // Create emergency booking preview (will be saved on confirm)
     const bookingId = `EMERG-${Date.now()}`
-    const emergencyAppointment: TodayAppointment = {
-      id: bookingId,
-      time: timeSlot,
-      patient: `${draggedPatient.firstName} ${draggedPatient.lastName}`,
-      service: 'Emergency Visit',
-      dentist: dentist,
-      status: 'scheduled',
-      phone: draggedPatient.phone,
-    }
-
-    setAppointments((prev) => [...prev, emergencyAppointment].sort((a, b) => a.time.localeCompare(b.time)))
     setPendingEmergencyBooking({
       id: bookingId,
       patient: `${draggedPatient.firstName} ${draggedPatient.lastName}`,
@@ -555,22 +453,35 @@ const Today = () => {
     showToast(`Emergency booking created for ${draggedPatient.firstName} ${draggedPatient.lastName}. Please confirm.`, 'info')
   }
 
-  const handleConfirmEmergencyBooking = () => {
-    if (!pendingEmergencyBooking) return
+  const handleConfirmEmergencyBooking = async () => {
+    if (!pendingEmergencyBooking || !draggedPatient) return
     
-    setPendingEmergencyBooking(null)
-    setSelectedEmergencyPatient(null)
-    setPreviewSlot(null) // Clear preview when confirmed
-    showToast('Emergency booking confirmed!', 'success')
+    try {
+      await createBooking({
+        patient: pendingEmergencyBooking.patient,
+        email: draggedPatient.email,
+        phone: draggedPatient.phone,
+        service: 'Emergency Visit',
+        dentist: pendingEmergencyBooking.dentist,
+        date: today,
+        time: pendingEmergencyBooking.time,
+        status: 'confirmed',
+      })
+      setPendingEmergencyBooking(null)
+      setSelectedEmergencyPatient(null)
+      setPreviewSlot(null)
+      showToast('Emergency booking confirmed!', 'success')
+    } catch (error) {
+      console.error('Failed to create emergency booking:', error)
+      showToast('Failed to create emergency booking', 'error')
+    }
   }
 
   const handleCancelEmergencyBooking = () => {
     if (!pendingEmergencyBooking) return
 
-    // Remove the booking from appointments
-    setAppointments((prev) => prev.filter(apt => apt.id !== pendingEmergencyBooking.id))
     setPendingEmergencyBooking(null)
-    setPreviewSlot(null) // Clear preview when cancelled
+    setPreviewSlot(null)
     showToast('Emergency booking cancelled', 'warning')
   }
 
@@ -578,41 +489,57 @@ const Today = () => {
     setSelectedEmergencyPatient(patient)
   }
 
-  const handleAddNewPatient = (patientData: { firstName: string; lastName: string; email: string; phone: string }) => {
-    const newPatient: Patient = {
-      id: `PAT-${Date.now()}`,
-      firstName: patientData.firstName,
-      lastName: patientData.lastName,
-      email: patientData.email,
-      phone: patientData.phone,
-      createdAt: new Date().toISOString().split('T')[0],
-      totalVisits: 0,
-      totalSpent: 0,
+  const handleAddNewPatient = async (patientData: { firstName: string; lastName: string; email: string; phone: string }) => {
+    try {
+      const patientId = await createPatient({
+        firstName: patientData.firstName,
+        lastName: patientData.lastName,
+        email: patientData.email,
+        phone: patientData.phone,
+      })
+      
+      // Find the newly created patient (will be in patients after reload)
+      const newPatient: Patient = {
+        id: patientId,
+        firstName: patientData.firstName,
+        lastName: patientData.lastName,
+        email: patientData.email,
+        phone: patientData.phone,
+        createdAt: new Date().toISOString().split('T')[0],
+        totalVisits: 0,
+        totalSpent: 0,
+      }
+      
+      // Automatically select the new patient
+      setSelectedEmergencyPatient(newPatient)
+      
+      setIsAddPatientModalOpen(false)
+      showToast(`Patient ${patientData.firstName} ${patientData.lastName} added and selected!`, 'success')
+    } catch (error) {
+      console.error('Failed to create patient:', error)
+      showToast('Failed to create patient', 'error')
     }
-
-    // Add to patients list
-    setAllPatients((prev) => [...prev, newPatient])
-    
-    // Automatically select the new patient
-    setSelectedEmergencyPatient(newPatient)
-    
-    setIsAddPatientModalOpen(false)
-    showToast(`Patient ${patientData.firstName} ${patientData.lastName} added and selected!`, 'success')
   }
 
-  const handleCreateBooking = (newBooking: any) => {
-    const appointment: TodayAppointment = {
-      id: newBooking.id,
-      patient: newBooking.patient,
-      service: newBooking.service,
-      time: newBooking.time,
-      dentist: newBooking.dentist,
-      status: 'scheduled',
-      phone: newBooking.phone,
+  const handleCreateBooking = async (newBooking: any) => {
+    try {
+      await createBooking({
+        patient: newBooking.patient,
+        email: newBooking.email,
+        phone: newBooking.phone,
+        service: newBooking.service,
+        dentist: newBooking.dentist,
+        date: newBooking.date || today,
+        time: newBooking.time,
+        status: 'confirmed',
+        deposit: newBooking.deposit,
+        total: newBooking.total,
+      })
+      showToast('Walk-in appointment added!', 'success')
+    } catch (error) {
+      console.error('Failed to create booking:', error)
+      showToast('Failed to create appointment', 'error')
     }
-    setAppointments((prev) => [...prev, appointment].sort((a, b) => a.time.localeCompare(b.time)))
-    // playSound('success')
-    showToast('Walk-in appointment added!', 'success')
   }
 
   const getStatusColor = (status: string) => {
