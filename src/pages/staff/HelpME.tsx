@@ -32,6 +32,11 @@ const HelpME = () => {
     scrollToBottom()
   }, [messages])
 
+  useEffect(() => {
+    // Scroll to top when component mounts
+    window.scrollTo(0, 0)
+  }, [])
+
   const knowledgeBase: Record<string, string[]> = {
     dashboard: [
       'The Dashboard shows key metrics: Today\'s Appointments, Revenue Today, Deposits Collected, and No-Shows Saved.',
@@ -224,7 +229,7 @@ const HelpME = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 pb-24 md:pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 pt-8 pb-24 md:pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -232,14 +237,14 @@ const HelpME = () => {
           className="mb-8"
         >
           <div className="flex items-center space-x-3 mb-2">
-            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-              <HelpCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0">
+              <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800 dark:text-gray-100">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-gray-800 dark:text-gray-100">
                 HelpME!
               </h1>
-              <p className="text-gray-600 dark:text-gray-400">Your AI assistant for the staff portal</p>
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Your AI assistant for the staff portal</p>
             </div>
           </div>
         </motion.div>
@@ -262,7 +267,7 @@ const HelpME = () => {
                   setInput(question)
                   inputRef.current?.focus()
                 }}
-                className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="px-3 py-2 sm:px-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors min-h-[44px]"
               >
                 {question}
               </motion.button>
@@ -275,10 +280,10 @@ const HelpME = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="card bg-white dark:bg-gray-800 p-0 overflow-hidden"
+          className="card bg-white dark:bg-gray-800 p-0 overflow-hidden border-2 border-gray-800"
         >
           {/* Messages */}
-          <div className="h-[500px] overflow-y-auto p-6 space-y-4">
+          <div className="h-[400px] md:h-[500px] overflow-y-auto p-4 md:p-6 space-y-4">
             <AnimatePresence>
               {messages.map((message) => (
                 <motion.div
@@ -348,7 +353,7 @@ const HelpME = () => {
           </div>
 
           {/* Input Area */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-700">
+          <div className="border-t border-gray-200 dark:border-gray-700 p-3 md:p-4 bg-gray-50 dark:bg-gray-700">
             <div className="flex items-center space-x-3">
               <div className="flex-1 relative">
                 <input
@@ -358,7 +363,7 @@ const HelpME = () => {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask me anything about using the staff portal..."
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent text-base min-h-[44px]"
                   disabled={isLoading}
                 />
                 <MessageCircle className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
