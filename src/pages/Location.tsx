@@ -70,7 +70,7 @@ const Location = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.6 }}
-                className="bg-white rounded-lg border border-gray-200 p-4 md:p-6 space-y-4 md:space-y-6"
+                className="bg-white rounded-lg border-2 border-gray-800 p-4 md:p-6 space-y-4 md:space-y-6"
               >
                 <div>
                   <h2 className="text-lg md:text-xl font-display font-semibold text-gray-800 mb-3 md:mb-4 tracking-tight">
@@ -166,7 +166,7 @@ const Location = () => {
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="bg-white rounded-lg border-2 border-gray-800 p-6">
                 <h3 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-wide">
                   By Car
                 </h3>
@@ -176,7 +176,7 @@ const Location = () => {
                 </p>
               </div>
 
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="bg-white rounded-lg border-2 border-gray-800 p-6">
                 <h3 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-wide">
                   Public Transport
                 </h3>

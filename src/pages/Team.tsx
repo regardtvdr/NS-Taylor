@@ -102,7 +102,7 @@ const Team = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="card p-8 hover:shadow-xl transition-shadow duration-300"
+                className="card p-8 hover:shadow-xl transition-shadow duration-300 border-2 border-gray-800"
               >
                 <div className="text-center mb-6">
                   <div className="relative inline-block mb-4">

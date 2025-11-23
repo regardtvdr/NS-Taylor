@@ -50,7 +50,7 @@ export const AnimatedTestimonials = ({
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
             >
-              <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-8 shadow-lg">
+              <div className="relative overflow-hidden rounded-2xl border-2 border-gray-800 bg-white p-8 shadow-lg">
                 <Quote className="absolute -top-4 -left-4 h-24 w-24 text-gray-100" />
                 <div className="relative">
                   <div className="mb-4 flex items-center gap-1">

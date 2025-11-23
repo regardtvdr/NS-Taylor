@@ -114,7 +114,7 @@ const Contact = () => {
               </div>
             </div>
 
-              <div className="bg-white rounded-lg border-2 border-red-500 p-4 md:p-6">
+              <div className="bg-red-50 rounded-lg border-2 border-red-500 p-4 md:p-6">
                 <h3 className="text-sm md:text-base font-semibold text-gray-800 mb-2 md:mb-3">Emergency Contact</h3>
                 <p className="text-xs md:text-sm text-gray-600 mb-2">
                   For dental emergencies outside business hours, please call:
