@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, User, Mail, Phone, Calendar, Clock, DollarSign, MapPin, FileText, CreditCard, Repeat } from 'lucide-react'
+import { X, User, Mail, Phone, Calendar, Clock, FileText, CreditCard, Repeat } from 'lucide-react'
 import { format } from 'date-fns'
 
 interface BookingDetail {

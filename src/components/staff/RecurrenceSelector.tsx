@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Calendar, Repeat, X } from 'lucide-react'
+import { Calendar, Repeat } from 'lucide-react'
 import { RecurrencePattern, RecurrenceFrequency } from '../../types'
-import { format, addDays, addWeeks, addMonths, addYears } from 'date-fns'
+import { format, addDays } from 'date-fns'
 
 interface RecurrenceSelectorProps {
   startDate: Date | null

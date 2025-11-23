@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { XCircle, Calendar, Clock, AlertTriangle, Home } from 'lucide-react'
 import { formatDate } from '../utils/dateUtils'
 
 const CancellationPortal = () => {
   const { token: _token } = useParams()
-  const _navigate = useNavigate()
   const [cancelled, setCancelled] = useState(false)
   const [loading, setLoading] = useState(false)
 

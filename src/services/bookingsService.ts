@@ -62,7 +62,13 @@ const convertToFirestore = (booking: Partial<BookingDetail>): Partial<FirestoreB
     deposit: booking.deposit,
     total: booking.total,
     isRecurring: booking.isRecurring,
-    recurrence: booking.recurrence,
+    recurrence: booking.recurrence && booking.recurrence.frequency !== 'none' ? {
+      frequency: booking.recurrence.frequency as 'daily' | 'weekly' | 'monthly' | 'yearly',
+      interval: booking.recurrence.interval,
+      daysOfWeek: booking.recurrence.daysOfWeek,
+      endDate: booking.recurrence.endDate,
+      occurrences: booking.recurrence.occurrences,
+    } : undefined,
   }
   
   // Remove undefined fields
@@ -110,8 +116,8 @@ export const bookingsServiceMethods = {
     const bookings = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-    }))
-    return bookings.map(convertFirestoreBooking) as BookingDetail[]
+    })) as FirestoreBooking[]
+    return bookings.map(convertFirestoreBooking)
   },
 
   // Get bookings by dentist

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageCircle, Send, Bot, User, HelpCircle, X } from 'lucide-react'
+import { MessageCircle, Send, Bot, User, HelpCircle } from 'lucide-react'
 import { format } from 'date-fns'
 
 interface Message {

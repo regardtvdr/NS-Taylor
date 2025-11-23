@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Lock, Eye, EyeOff, AlertCircle, Calendar } from 'lucide-react'
+import { Eye, EyeOff, AlertCircle, Calendar } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
-import { playSound } from '../../utils/sounds'
 
 const Login = () => {
   const [password, setPassword] = useState('')

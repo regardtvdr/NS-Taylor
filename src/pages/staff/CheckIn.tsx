@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { CheckCircle, XCircle, Clock, User, Search, Calendar } from 'lucide-react'
-import { format, isSameDay } from 'date-fns'
+import { format } from 'date-fns'
 import { useToast } from '../../contexts/ToastContext'
 import { DENTISTS } from '../../utils/constants'
 

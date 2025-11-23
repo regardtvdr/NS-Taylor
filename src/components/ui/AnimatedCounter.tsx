@@ -12,7 +12,7 @@ interface AnimatedCounterProps {
 
 export const AnimatedCounter = ({
   value,
-  duration = 2,
+  duration: _duration = 2,
   prefix = '',
   suffix = '',
   decimals = 0,

@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Calendar, BarChart3, TrendingUp, Users, Clock, ChevronLeft, ChevronRight, Filter, Download, FileText, DollarSign, AlertCircle } from 'lucide-react'
-import { format, isSameDay, addDays, subDays, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subMonths, addMonths } from 'date-fns'
+import { Calendar, BarChart3, TrendingUp, Users, Filter, Download, DollarSign, AlertCircle } from 'lucide-react'
+import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns'
 import { DayPicker } from 'react-day-picker'
-import { DENTISTS, SERVICES } from '../../utils/constants'
+import { DENTISTS } from '../../utils/constants'
 import 'react-day-picker/dist/style.css'
 
 interface Booking {
@@ -21,7 +21,7 @@ interface Booking {
 type DateRangeType = 'today' | 'week' | 'month' | 'custom'
 
 const Analytics = () => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  const [_selectedDate, _setSelectedDate] = useState<Date>(new Date())
   const [selectedDentist, setSelectedDentist] = useState<string>('all')
   const [dateRangeType, setDateRangeType] = useState<DateRangeType>('today')
   const [customStartDate, setCustomStartDate] = useState<Date | null>(null)
@@ -287,20 +287,6 @@ const Analytics = () => {
     return metrics
   }, [filteredBookings])
 
-  const navigateDate = (direction: 'prev' | 'next') => {
-    if (dateRangeType === 'today') {
-      setSelectedDate((prev) => (direction === 'next' ? addDays(prev, 1) : subDays(prev, 1)))
-    } else if (dateRangeType === 'week') {
-      setSelectedDate((prev) => (direction === 'next' ? addDays(prev, 7) : subDays(prev, 7)))
-    } else if (dateRangeType === 'month') {
-      setSelectedDate((prev) => (direction === 'next' ? addMonths(prev, 1) : subMonths(prev, 1)))
-    }
-  }
-
-  const goToToday = () => {
-    setSelectedDate(new Date())
-    setDateRangeType('today')
-  }
 
   // Pie Chart Component
   const PieChart = ({ data }: { data: Record<string, number> }) => {
@@ -477,42 +463,6 @@ const Analytics = () => {
     ? 'All Dentists' 
     : DENTISTS.find(d => d.name === selectedDentist)?.name || 'All Dentists'
 
-  // Export functionality
-  const handleExport = (format: 'csv' | 'json') => {
-    const data = filteredBookings.map(booking => ({
-      ID: booking.id,
-      Patient: booking.patient,
-      Service: booking.service,
-      Dentist: booking.dentist,
-      Date: booking.date,
-      Time: booking.time,
-      Status: booking.status,
-      Deposit: booking.deposit || 50,
-      Total: booking.total || 0
-    }))
-
-    if (format === 'csv') {
-      const headers = Object.keys(data[0] || {}).join(',')
-      const rows = data.map(row => Object.values(row).join(','))
-      const csv = [headers, ...rows].join('\n')
-      const blob = new Blob([csv], { type: 'text/csv' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `appointments-${format(new Date(), 'yyyy-MM-dd')}.csv`
-      a.click()
-      URL.revokeObjectURL(url)
-    } else {
-      const json = JSON.stringify(data, null, 2)
-      const blob = new Blob([json], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `appointments-${format(new Date(), 'yyyy-MM-dd')}.json`
-      a.click()
-      URL.revokeObjectURL(url)
-    }
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 pb-24 md:pb-8">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, User, Mail, Phone, Calendar, Clock, DollarSign } from 'lucide-react'
+import { X, User, Mail, Phone, Calendar } from 'lucide-react'
 import { DayPicker } from 'react-day-picker'
 import { format } from 'date-fns'
 import { SERVICES, DENTISTS } from '../../utils/constants'

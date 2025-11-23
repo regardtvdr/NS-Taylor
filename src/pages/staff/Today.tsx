@@ -1,9 +1,8 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Phone, MessageCircle, CheckCircle, XCircle, Clock, User, Plus, UserPlus, LayoutGrid, List, AlertCircle, X, Move, Mail, Search } from 'lucide-react'
-import { format, addDays, subDays, isSameDay } from 'date-fns'
+import { motion } from 'framer-motion'
+import { Phone, MessageCircle, CheckCircle, Clock, User, Plus, UserPlus, LayoutGrid, List, AlertCircle, Move, Mail, Search, X } from 'lucide-react'
+import { format, isSameDay } from 'date-fns'
 import { useToast } from '../../contexts/ToastContext'
-import { playSound } from '../../utils/sounds'
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts'
 import CreateBookingModal from '../../components/staff/CreateBookingModal'
 import BookingDetailModal from '../../components/staff/BookingDetailModal'
@@ -396,7 +395,7 @@ const Today = () => {
     document.addEventListener('pointerup', handleGlobalPointerUp)
   }
 
-  const handlePointerMove = (e: React.PointerEvent) => {
+  const handlePointerMove = (_e: React.PointerEvent) => {
     // This is now handled globally in handlePointerDown
     // Keeping for compatibility but it won't be called during drag
   }
@@ -433,28 +432,6 @@ const Today = () => {
     
     setPointerDragState(null)
     setDraggedItem(null)
-  }
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-  }
-
-  const handleDrop = (targetId: string) => {
-    if (!draggedItem || draggedItem === targetId) return
-
-    const draggedIndex = appointments.findIndex((a) => a.id === draggedItem)
-    const targetIndex = appointments.findIndex((a) => a.id === targetId)
-
-    if (draggedIndex === -1 || targetIndex === -1) return
-
-    const newAppointments = [...appointments]
-    const [removed] = newAppointments.splice(draggedIndex, 1)
-    newAppointments.splice(targetIndex, 0, removed)
-
-    setAppointments(newAppointments)
-    setDraggedItem(null)
-    // playSound('success')
-    showToast('Appointment order updated', 'success')
   }
 
   const handleAppointmentTimeDrop = (appointmentId: string, newTimeSlot: string, newDentist: string) => {
@@ -902,9 +879,7 @@ const Today = () => {
                           </div>
                           {timeSlots.map((slot) => {
                             const slotAppointments = appointmentsByTimeSlotAndDentist[slot]?.[dentist.name] || []
-                            const [hour, minute] = slot.split(':')
-                            const isQuarterHour = minute === '15' || minute === '45'
-                            const isHalfHour = minute === '30'
+                            const [, minute] = slot.split(':')
                             const isHourly = minute === '00'
                             return (
                               <div
@@ -1079,7 +1054,6 @@ const Today = () => {
               <div className="space-y-4">
                 {timeSlots.map((time) => {
                   const timeAppointments = appointmentsByTimeAndDentist[time] || {}
-                  const hasAnyAppointments = Object.values(timeAppointments).some(apts => apts.length > 0)
 
                   return (
                     <div key={time} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">

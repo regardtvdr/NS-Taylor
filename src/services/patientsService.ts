@@ -1,6 +1,6 @@
 import { FirestoreService } from './firestore'
-import { Patient, PatientHistory, PaymentRecord } from '../types'
-import { orderBy, where } from 'firebase/firestore'
+import { Patient } from '../types'
+import { orderBy } from 'firebase/firestore'
 
 const patientsService = new FirestoreService('patients')
 

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Calendar, DollarSign, CreditCard, TrendingUp, Clock, User, Plus, Phone, MessageCircle, CheckCircle, Search, AlertCircle } from 'lucide-react'
@@ -8,7 +8,6 @@ import CreateBookingModal from '../../components/staff/CreateBookingModal'
 import BookingDetailModal from '../../components/staff/BookingDetailModal'
 import { AnimatedCounter } from '../../components/ui/AnimatedCounter'
 import { useToast } from '../../contexts/ToastContext'
-import { playSound } from '../../utils/sounds'
 import 'react-day-picker/dist/style.css'
 
 interface Booking {
@@ -20,6 +19,7 @@ interface Booking {
   status: 'confirmed' | 'pending' | 'arrived'
   date?: string
   phone?: string
+  email?: string
   deposit?: number
   total?: number
 }

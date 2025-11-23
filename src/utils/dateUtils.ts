@@ -25,7 +25,7 @@ export const isDateAvailable = (_date: Date): boolean => {
   return day !== 0 && day !== 6
 }
 
-export const generateTimeSlots = (date: Date): string[] => {
+export const generateTimeSlots = (_date: Date): string[] => {
   const slots: string[] = []
   const startHour = 8
   const endHour = 17

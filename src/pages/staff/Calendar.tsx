@@ -1,12 +1,11 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Clock, User, X } from 'lucide-react'
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths, parseISO } from 'date-fns'
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Clock, X } from 'lucide-react'
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths } from 'date-fns'
 import { DENTISTS } from '../../utils/constants'
 import CreateBookingModal from '../../components/staff/CreateBookingModal'
 import BookingDetailModal from '../../components/staff/BookingDetailModal'
 import { useToast } from '../../contexts/ToastContext'
-import { playSound } from '../../utils/sounds'
 
 interface Booking {
   id: string
@@ -17,6 +16,7 @@ interface Booking {
   time: string
   status: 'confirmed' | 'pending' | 'cancelled'
   phone?: string
+  email?: string
 }
 
 interface LeaveDay {
@@ -134,10 +134,6 @@ const Calendar = () => {
     }).length
   }
 
-  // Check if date has bookings
-  const hasBookings = (date: Date): boolean => {
-    return getBookingCount(date) > 0
-  }
 
   // Check if date is blacklisted/leave for a specific dentist
   const isLeaveDay = (date: Date, dentist: string): boolean => {
@@ -181,7 +177,7 @@ const Calendar = () => {
     // playSound('click')
   }
 
-  const handleQuickBook = (time: string, dentist: string) => {
+  const handleQuickBook = (time: string, _dentist: string) => {
     if (!selectedDate) return
     setSelectedTimeSlot(time)
     setIsCreateModalOpen(true)

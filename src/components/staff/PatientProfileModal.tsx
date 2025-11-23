@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, User, Mail, Phone, Calendar, DollarSign, FileText, History, CreditCard, Edit2, Save } from 'lucide-react'
+import { X, User, Mail, Phone, DollarSign, FileText, History, CreditCard, Edit2, Save } from 'lucide-react'
 import { format } from 'date-fns'
 import { Patient, PatientHistory, PaymentRecord } from '../../types'
 

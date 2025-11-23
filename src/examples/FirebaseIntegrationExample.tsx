@@ -12,7 +12,7 @@ import { BookingDetail, Patient } from '../types'
 
 // Example 1: Using the useBookings hook
 export const BookingsListExample = () => {
-  const { bookings, loading, error, createBooking, updateBooking, deleteBooking } = useBookings()
+  const { bookings, loading, error, createBooking, deleteBooking } = useBookings()
 
   if (loading) return <div>Loading bookings...</div>
   if (error) return <div>Error: {error}</div>
@@ -55,7 +55,7 @@ export const BookingsListExample = () => {
 
 // Example 2: Using the usePatients hook
 export const PatientsListExample = () => {
-  const { patients, loading, searchPatients, createPatient } = usePatients()
+  const { loading, searchPatients, createPatient } = usePatients()
   const [searchResults, setSearchResults] = useState<Patient[]>([])
 
   const handleSearch = async (searchTerm: string) => {
