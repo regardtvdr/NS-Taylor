@@ -191,11 +191,11 @@ const Today = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'arrived':
-        return 'bg-green-100 text-green-800 border-green-200'
+        return 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-200 dark:border-green-700'
       case 'no-show':
-        return 'bg-red-100 text-red-800 border-red-200'
+        return 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-200 dark:border-red-700'
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200'
+        return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-600'
     }
   }
 
@@ -243,7 +243,7 @@ const Today = () => {
   }, [appointments, timeSlots])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 pb-24 md:pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 pb-24 md:pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -251,14 +251,14 @@ const Today = () => {
           className="mb-8 flex items-center justify-between"
         >
           <div>
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800 mb-2">
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800 dark:text-gray-100 mb-2">
               Today's Schedule
             </h1>
-            <p className="text-gray-600">Manage today's appointments • {format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
+            <p className="text-gray-600 dark:text-gray-400">Manage today's appointments • {format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
           </div>
           <div className="flex items-center space-x-3">
             {/* View Toggle */}
-            <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
+            <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
               <button
                 onClick={() => {
                   setViewMode('timeline')
@@ -266,8 +266,8 @@ const Today = () => {
                 }}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-2 ${
                   viewMode === 'timeline'
-                    ? 'bg-white text-gray-800 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-800'
+                    ? 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                 }`}
               >
                 <List className="w-4 h-4" />
@@ -280,8 +280,8 @@ const Today = () => {
                 }}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-2 ${
                   viewMode === 'hourly'
-                    ? 'bg-white text-gray-800 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-800'
+                    ? 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                 }`}
               >
                 <LayoutGrid className="w-4 h-4" />
@@ -314,14 +314,14 @@ const Today = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="card p-6 bg-white"
+              className="card p-6 bg-white dark:bg-gray-800"
             >
             <div className="flex">
               {/* Timeline */}
               <div className="w-24 flex-shrink-0">
                 {timelineHours.map((hour) => (
-                    <div key={hour} className="h-24 border-b border-gray-200 flex items-start pt-2">
-                      <span className="text-sm font-semibold text-gray-700">{hour}:00</span>
+                    <div key={hour} className="h-24 border-b border-gray-200 dark:border-gray-700 flex items-start pt-2">
+                      <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{hour}:00</span>
                     </div>
                 ))}
               </div>
@@ -333,7 +333,7 @@ const Today = () => {
                   return (
                     <div
                       key={hour}
-                      className="h-24 border-b border-gray-200 relative"
+                      className="h-24 border-b border-gray-200 dark:border-gray-700 relative"
                       onDragOver={handleDragOver}
                       onDrop={() => {
                         if (hourAppointments[0]) handleDrop(hourAppointments[0].id)
@@ -347,14 +347,14 @@ const Today = () => {
                             onDragStart={() => handleDragStart(apt.id)}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-md cursor-move group"
+                            className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:shadow-md cursor-move group"
                           >
-                            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                              <User className="w-5 h-5 text-gray-700" />
+                            <div className="w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
+                              <User className="w-5 h-5 text-gray-700 dark:text-gray-300" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-gray-900 truncate">{apt.patient}</h3>
-                              <p className="text-xs text-gray-600 truncate">{apt.service}</p>
+                              <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">{apt.patient}</h3>
+                              <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{apt.service}</p>
                             </div>
                             <div className="flex items-center space-x-2">
                               <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(apt.status)}`}>
@@ -367,19 +367,19 @@ const Today = () => {
                                       whileHover={{ scale: 1.1 }}
                                       whileTap={{ scale: 0.9 }}
                                       onClick={() => handleAction(apt.id, 'call')}
-                                      className="p-1.5 bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+                                      className="p-1.5 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded transition-colors"
                                       title="Call"
                                     >
-                                      <Phone className="w-3.5 h-3.5 text-gray-700" />
+                                      <Phone className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />
                                     </motion.button>
                                     <motion.button
                                       whileHover={{ scale: 1.1 }}
                                       whileTap={{ scale: 0.9 }}
                                       onClick={() => handleAction(apt.id, 'whatsapp')}
-                                      className="p-1.5 bg-green-100 hover:bg-green-200 rounded transition-colors"
+                                      className="p-1.5 bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 rounded transition-colors"
                                       title="WhatsApp"
                                     >
-                                      <MessageCircle className="w-3.5 h-3.5 text-green-700" />
+                                      <MessageCircle className="w-3.5 h-3.5 text-green-700 dark:text-green-300" />
                                     </motion.button>
                                   </>
                                 )}
@@ -388,10 +388,10 @@ const Today = () => {
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     onClick={() => handleAction(apt.id, 'arrived')}
-                                    className="p-1.5 bg-teal-100 hover:bg-teal-200 rounded transition-colors"
+                                    className="p-1.5 bg-teal-100 dark:bg-teal-900 hover:bg-teal-200 dark:hover:bg-teal-800 rounded transition-colors"
                                     title="Mark Arrived"
                                   >
-                                    <CheckCircle className="w-3.5 h-3.5 text-teal-700" />
+                                    <CheckCircle className="w-3.5 h-3.5 text-teal-700 dark:text-teal-300" />
                                   </motion.button>
                                 )}
                               </div>
@@ -407,26 +407,26 @@ const Today = () => {
           </motion.div>
           )}
 
-          {/* Hourly by Dentist View */}
+          {/* Hourly Breakdown by Dentist View */}
           {viewMode === 'hourly' && (
             <motion.div
               key="hourly"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="card p-6 bg-white"
+              className="card p-6 bg-white dark:bg-gray-800"
             >
-              <h2 className="text-xl font-display font-bold text-gray-800 mb-6">Hourly Breakdown by Dentist</h2>
+              <h2 className="text-xl font-display font-bold text-gray-800 dark:text-gray-100 mb-6">Hourly Breakdown by Dentist</h2>
               <div className="space-y-4">
                 {timeSlots.map((time) => {
                   const timeAppointments = appointmentsByTimeAndDentist[time] || {}
                   const hasAnyAppointments = Object.values(timeAppointments).some(apts => apts.length > 0)
 
                   return (
-                    <div key={time} className="border border-gray-200 rounded-lg p-4">
+                    <div key={time} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                       <div className="flex items-center space-x-2 mb-4">
-                        <Clock className="w-5 h-5 text-gray-600" />
-                        <span className="text-lg font-semibold text-gray-800">{time}</span>
+                        <Clock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">{time}</span>
                       </div>
 
                       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -439,14 +439,14 @@ const Today = () => {
                               key={dentist.id}
                               className={`p-4 rounded-lg border-2 ${
                                 isEmpty
-                                  ? 'border-gray-200 bg-gray-50'
-                                  : 'border-gray-300 bg-white'
+                                  ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700'
+                                  : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800'
                               }`}
                             >
                               <div className="flex items-center justify-between mb-3">
-                                <h3 className="font-semibold text-gray-800 text-sm">{dentist.name}</h3>
+                                <h3 className="font-semibold text-gray-800 dark:text-gray-100 text-sm">{dentist.name}</h3>
                                 {!isEmpty && (
-                                  <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                                  <span className="text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-600 px-2 py-1 rounded">
                                     {dentistAppointments.length} {dentistAppointments.length === 1 ? 'appointment' : 'appointments'}
                                   </span>
                                 )}
@@ -454,7 +454,7 @@ const Today = () => {
 
                               {isEmpty ? (
                                 <div className="text-center py-4">
-                                  <div className="text-gray-400 text-sm">Available</div>
+                                  <div className="text-gray-400 dark:text-gray-500 text-sm">Available</div>
                                 </div>
                               ) : (
                                 <div className="space-y-2">
@@ -463,17 +463,17 @@ const Today = () => {
                                       key={apt.id}
                                       initial={{ opacity: 0, y: 10 }}
                                       animate={{ opacity: 1, y: 0 }}
-                                      className="p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors group"
+                                      className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 transition-colors group"
                                     >
                                       <div className="flex items-start justify-between">
                                         <div className="flex-1">
-                                          <h4 className="font-semibold text-gray-900 text-sm mb-1">{apt.patient}</h4>
-                                          <p className="text-xs text-gray-600 mb-2">{apt.service}</p>
+                                          <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-1">{apt.patient}</h4>
+                                          <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{apt.service}</p>
                                           <div className="flex items-center space-x-2">
                                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(apt.status)}`}>
                                               {apt.status === 'arrived' ? 'Arrived' : apt.status === 'no-show' ? 'No-Show' : 'Scheduled'}
                                             </span>
-                                            <span className={`text-xs ${apt.depositPaid ? 'text-green-600' : 'text-orange-600'}`}>
+                                            <span className={`text-xs ${apt.depositPaid ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'}`}>
                                               {apt.depositPaid ? '✓ Paid' : '⚠ Pending'}
                                             </span>
                                           </div>
@@ -485,19 +485,19 @@ const Today = () => {
                                                 whileHover={{ scale: 1.1 }}
                                                 whileTap={{ scale: 0.9 }}
                                                 onClick={() => handleAction(apt.id, 'call')}
-                                                className="p-1.5 bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+                                                className="p-1.5 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded transition-colors"
                                                 title="Call"
                                               >
-                                                <Phone className="w-3 h-3 text-gray-700" />
+                                                <Phone className="w-3 h-3 text-gray-700 dark:text-gray-300" />
                                               </motion.button>
                                               <motion.button
                                                 whileHover={{ scale: 1.1 }}
                                                 whileTap={{ scale: 0.9 }}
                                                 onClick={() => handleAction(apt.id, 'whatsapp')}
-                                                className="p-1.5 bg-green-100 hover:bg-green-200 rounded transition-colors"
+                                                className="p-1.5 bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 rounded transition-colors"
                                                 title="WhatsApp"
                                               >
-                                                <MessageCircle className="w-3 h-3 text-green-700" />
+                                                <MessageCircle className="w-3 h-3 text-green-700 dark:text-green-300" />
                                               </motion.button>
                                             </>
                                           )}
@@ -506,10 +506,10 @@ const Today = () => {
                                               whileHover={{ scale: 1.1 }}
                                               whileTap={{ scale: 0.9 }}
                                               onClick={() => handleAction(apt.id, 'arrived')}
-                                              className="p-1.5 bg-teal-100 hover:bg-teal-200 rounded transition-colors"
+                                              className="p-1.5 bg-teal-100 dark:bg-teal-900 hover:bg-teal-200 dark:hover:bg-teal-800 rounded transition-colors"
                                               title="Mark Arrived"
                                             >
-                                              <CheckCircle className="w-3 h-3 text-teal-700" />
+                                              <CheckCircle className="w-3 h-3 text-teal-700 dark:text-teal-300" />
                                             </motion.button>
                                           )}
                                         </div>
@@ -538,22 +538,22 @@ const Today = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="card p-4 bg-white"
+              className="card p-4 bg-white dark:bg-gray-800"
             >
               <div className="flex items-start space-x-4">
                 <div className="flex flex-col items-center min-w-[60px]">
-                  <Clock className="w-4 h-4 text-gray-600 mb-1" />
-                  <span className="text-lg font-bold text-gray-800">{apt.time}</span>
+                  <Clock className="w-4 h-4 text-gray-600 dark:text-gray-400 mb-1" />
+                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">{apt.time}</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 mb-1">{apt.patient}</h3>
-                  <p className="text-sm text-gray-600 mb-2">{apt.service}</p>
-                  <p className="text-xs text-gray-500 mb-3">{apt.dentist}</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">{apt.patient}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{apt.service}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mb-3">{apt.dentist}</p>
                   <div className="flex items-center space-x-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(apt.status)}`}>
                       {apt.status === 'arrived' ? 'Arrived' : apt.status === 'no-show' ? 'No-Show' : 'Scheduled'}
                     </span>
-                    <span className={`text-xs ${apt.depositPaid ? 'text-green-600' : 'text-orange-600'}`}>
+                    <span className={`text-xs ${apt.depositPaid ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'}`}>
                       {apt.depositPaid ? '✓ Paid' : '⚠ Pending'}
                     </span>
                   </div>
@@ -564,18 +564,18 @@ const Today = () => {
                       <motion.button
                         whileTap={{ scale: 0.9 }}
                         onClick={() => handleAction(apt.id, 'call')}
-                        className="p-2 bg-gray-100 rounded-lg"
+                        className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg"
                         title="Call"
                       >
-                        <Phone className="w-4 h-4 text-gray-700" />
+                        <Phone className="w-4 h-4 text-gray-700 dark:text-gray-300" />
                       </motion.button>
                       <motion.button
                         whileTap={{ scale: 0.9 }}
                         onClick={() => handleAction(apt.id, 'whatsapp')}
-                        className="p-2 bg-green-100 rounded-lg"
+                        className="p-2 bg-green-100 dark:bg-green-900 rounded-lg"
                         title="WhatsApp"
                       >
-                        <MessageCircle className="w-4 h-4 text-green-700" />
+                        <MessageCircle className="w-4 h-4 text-green-700 dark:text-green-300" />
                       </motion.button>
                     </>
                   )}
@@ -583,10 +583,10 @@ const Today = () => {
                     <motion.button
                       whileTap={{ scale: 0.9 }}
                       onClick={() => handleAction(apt.id, 'arrived')}
-                      className="p-2 bg-teal-100 rounded-lg"
+                      className="p-2 bg-teal-100 dark:bg-teal-900 rounded-lg"
                       title="Mark Arrived"
                     >
-                      <CheckCircle className="w-4 h-4 text-teal-700" />
+                      <CheckCircle className="w-4 h-4 text-teal-700 dark:text-teal-300" />
                     </motion.button>
                   )}
                 </div>
@@ -600,10 +600,10 @@ const Today = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="mt-8 card p-4 bg-gray-50 border-gray-200"
+          className="mt-8 card p-4 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
         >
-          <p className="text-xs text-gray-700 text-center">
-            <span className="font-semibold">Keyboard shortcuts:</span> Press <kbd className="px-2 py-1 bg-white rounded border border-gray-300 text-gray-700">A</kbd> for Arrived, <kbd className="px-2 py-1 bg-white rounded border border-gray-300 text-gray-700">N</kbd> for No-Show, <kbd className="px-2 py-1 bg-white rounded border border-gray-300 text-gray-700">W</kbd> for WhatsApp
+          <p className="text-xs text-gray-700 dark:text-gray-300 text-center">
+            <span className="font-semibold">Keyboard shortcuts:</span> Press <kbd className="px-2 py-1 bg-white dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-300">A</kbd> for Arrived, <kbd className="px-2 py-1 bg-white dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-300">N</kbd> for No-Show, <kbd className="px-2 py-1 bg-white dark:bg-gray-600 rounded border border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-300">W</kbd> for WhatsApp
           </p>
         </motion.div>
       </div>

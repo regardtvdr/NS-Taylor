@@ -30,7 +30,7 @@ const CancellationPortal = () => {
 
   if (cancelled) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50 py-12 pb-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -80,7 +80,7 @@ const CancellationPortal = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50 py-12 pb-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

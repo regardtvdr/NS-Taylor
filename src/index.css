@@ -52,7 +52,7 @@
   }
 
   .input-field {
-    @apply w-full px-4 py-3.5 border border-gray-300 rounded-lg focus:border-navy-500 focus:ring-1 focus:ring-navy-200 outline-none transition-all duration-300 text-gray-900 placeholder:text-gray-400;
+    @apply w-full px-4 py-3.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:border-navy-500 dark:focus:border-navy-400 focus:ring-1 focus:ring-navy-200 dark:focus:ring-navy-800 outline-none transition-all duration-300 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500;
   }
 
   .gradient-text {

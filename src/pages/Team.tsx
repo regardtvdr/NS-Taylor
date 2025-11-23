@@ -17,8 +17,7 @@ const Team = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-gray-50 via-white to-gray-100 py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-grid-gray-900/[0.02] bg-[size:20px_20px]" />
+      <section className="relative bg-gray-800 py-20 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -26,10 +25,10 @@ const Team = () => {
             transition={{ duration: 0.6 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <h1 className="text-5xl md:text-6xl font-display font-bold text-gray-800 mb-6 tracking-tight">
+            <h1 className="text-5xl md:text-6xl font-display font-bold text-white mb-6 tracking-tight">
               Meet Our Expert Team
             </h1>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-xl text-gray-300 mb-8 leading-relaxed">
               Our experienced dental professionals are dedicated to providing you with the highest quality care and personalized treatment.
             </p>
             <Link to="/booking" className="inline-block">

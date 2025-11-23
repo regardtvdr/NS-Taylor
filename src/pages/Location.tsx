@@ -1,80 +1,6 @@
 import { motion } from 'framer-motion'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import { MapPin, Phone, Mail, Clock, Navigation } from 'lucide-react'
-import { useMemo } from 'react'
-
-// FloatingPaths component for animated background - optimized for smoothness
-function FloatingPaths({ position }: { position: number }) {
-    // Memoize paths and durations to prevent re-renders
-    const paths = useMemo(() => {
-        return Array.from({ length: 15 }, (_, i) => {
-            // Pre-calculate duration to avoid Math.random() on every render
-            const baseDuration = 25;
-            const variation = (i % 5) * 3; // Use modulo instead of random
-            const duration = baseDuration + variation;
-            
-            // Create curved paths that are visible within the viewBox
-            const startX = 50 + (i * 60 * position);
-            const startY = 100 + (i * 40);
-            const midX1 = startX + 200;
-            const midY1 = startY + 100;
-            const midX2 = startX + 400;
-            const midY2 = startY + 150;
-            const endX = startX + 600;
-            const endY = startY + 200;
-            
-            return {
-                id: i,
-                d: `M${startX} ${startY}C${midX1} ${midY1},${midX2} ${midY2},${endX} ${endY}`,
-                width: 1.5 + i * 0.05,
-                opacity: 0.25 + i * 0.03,
-                duration,
-            };
-        });
-    }, [position]);
-
-    return (
-        <div 
-            className="absolute inset-0 pointer-events-none overflow-hidden"
-            style={{ 
-                transform: 'translateZ(0)',
-                zIndex: 0,
-            }}
-        >
-            <svg
-                className="w-full h-full"
-                viewBox="0 0 1200 800"
-                fill="none"
-                preserveAspectRatio="xMidYMid slice"
-                style={{ width: '100%', height: '100%' }}
-            >
-                <title>Background Paths</title>
-                {paths.map((path) => (
-                    <motion.path
-                        key={path.id}
-                        d={path.d}
-                        stroke="#9CA3AF"
-                        strokeWidth={path.width}
-                        strokeOpacity={path.opacity}
-                        strokeLinecap="round"
-                        fill="none"
-                        initial={{ pathLength: 0 }}
-                        animate={{
-                            pathLength: 1,
-                        }}
-                        transition={{
-                            duration: path.duration,
-                            repeat: Number.POSITIVE_INFINITY,
-                            ease: "linear",
-                            repeatType: "loop",
-                            repeatDelay: path.id * 0.3,
-                        }}
-                    />
-                ))}
-            </svg>
-        </div>
-    );
-}
 
 const Location = () => {
   const { ref, isInView } = useScrollAnimation()
@@ -83,26 +9,25 @@ const Location = () => {
   const mapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3580.1234567890!2d28.0544!3d-26.1076!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDA2JzI3LjQiUyAyOMKwMDMnMTUuOCJF!5e0!3m2!1sen!2sza!4v1234567890123!5m2!1sen!2sza"
 
   return (
-    <div className="min-h-screen relative">
-      {/* Background Paths - covers entire page until footer */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <FloatingPaths position={1} />
-        <FloatingPaths position={-1} />
-      </div>
-      
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative bg-white z-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+      <section className="relative bg-gray-800 z-10 -mt-20 md:-mt-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 pt-32 md:pt-40">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0.0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: 0.3,
+              duration: 0.8,
+              ease: "easeInOut",
+            }}
+            viewport={{ once: true }}
             className="max-w-3xl mx-auto text-center"
           >
-            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 tracking-tight text-gray-800">
+            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 tracking-tight text-white">
               Visit Our Practice
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-300">
               Located in the heart of Sandton, Johannesburg
             </p>
           </motion.div>
@@ -227,7 +152,7 @@ const Location = () => {
       </section>
 
       {/* Additional Info Section */}
-      <section className="relative py-12 bg-gray-50 z-10">
+      <section className="relative py-12 pb-20 bg-white z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

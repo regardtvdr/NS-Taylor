@@ -264,8 +264,8 @@ const Analytics = () => {
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-800">{total}</div>
-              <div className="text-xs text-gray-600">Total</div>
+              <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">{total}</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">Total</div>
             </div>
           </div>
         </div>
@@ -273,12 +273,12 @@ const Analytics = () => {
           {segments.map((segment) => (
             <div key={segment.service} className="flex items-center space-x-3">
               <div
-                className="w-5 h-5 rounded flex-shrink-0 border border-gray-200"
+                className="w-5 h-5 rounded flex-shrink-0 border border-gray-200 dark:border-gray-700"
                 style={{ backgroundColor: segment.color }}
               />
               <div className="flex-1">
-                <div className="text-sm font-semibold text-gray-800">{segment.service}</div>
-                <div className="text-xs text-gray-600 font-medium">
+                <div className="text-sm font-semibold text-gray-800 dark:text-gray-100">{segment.service}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">
                   {segment.count} appointment{segment.count !== 1 ? 's' : ''} ({segment.percentage.toFixed(1)}%)
                 </div>
               </div>
@@ -327,7 +327,7 @@ const Analytics = () => {
             >
               <div className="flex items-center justify-between mb-1">
                  <div className="flex items-center space-x-3">
-                   <div className="w-16 text-sm font-semibold text-gray-800">{hour}</div>
+                   <div className="w-16 text-sm font-semibold text-gray-800 dark:text-gray-100">{hour}</div>
                    <div className={`text-sm font-semibold ${textColor}`}>
                      {count} {count === 1 ? 'appointment' : 'appointments'}
                    </div>
@@ -338,7 +338,7 @@ const Analytics = () => {
                   </div>
                 )}
               </div>
-              <div className="relative h-10 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+              <div className="relative h-10 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${percentage}%` }}
@@ -377,7 +377,7 @@ const Analytics = () => {
     : DENTISTS.find(d => d.name === selectedDentist)?.name || 'All Dentists'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 pb-24 md:pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 pb-24 md:pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -386,33 +386,33 @@ const Analytics = () => {
         >
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800 mb-2">
+              <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800 dark:text-gray-100 mb-2">
                 Analytics & Insights
               </h1>
-              <p className="text-gray-600">Hourly busyness analysis and staff workload</p>
+              <p className="text-gray-600 dark:text-gray-400">Hourly busyness analysis and staff workload</p>
             </div>
           </div>
 
           {/* Date Navigation and Filter */}
-          <div className="card p-6 mb-6 bg-white">
+          <div className="card p-6 mb-6 bg-white dark:bg-gray-800">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               {/* Date Navigation */}
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => navigateDate('prev')}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 >
-                  <ChevronLeft className="w-5 h-5 text-gray-600" />
+                  <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 </button>
                 <div className="flex items-center space-x-4">
-                  <Calendar className="w-5 h-5 text-gray-600" />
-                  <h2 className="text-xl font-display font-semibold text-gray-800">
+                  <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <h2 className="text-xl font-display font-semibold text-gray-800 dark:text-gray-100">
                     {format(selectedDate, 'EEEE, MMMM d, yyyy')}
                   </h2>
                   {!isSameDay(selectedDate, new Date()) && (
                     <button
                       onClick={goToToday}
-                      className="text-sm text-gray-600 hover:text-gray-800 underline"
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 underline"
                     >
                       Today
                     </button>
@@ -420,19 +420,19 @@ const Analytics = () => {
                 </div>
                 <button
                   onClick={() => navigateDate('next')}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 >
-                  <ChevronRight className="w-5 h-5 text-gray-600" />
+                  <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 </button>
               </div>
 
               {/* Dentist Filter */}
               <div className="flex items-center space-x-3">
-                <Filter className="w-5 h-5 text-gray-600" />
+                <Filter className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 <select
                   value={selectedDentist}
                   onChange={(e) => setSelectedDentist(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent"
                 >
                   <option value="all">All Dentists</option>
                   {DENTISTS.map((dentist) => (
@@ -452,58 +452,58 @@ const Analytics = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="card p-6 bg-white border-l-4 border-l-blue-500 shadow-md"
+            className="card p-6 bg-white dark:bg-gray-800 border-l-4 border-l-blue-500 dark:border-l-blue-400 shadow-md"
           >
             <div className="flex items-center justify-between mb-3">
-              <Users className="w-8 h-8 text-blue-600" />
+              <Users className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             </div>
-            <div className="text-3xl font-bold text-gray-800 mb-1">{totalAppointments}</div>
-            <div className="text-sm font-medium text-gray-700">Total Appointments</div>
-            <div className="text-xs text-gray-600 mt-1">{selectedDentistName}</div>
+            <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">{totalAppointments}</div>
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Appointments</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{selectedDentistName}</div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="card p-6 bg-white border-l-4 border-l-green-500 shadow-md"
+            className="card p-6 bg-white dark:bg-gray-800 border-l-4 border-l-green-500 dark:border-l-green-400 shadow-md"
           >
             <div className="flex items-center justify-between mb-3">
-              <TrendingUp className="w-8 h-8 text-green-600" />
+              <TrendingUp className="w-8 h-8 text-green-600 dark:text-green-400" />
             </div>
-            <div className="text-3xl font-bold text-gray-800 mb-1">{peakHour.hour || 'N/A'}</div>
-            <div className="text-sm font-medium text-gray-700">Peak Hour</div>
-            <div className="text-xs text-gray-600 mt-1">{peakHour.count} appointments</div>
+            <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">{peakHour.hour || 'N/A'}</div>
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Peak Hour</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{peakHour.count} appointments</div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="card p-6 bg-white border-l-4 border-l-purple-500 shadow-md"
+            className="card p-6 bg-white dark:bg-gray-800 border-l-4 border-l-purple-500 dark:border-l-purple-400 shadow-md"
           >
             <div className="flex items-center justify-between mb-3">
-              <BarChart3 className="w-8 h-8 text-purple-600" />
+              <BarChart3 className="w-8 h-8 text-purple-600 dark:text-purple-400" />
             </div>
-            <div className="text-3xl font-bold text-gray-800 mb-1">{maxBookings}</div>
-            <div className="text-sm font-medium text-gray-700">Max Hourly Load</div>
-            <div className="text-xs text-gray-600 mt-1">Busiest hour</div>
+            <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">{maxBookings}</div>
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Max Hourly Load</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">Busiest hour</div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="card p-6 bg-white border-l-4 border-l-orange-500 shadow-md"
+            className="card p-6 bg-white dark:bg-gray-800 border-l-4 border-l-orange-500 dark:border-l-orange-400 shadow-md"
           >
             <div className="flex items-center justify-between mb-3">
-              <Clock className="w-8 h-8 text-orange-600" />
+              <Clock className="w-8 h-8 text-orange-600 dark:text-orange-400" />
             </div>
-            <div className="text-3xl font-bold text-gray-800 mb-1">
+            <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">
               {totalAppointments > 0 ? (totalAppointments / 10).toFixed(1) : '0.0'}
             </div>
-            <div className="text-sm font-medium text-gray-700">Avg per Hour</div>
-            <div className="text-xs text-gray-600 mt-1">Across 10 hours</div>
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">Avg per Hour</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">Across 10 hours</div>
           </motion.div>
         </div>
 
@@ -513,25 +513,25 @@ const Analytics = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="card p-6 bg-white shadow-md"
+            className="card p-6 bg-white dark:bg-gray-800 shadow-md"
           >
             <div className="flex items-center space-x-2 mb-6">
-              <BarChart3 className="w-6 h-6 text-gray-800" />
-              <h2 className="text-2xl font-display font-bold text-gray-800">Hourly Busyness</h2>
+              <BarChart3 className="w-6 h-6 text-gray-800 dark:text-gray-100" />
+              <h2 className="text-2xl font-display font-bold text-gray-800 dark:text-gray-100">Hourly Busyness</h2>
             </div>
             <BarChart data={bookingsByHour} maxValue={maxBookings} />
-            <div className="mt-6 pt-4 border-t border-gray-200 flex items-center justify-center space-x-6 text-sm">
+            <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-center space-x-6 text-sm">
               <div className="flex items-center space-x-2">
                 <div className="w-4 h-4 bg-green-500 rounded"></div>
-                <span className="text-gray-700 font-medium">Low (1-2)</span>
+                <span className="text-gray-700 dark:text-gray-300 font-medium">Low (1-2)</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-                <span className="text-gray-700 font-medium">Medium (3-4)</span>
+                <span className="text-gray-700 dark:text-gray-300 font-medium">Medium (3-4)</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-4 h-4 bg-red-500 rounded"></div>
-                <span className="text-gray-700 font-medium">High (5+)</span>
+                <span className="text-gray-700 dark:text-gray-300 font-medium">High (5+)</span>
               </div>
             </div>
           </motion.div>
@@ -541,11 +541,11 @@ const Analytics = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="card p-6 bg-white shadow-md"
+            className="card p-6 bg-white dark:bg-gray-800 shadow-md"
           >
             <div className="flex items-center space-x-2 mb-6">
-              <Users className="w-6 h-6 text-gray-800" />
-              <h2 className="text-2xl font-display font-bold text-gray-800">Appointment Types</h2>
+              <Users className="w-6 h-6 text-gray-800 dark:text-gray-100" />
+              <h2 className="text-2xl font-display font-bold text-gray-800 dark:text-gray-100">Appointment Types</h2>
             </div>
             <PieChart data={bookingsByService} />
           </motion.div>

@@ -224,7 +224,7 @@ const HelpME = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 pb-24 md:pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 pb-24 md:pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -232,14 +232,14 @@ const HelpME = () => {
           className="mb-8"
         >
           <div className="flex items-center space-x-3 mb-2">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-              <HelpCircle className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+              <HelpCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800">
+              <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800 dark:text-gray-100">
                 HelpME!
               </h1>
-              <p className="text-gray-600">Your AI assistant for the staff portal</p>
+              <p className="text-gray-600 dark:text-gray-400">Your AI assistant for the staff portal</p>
             </div>
           </div>
         </motion.div>
@@ -251,7 +251,7 @@ const HelpME = () => {
           transition={{ delay: 0.1 }}
           className="mb-6"
         >
-          <p className="text-sm text-gray-600 mb-3">Quick questions:</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Quick questions:</p>
           <div className="flex flex-wrap gap-2">
             {quickQuestions.map((question, index) => (
               <motion.button
@@ -262,7 +262,7 @@ const HelpME = () => {
                   setInput(question)
                   inputRef.current?.focus()
                 }}
-                className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 hover:border-gray-300 hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 {question}
               </motion.button>
@@ -275,7 +275,7 @@ const HelpME = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="card bg-white p-0 overflow-hidden"
+          className="card bg-white dark:bg-gray-800 p-0 overflow-hidden"
         >
           {/* Messages */}
           <div className="h-[500px] overflow-y-auto p-6 space-y-4">
@@ -293,8 +293,8 @@ const HelpME = () => {
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                       message.role === 'user'
-                        ? 'bg-gray-800 text-white'
-                        : 'bg-blue-100 text-blue-600'
+                        ? 'bg-gray-800 dark:bg-gray-700 text-white'
+                        : 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
                     }`}
                   >
                     {message.role === 'user' ? (
@@ -306,8 +306,8 @@ const HelpME = () => {
                   <div
                     className={`flex-1 rounded-lg p-4 ${
                       message.role === 'user'
-                        ? 'bg-gray-800 text-white'
-                        : 'bg-gray-50 text-gray-800 border border-gray-200'
+                        ? 'bg-gray-800 dark:bg-gray-700 text-white'
+                        : 'bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-600'
                     }`}
                   >
                     <div className="whitespace-pre-line text-sm leading-relaxed">
@@ -315,7 +315,7 @@ const HelpME = () => {
                     </div>
                     <div
                       className={`text-xs mt-2 ${
-                        message.role === 'user' ? 'text-gray-300' : 'text-gray-500'
+                        message.role === 'user' ? 'text-gray-300 dark:text-gray-400' : 'text-gray-500 dark:text-gray-400'
                       }`}
                     >
                       {format(message.timestamp, 'HH:mm')}
@@ -331,14 +331,14 @@ const HelpME = () => {
                 animate={{ opacity: 1 }}
                 className="flex items-start space-x-3"
               >
-                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
                   <Bot className="w-4 h-4" />
                 </div>
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div className="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                   </div>
                 </div>
               </motion.div>
@@ -348,7 +348,7 @@ const HelpME = () => {
           </div>
 
           {/* Input Area */}
-          <div className="border-t border-gray-200 p-4 bg-gray-50">
+          <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-700">
             <div className="flex items-center space-x-3">
               <div className="flex-1 relative">
                 <input
@@ -358,10 +358,10 @@ const HelpME = () => {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask me anything about using the staff portal..."
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent"
                   disabled={isLoading}
                 />
-                <MessageCircle className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <MessageCircle className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
               </div>
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -370,14 +370,14 @@ const HelpME = () => {
                 disabled={!input.trim() || isLoading}
                 className={`p-3 rounded-lg transition-colors ${
                   !input.trim() || isLoading
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-gray-800 text-white hover:bg-gray-900'
+                    ? 'bg-gray-200 dark:bg-gray-600 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    : 'bg-gray-800 dark:bg-gray-600 text-white hover:bg-gray-900 dark:hover:bg-gray-500'
                 }`}
               >
                 <Send className="w-5 h-5" />
               </motion.button>
             </div>
-            <p className="text-xs text-gray-500 mt-2 text-center">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
               Press Enter to send, Shift+Enter for new line
             </p>
           </div>

@@ -48,7 +48,7 @@ const PrivacyPolicy = () => {
   ]
 
   return (
-    <div className="min-h-screen py-12 bg-gray-50">
+    <div className="min-h-screen py-12 pb-20 bg-gray-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

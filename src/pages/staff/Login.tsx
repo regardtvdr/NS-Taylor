@@ -23,16 +23,16 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    playSound('click')
+    // playSound('click')
 
     if (login(password)) {
-      playSound('success')
+      // playSound('success')
       if (rememberMe) {
         localStorage.setItem('remember_staff', 'true')
       }
       navigate('/staff/dashboard', { replace: true })
     } else {
-      playSound('error')
+      // playSound('error')
       setError('Incorrect password. Please try again.')
     }
   }
@@ -96,7 +96,7 @@ const Login = () => {
                   type="button"
                   onClick={() => {
                     setShowPassword(!showPassword)
-                    playSound('click')
+                    // playSound('click')
                   }}
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                 >

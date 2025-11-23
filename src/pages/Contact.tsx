@@ -22,29 +22,43 @@ const Contact = () => {
   }
 
   return (
-    <div className="min-h-screen py-12 bg-gray-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800 mb-4">
-            Get in Touch
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Have a question? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          {/* Contact Info */}
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <section className="relative bg-gray-800 z-10 -mt-20 md:-mt-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 pt-32 md:pt-40">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="space-y-8"
+            initial={{ opacity: 0.0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: 0.3,
+              duration: 0.8,
+              ease: "easeInOut",
+            }}
+            viewport={{ once: true }}
+            className="max-w-3xl mx-auto text-center"
           >
+            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 tracking-tight text-white">
+              Get in Touch
+            </h1>
+            <p className="text-lg text-gray-300">
+              Have a question? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Main Content Section */}
+      <section className="relative py-12 pb-20 bg-white z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            {/* Contact Info */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="space-y-8"
+            >
             <div>
               <h2 className="text-2xl font-display font-bold text-gray-800 mb-6">
                 Contact Information
@@ -88,30 +102,32 @@ const Contact = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br bg-gray-50 rounded-card p-6">
-              <h3 className="font-semibold text-gray-800 mb-3">Emergency Contact</h3>
-              <p className="text-gray-600 mb-2">
-                For dental emergencies outside business hours, please call:
-              </p>
-              <p className="text-xl font-bold text-gray-700">+27 11 123 4567</p>
-            </div>
-          </motion.div>
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <h3 className="font-semibold text-gray-800 mb-3">Emergency Contact</h3>
+                <p className="text-gray-600 mb-2">
+                  For dental emergencies outside business hours, please call:
+                </p>
+                <p className="text-xl font-bold text-gray-700">+27 11 123 4567</p>
+              </div>
+            </motion.div>
 
-          {/* Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-            className="card p-8"
-          >
+            {/* Contact Form */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="bg-white rounded-lg border border-gray-200 p-8"
+            >
             <h2 className="text-2xl font-display font-bold text-gray-800 mb-6">
               Send us a Message
             </h2>
 
             {submitted ? (
               <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
                 className="bg-gray-50 border-2 border-gray-200 rounded-card p-6 text-center"
               >
                 <CheckCircle className="w-12 h-12 text-gray-700 mx-auto mb-4" />
@@ -133,7 +149,7 @@ const Contact = () => {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="input-field"
+                    className="input-field bg-white"
                     placeholder="John Doe"
                   />
                 </div>
@@ -147,7 +163,7 @@ const Contact = () => {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="input-field"
+                    className="input-field bg-white"
                     placeholder="john@example.com"
                   />
                 </div>
@@ -160,7 +176,7 @@ const Contact = () => {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="input-field"
+                    className="input-field bg-white"
                     placeholder="+27 11 123 4567"
                   />
                 </div>
@@ -174,7 +190,7 @@ const Contact = () => {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     rows={6}
-                    className="input-field resize-none"
+                    className="input-field bg-white resize-none"
                     placeholder="Tell us how we can help..."
                   />
                 </div>
@@ -185,9 +201,10 @@ const Contact = () => {
                 </button>
               </form>
             )}
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   )
 }

@@ -182,17 +182,17 @@ const StaffDashboard = () => {
       total: newBooking.total,
     }
     setAllBookings((prev) => [...prev, appointment])
-    playSound('success')
+    // playSound('success')
     showToast('Booking created successfully!', 'success')
   }
 
   const handleQuickAction = (action: 'call' | 'whatsapp' | 'arrived', bookingId: string) => {
-    playSound('click')
+    // playSound('click')
     if (action === 'arrived') {
       setAllBookings((prev) =>
         prev.map((b) => (b.id === bookingId ? { ...b, status: 'arrived' as const } : b))
       )
-      playSound('success')
+      // playSound('success')
       showToast('Patient marked as arrived!', 'success')
     } else {
       showToast(`${action === 'call' ? 'Calling' : 'Opening WhatsApp'}...`, 'info')
@@ -200,7 +200,7 @@ const StaffDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -209,17 +209,17 @@ const StaffDashboard = () => {
           className="mb-8 flex items-center justify-between"
         >
           <div>
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800 mb-2">
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-gray-800 dark:text-gray-100 mb-2">
               Good Morning! 👋
             </h1>
-            <p className="text-gray-600">Here's what's happening today</p>
+            <p className="text-gray-600 dark:text-gray-400">Here's what's happening today</p>
           </div>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               setIsCreateModalOpen(true)
-              playSound('click')
+              // playSound('click')
             }}
             className="btn-staff-primary flex items-center space-x-2 shadow-lg"
           >
@@ -278,11 +278,11 @@ const StaffDashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -4 }}
-                className="card p-6 bg-white border-2 border-transparent hover:border-gray-200 transition-all duration-300"
+                className="card p-6 bg-white dark:bg-gray-800 border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700 transition-all duration-300"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className={`w-14 h-14 ${metric.bgColor} rounded-xl flex items-center justify-center`}>
-                    <Icon className={`w-7 h-7 ${metric.iconColor}`} />
+                  <div className={`w-14 h-14 ${metric.bgColor} dark:bg-gray-700 rounded-xl flex items-center justify-center`}>
+                    <Icon className={`w-7 h-7 ${metric.iconColor} dark:text-gray-300`} />
                   </div>
                 </div>
                 <div className="mb-2">
@@ -290,10 +290,10 @@ const StaffDashboard = () => {
                     value={metric.value}
                     prefix={metric.prefix || ''}
                     suffix={metric.suffix || ''}
-                    className="text-4xl font-bold text-gray-900"
+                    className="text-4xl font-bold text-gray-900 dark:text-gray-100"
                   />
                 </div>
-                <div className="text-sm font-medium text-gray-600">{metric.label}</div>
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400">{metric.label}</div>
               </motion.div>
             )
           })}
@@ -306,15 +306,15 @@ const StaffDashboard = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="card p-6 bg-white"
+              className="card p-6 bg-white dark:bg-gray-800"
             >
-              <h2 className="text-2xl font-display font-bold text-gray-800 mb-6">
+              <h2 className="text-2xl font-display font-bold text-gray-800 dark:text-gray-100 mb-6">
                 Next 7 Appointments
               </h2>
               <div className="space-y-3">
                 {nextAppointments.length === 0 ? (
-                  <div className="text-center py-12 text-gray-500">
-                    <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                  <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                    <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
                     <p>No appointments scheduled for today</p>
                   </div>
                 ) : (
@@ -324,28 +324,28 @@ const StaffDashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.3 + index * 0.05 }}
-                      className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all group"
+                      className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white dark:from-gray-700 dark:to-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition-all group"
                     >
                       <div className="flex items-center space-x-4 flex-1">
                         <div className="flex flex-col items-center min-w-[60px]">
-                          <Clock className="w-4 h-4 text-gray-600 mb-1" />
-                          <span className="text-lg font-bold text-gray-800">{apt.time}</span>
+                          <Clock className="w-4 h-4 text-gray-600 dark:text-gray-400 mb-1" />
+                          <span className="text-lg font-bold text-gray-800 dark:text-gray-100">{apt.time}</span>
                         </div>
-                        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                          <User className="w-6 h-6 text-gray-700" />
+                        <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                          <User className="w-6 h-6 text-gray-700 dark:text-gray-300" />
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900">{apt.patient}</h3>
-                          <p className="text-sm text-gray-600">{apt.service}</p>
-                          <p className="text-xs text-gray-500 mt-1">{apt.dentist}</p>
+                          <h3 className="font-semibold text-gray-900 dark:text-gray-100">{apt.patient}</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{apt.service}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{apt.dentist}</p>
                         </div>
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium ${
                             apt.status === 'arrived'
-                              ? 'bg-green-100 text-green-800'
+                              ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
                               : apt.status === 'confirmed'
-                              ? 'bg-blue-100 text-blue-800'
-                              : 'bg-orange-100 text-orange-800'
+                              ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
+                              : 'bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200'
                           }`}
                         >
                           {apt.status}
@@ -358,19 +358,19 @@ const StaffDashboard = () => {
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
                               onClick={() => handleQuickAction('call', apt.id)}
-                              className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                              className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
                               title="Call"
                             >
-                              <Phone className="w-4 h-4 text-gray-700" />
+                              <Phone className="w-4 h-4 text-gray-700 dark:text-gray-300" />
                             </motion.button>
                             <motion.button
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
                               onClick={() => handleQuickAction('whatsapp', apt.id)}
-                              className="p-2 bg-green-100 hover:bg-green-200 rounded-lg transition-colors"
+                              className="p-2 bg-green-100 dark:bg-green-900 hover:bg-green-200 dark:hover:bg-green-800 rounded-lg transition-colors"
                               title="WhatsApp"
                             >
-                              <MessageCircle className="w-4 h-4 text-green-700" />
+                              <MessageCircle className="w-4 h-4 text-green-700 dark:text-green-300" />
                             </motion.button>
                           </>
                         )}
@@ -379,10 +379,10 @@ const StaffDashboard = () => {
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             onClick={() => handleQuickAction('arrived', apt.id)}
-                            className="p-2 bg-teal-100 hover:bg-teal-200 rounded-lg transition-colors"
+                            className="p-2 bg-teal-100 dark:bg-teal-900 hover:bg-teal-200 dark:hover:bg-teal-800 rounded-lg transition-colors"
                             title="Mark Arrived"
                           >
-                            <CheckCircle className="w-4 h-4 text-teal-700" />
+                            <CheckCircle className="w-4 h-4 text-teal-700 dark:text-teal-300" />
                           </motion.button>
                         )}
                       </div>
@@ -398,9 +398,9 @@ const StaffDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="card p-6 bg-white"
+            className="card p-6 bg-white dark:bg-gray-800"
           >
-            <h2 className="text-2xl font-display font-bold text-gray-800 mb-6">Calendar</h2>
+            <h2 className="text-2xl font-display font-bold text-gray-800 dark:text-gray-100 mb-6">Calendar</h2>
             <div className="calendar-wrapper">
               <DayPicker
                 mode="single"
@@ -437,6 +437,12 @@ const StaffDashboard = () => {
                   --rdp-outline-selected: 2px solid var(--rdp-accent-color);
                   font-size: 14px;
                 }
+                .dark .calendar-wrapper .rdp {
+                  --rdp-accent-color: #9ca3af;
+                  --rdp-background-color: #1f2937;
+                  --rdp-accent-color-dark: #6b7280;
+                  --rdp-background-color-dark: #111827;
+                }
                 .calendar-wrapper .rdp-month {
                   margin: 0;
                 }
@@ -451,6 +457,9 @@ const StaffDashboard = () => {
                   letter-spacing: 0.05em;
                   padding: 8px 0;
                 }
+                .dark .calendar-wrapper .rdp-head_cell {
+                  color: #9ca3af;
+                }
                 .calendar-wrapper .rdp-day {
                   width: var(--rdp-cell-size);
                   height: var(--rdp-cell-size);
@@ -460,10 +469,18 @@ const StaffDashboard = () => {
                   border-radius: 8px;
                   transition: all 0.2s;
                 }
+                .dark .calendar-wrapper .rdp-day {
+                  color: #e5e7eb;
+                }
                 .calendar-wrapper .rdp-day:hover:not(.rdp-day_disabled):not(.rdp-day_selected) {
                   background-color: #f3f4f6;
                   border-color: #d1d5db;
                   color: #111827;
+                }
+                .dark .calendar-wrapper .rdp-day:hover:not(.rdp-day_disabled):not(.rdp-day_selected) {
+                  background-color: #374151;
+                  border-color: #4b5563;
+                  color: #f3f4f6;
                 }
                 .calendar-wrapper .rdp-day_selected {
                   background-color: #0D47A1 !important;
@@ -474,12 +491,21 @@ const StaffDashboard = () => {
                   font-weight: 700;
                   color: #1f2937;
                 }
+                .dark .calendar-wrapper .rdp-day_today {
+                  color: #e5e7eb;
+                }
                 .calendar-wrapper .rdp-day_today:not(.rdp-day_selected) {
                   border: 2px solid #6b7280;
+                }
+                .dark .calendar-wrapper .rdp-day_today:not(.rdp-day_selected) {
+                  border: 2px solid #9ca3af;
                 }
                 .calendar-wrapper .rdp-day_disabled {
                   color: #d1d5db;
                   opacity: 0.5;
+                }
+                .dark .calendar-wrapper .rdp-day_disabled {
+                  color: #4b5563;
                 }
                 .calendar-wrapper .rdp-caption {
                   font-weight: 600;
@@ -488,11 +514,20 @@ const StaffDashboard = () => {
                   padding: 8px 0;
                   margin-bottom: 8px;
                 }
+                .dark .calendar-wrapper .rdp-caption {
+                  color: #f3f4f6;
+                }
                 .calendar-wrapper .rdp-button {
                   color: #374151;
                 }
+                .dark .calendar-wrapper .rdp-button {
+                  color: #9ca3af;
+                }
                 .calendar-wrapper .rdp-button:hover {
                   background-color: #f3f4f6;
+                }
+                .dark .calendar-wrapper .rdp-button:hover {
+                  background-color: #374151;
                 }
                 .calendar-wrapper .rdp-nav_button {
                   width: 32px;
@@ -502,14 +537,17 @@ const StaffDashboard = () => {
                   background-color: #f3f4f6;
                   border-radius: 6px;
                 }
+                .dark .calendar-wrapper .rdp-nav_button:hover {
+                  background-color: #374151;
+                }
               `}</style>
             </div>
-            <div className="mt-6 p-4 bg-gray-50 rounded-xl">
-              <p className="text-sm text-gray-700 mb-2">
-                <span className="font-semibold text-gray-800">{format(selectedDate, 'MMMM d, yyyy')}</span>
+            <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
+              <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                <span className="font-semibold text-gray-800 dark:text-gray-100">{format(selectedDate, 'MMMM d, yyyy')}</span>
               </p>
               {hasBookings(selectedDate) && (
-                <p className="text-sm font-medium text-gray-800">
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
                   {getBookingCountForDate(selectedDate)} {getBookingCountForDate(selectedDate) === 1 ? 'appointment' : 'appointments'}
                 </p>
               )}
