@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
@@ -14,15 +14,32 @@ const BookingConfirmation = () => {
   const navigate = useNavigate()
   const bookingData = location.state as BookingData | null
   const [confettiFired, setConfettiFired] = useState(false)
-  const [bookingSaved, setBookingSaved] = useState(false)
   const { createBooking } = useBookings()
   const { createPatient, searchPatients } = usePatients()
+  const hasSavedRef = useRef(false) // Use ref to prevent duplicate saves even in StrictMode
+  const savedBookingIdRef = useRef<string | null>(null) // Track which booking we've saved
+
+  // Create a unique identifier for this booking attempt
+  const bookingId = bookingData 
+    ? `${bookingData.patientDetails.email}-${bookingData.date ? format(bookingData.date, 'yyyy-MM-dd') : ''}-${bookingData.time}`
+    : null
 
   // Save booking to Firebase - separate effect to prevent duplicates
   useEffect(() => {
-    if (!bookingData || bookingSaved) return
+    if (!bookingData || !bookingId || hasSavedRef.current || savedBookingIdRef.current === bookingId) {
+      return
+    }
 
     const saveBooking = async () => {
+      // Double-check with ref before proceeding (critical for StrictMode)
+      if (hasSavedRef.current || savedBookingIdRef.current === bookingId) {
+        return
+      }
+      
+      // Set both guards immediately to prevent race conditions
+      hasSavedRef.current = true
+      savedBookingIdRef.current = bookingId
+
       try {
         // First, check if patient exists or create new patient
         const [firstName, ...lastNameParts] = bookingData.patientDetails.firstName.split(' ')
@@ -56,16 +73,18 @@ const BookingConfirmation = () => {
           total: bookingData.service?.price || 0,
         })
         
-        setBookingSaved(true)
       } catch (error) {
         console.error('Failed to save booking:', error)
-        // Still show confirmation even if save fails
-        setBookingSaved(true)
+        // Reset refs on error so user can retry if needed
+        hasSavedRef.current = false
+        savedBookingIdRef.current = null
       }
     }
 
     saveBooking()
-  }, [bookingData, bookingSaved, createBooking, createPatient, searchPatients])
+    // Only depend on bookingData and bookingId - functions are stable from hooks
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookingData, bookingId])
 
   // Confetti effect - separate to prevent re-running booking save
   useEffect(() => {
