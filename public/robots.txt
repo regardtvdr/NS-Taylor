@@ -3,5 +3,5 @@ Allow: /
 Disallow: /dashboard
 Disallow: /booking/confirm
 
-Sitemap: https://premiumdental.co.za/sitemap.xml
+Sitemap: https://drnstaylor.co.za/sitemap.xml
 

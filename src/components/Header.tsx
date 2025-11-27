@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Calendar, LogIn } from 'lucide-react'
+import { Menu, X, LogIn } from 'lucide-react'
 import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
 
 const Header = () => {
@@ -24,11 +24,17 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-display font-bold text-gray-800 tracking-tight">
-              Premium Dental
+            <img 
+              src="/logo.jpg" 
+              alt="Dr. NS Taylor and Associates Inc." 
+              className="h-12 w-12 object-contain"
+              width="48"
+              height="48"
+              loading="eager"
+              fetchPriority="high"
+            />
+            <span className="text-xs sm:text-2xl font-display font-bold text-black tracking-tight">
+              Dr. NS Taylor & Associates Inc.
             </span>
           </Link>
 
@@ -72,9 +78,11 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-gray-700"
+            className="md:hidden p-2 text-gray-700 min-w-[44px] min-h-[44px] flex items-center justify-center"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
+            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             {mobileMenuOpen ? (
               <X className="w-6 h-6" />
@@ -88,10 +96,13 @@ const Header = () => {
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
+              id="mobile-menu"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="md:hidden overflow-hidden"
+              role="navigation"
+              aria-label="Mobile navigation"
             >
               <div className="py-4 space-y-4">
                 {navItems.map((item) => (

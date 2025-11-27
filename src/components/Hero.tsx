@@ -6,7 +6,11 @@ import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
 
 const Hero = () => {
   return (
-    <section className="relative min-h-[85vh] md:min-h-[90vh] flex items-center justify-center overflow-hidden">
+    <section 
+      className="relative min-h-[85vh] md:min-h-[90vh] flex items-center justify-center overflow-hidden"
+      aria-label="Welcome to Dr. NS Taylor and Associates dental practice"
+      role="banner"
+    >
       {/* Parallax Background */}
       <div className="absolute inset-0 z-0">
         <div
@@ -15,8 +19,8 @@ const Hero = () => {
             backgroundImage: 'url(https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=1920&q=75&auto=format&fit=crop)',
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/70 to-gray-900/90" />
-        <div className="absolute inset-0 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/75 to-black/90" />
+        <div className="absolute inset-0 backdrop-blur-[2px]" />
       </div>
 
       {/* Content */}
@@ -32,9 +36,9 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.8 }}
           >
-            Premium Dental Care
+            Dr. NS Taylor & Associates Inc.
             <br />
-            <span className="text-gray-300 font-normal">In South Africa</span>
+            <span className="text-gray-300 font-normal">Quality Dental Care</span>
           </motion.h1>
           
           <motion.p
@@ -77,14 +81,16 @@ const Hero = () => {
               <Link 
                 to="/about" 
                 className="btn-secondary text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 relative overflow-hidden group w-full sm:w-auto text-center block"
+                aria-label="Learn more about Dr. NS Taylor and Associates dental practice"
               >
                 <motion.div
                   className="absolute inset-0 bg-gray-100"
                   initial={{ scale: 0, opacity: 0 }}
                   whileHover={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.3 }}
+                  aria-hidden="true"
                 />
-                <span className="relative z-10">Learn More</span>
+                <span className="relative z-10">Learn More About Us</span>
               </Link>
             </motion.div>
           </motion.div>
@@ -114,9 +120,10 @@ const Hero = () => {
 
       {/* Scroll Indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 hidden sm:block"
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 2 }}
+        aria-hidden="true"
       >
         <div className="w-6 h-10 border-2 border-white/50 rounded-full flex items-start justify-center p-2">
           <motion.div

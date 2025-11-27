@@ -56,7 +56,7 @@ const Testimonials = () => {
                   height="40"
                 />
                 <div>
-                  <h4 className="font-semibold text-gray-900 text-sm">{review.name}</h4>
+                  <p className="font-semibold text-gray-900 text-sm">{review.name}</p>
                   <div className="flex items-center space-x-0.5 mt-1">
                     {[...Array(5)].map((_, i) => (
                       <Star

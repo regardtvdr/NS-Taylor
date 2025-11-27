@@ -15,7 +15,7 @@ const Chatbot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hello! 👋 Welcome to Premium Dental Practice. I'm here to help answer any questions you might have. Whether you need help booking an appointment, understanding our services, finding our location, or anything else about our practice - I'm here to assist. Take your time, and feel free to ask me anything. How can I help you today?",
+      text: "Hello! 👋 Welcome to Dr. NS Taylor and Associates Inc. I'm here to help answer any questions you might have. Whether you need help booking an appointment, understanding our services, finding our location, or anything else about our practice - I'm here to assist. Take your time, and feel free to ask me anything. How can I help you today?",
       sender: 'bot',
       timestamp: new Date(),
     },
@@ -62,7 +62,7 @@ const Chatbot = () => {
       lowerMessage === 'hallo' ||
       lowerMessage === 'howdy'
     ) {
-      return "Hello! Welcome to Premium Dental Practice. I'm here to help you with any questions you might have. Whether you need help booking an appointment, understanding our services, or finding information about our practice - I'm here to assist. What would you like to know?"
+      return "Hello! Welcome to Dr. NS Taylor and Associates Inc. I'm here to help you with any questions you might have. Whether you need help booking an appointment, understanding our services, or finding information about our practice - I'm here to assist. What would you like to know?"
     }
 
     // Thank you responses - Check early (with more variations)
@@ -278,9 +278,9 @@ const Chatbot = () => {
         return "Our phone number is +27 11 123 4567. You can call us Monday to Friday between 8:00 AM and 5:00 PM. If you call outside these hours, please leave a message and we'll get back to you. For emergencies, you can also call this number."
       }
       if (lowerMessage.includes('email') || lowerMessage.includes('e-mail')) {
-        return "Our email address is info@premiumdental.co.za. You can send us an email anytime, and we'll respond within 24 hours during business days. You can also use the Contact page on our website to send us a message directly."
+        return "Our email address is info@drnstaylor.co.za. You can send us an email anytime, and we'll respond within 24 hours during business days. You can also use the Contact page on our website to send us a message directly."
       }
-      return "You can reach us in several ways: Phone us at +27 11 123 4567 (Monday-Friday, 8 AM - 5 PM), Email us at info@premiumdental.co.za, or visit our Contact page to send us a message through the website. We're here to help!"
+      return "You can reach us in several ways: Phone us at +27 11 123 4567 (Monday-Friday, 8 AM - 5 PM), Email us at info@drnstaylor.co.za, or visit our Contact page to send us a message through the website. We're here to help!"
     }
 
     // Cancellation
@@ -379,9 +379,9 @@ const Chatbot = () => {
       lowerMessage.includes('what is premium dental')
     ) {
       if (lowerMessage.includes('mission') || lowerMessage.includes('values') || lowerMessage.includes('believe')) {
-        return "Our mission at Premium Dental is to provide exceptional dental services in a comfortable, modern environment while making the booking process as simple and convenient as possible. We believe everyone deserves access to world-class dental care. We've revolutionized the appointment booking experience with our innovative online platform, reducing no-shows by 42% and ensuring every patient receives the care they need when they need it."
+        return "Our mission at Dr. NS Taylor and Associates Inc. is to provide exceptional dental services in a comfortable, modern environment while making the booking process as simple and convenient as possible. We believe everyone deserves access to world-class dental care. We've revolutionized the appointment booking experience with our innovative online platform, reducing no-shows by 42% and ensuring every patient receives the care they need when they need it."
       }
-      return "Premium Dental Practice is a premier dental practice in South Africa, dedicated to providing exceptional dental care with a focus on patient comfort and satisfaction. We're an award-winning practice with an expert team of highly qualified dentists. We use modern technology and state-of-the-art equipment to provide patient-centered care. You can learn more about us on our 'About Us' page in the top menu."
+      return "Dr. NS Taylor and Associates Inc. is a premier dental practice in South Africa, dedicated to providing exceptional dental care with a focus on patient comfort and satisfaction. We're an award-winning practice with an expert team of highly qualified dentists. We use modern technology and state-of-the-art equipment to provide patient-centered care. You can learn more about us on our 'About Us' page in the top menu."
     }
 
     // Team / Dentists - more specific questions
@@ -427,7 +427,7 @@ const Chatbot = () => {
       lowerMessage.includes('contact form') ||
       lowerMessage.includes('get in touch')
     ) {
-      return "You can contact us in several ways: 1) Use the Contact page on our website to send us a message directly, 2) Call us at +27 11 123 4567 (Monday-Friday, 8 AM - 5 PM), 3) Email us at info@premiumdental.co.za, or 4) Visit us at 123 Medical Boulevard, Sandton, Johannesburg. For emergencies outside business hours, call our emergency line at +27 11 123 4567."
+      return "You can contact us in several ways: 1) Use the Contact page on our website to send us a message directly, 2) Call us at +27 11 123 4567 (Monday-Friday, 8 AM - 5 PM), 3) Email us at info@drnstaylor.co.za, or 4) Visit us at 123 Medical Boulevard, Sandton, Johannesburg. For emergencies outside business hours, call our emergency line at +27 11 123 4567."
     }
 
     // Location page / Directions
@@ -464,7 +464,7 @@ const Chatbot = () => {
       if (lowerMessage.includes('terms') || lowerMessage.includes('service') || lowerMessage.includes('agreement')) {
         return "Our Terms of Service cover appointment booking, cancellation policies, payment terms, and your rights as a consumer under the Consumer Protection Act (CPA). You can read the full Terms of Service by clicking 'Terms of Service' in the footer or visiting /terms on our website."
       }
-      return "We take your privacy seriously and comply with POPIA (Protection of Personal Information Act), CPA (Consumer Protection Act), and ECTA (Electronic Communications and Transactions Act). We only collect necessary information for providing dental services and managing appointments. You can read our full Privacy Policy by clicking 'Privacy Policy' in the footer or visiting /privacy on our website. Our Information Officer is Dr. Jane Smith (privacy@premiumdental.co.za)."
+      return "We take your privacy seriously and comply with POPIA (Protection of Personal Information Act), CPA (Consumer Protection Act), and ECTA (Electronic Communications and Transactions Act). We only collect necessary information for providing dental services and managing appointments. You can read our full Privacy Policy by clicking 'Privacy Policy' in the footer or visiting /privacy on our website. Our Information Officer is Dr. Jane Smith (privacy@drnstaylor.co.za)."
     }
 
     // What to expect / First visit
@@ -653,8 +653,9 @@ const Chatbot = () => {
       {/* Chat Button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-4 md:right-6 w-12 h-12 md:w-14 md:h-14 bg-gray-800 text-white rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-gray-900 transition-colors"
-        whileHover={{ scale: 1.1 }}
+        className="fixed bottom-6 right-4 md:right-6 w-12 h-12 md:w-14 md:h-14 rounded-full shadow-lg flex items-center justify-center z-50 transition-colors"
+        style={{ backgroundColor: '#FFBE33' }}
+        whileHover={{ scale: 1.1, backgroundColor: '#E5A82E' }}
         whileTap={{ scale: 0.9 }}
         aria-label="Open chat"
       >
@@ -666,7 +667,7 @@ const Chatbot = () => {
               animate={{ rotate: 0, opacity: 1 }}
               exit={{ rotate: 90, opacity: 0 }}
             >
-              <X className="w-6 h-6" />
+              <X className="w-6 h-6 text-black" />
             </motion.div>
           ) : (
             <motion.div
@@ -675,7 +676,7 @@ const Chatbot = () => {
               animate={{ rotate: 0, opacity: 1 }}
               exit={{ rotate: -90, opacity: 0 }}
             >
-              <MessageCircle className="w-6 h-6" />
+              <MessageCircle className="w-6 h-6 text-black" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -697,7 +698,7 @@ const Chatbot = () => {
                   <Bot className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">Premium Dental Assistant</h3>
+                  <h3 className="font-semibold">Dr. NS Taylor Assistant</h3>
                   <p className="text-xs text-gray-300">We're here to help</p>
                 </div>
               </div>

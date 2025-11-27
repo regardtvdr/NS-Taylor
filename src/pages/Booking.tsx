@@ -3,21 +3,31 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import BookingStepper from '../components/booking/BookingStepper'
+import BranchSelection from '../components/booking/BranchSelection'
 import ServiceSelection from '../components/booking/ServiceSelection'
 import DentistSelection from '../components/booking/DentistSelection'
 import DateTimeSelection from '../components/booking/DateTimeSelection'
 import PatientDetails from '../components/booking/PatientDetails'
 import DisclaimerStep from '../components/booking/DisclaimerStep'
+import POPIAConsentStep from '../components/booking/POPIAConsentStep'
+import PaymentStep from '../components/booking/PaymentStep'
 import { BookingData, Service, Dentist } from '../types'
 import { useBookings } from '../hooks/useBookings'
 
-const STEPS = ['Service', 'Dentist', 'Date & Time', 'Details', 'Disclaimer']
+const STEPS = ['Branch', 'Service', 'Dentist', 'Date & Time', 'Details', 'Cancellation', 'POPIA', 'Payment']
+
+interface ExtendedBookingData extends BookingData {
+  branch: string | null
+  paymentMethod: 'ozow' | 'instant-eft' | null
+  popiaAccepted: boolean
+}
 
 const Booking = () => {
   const navigate = useNavigate()
   const { bookings } = useBookings()
   const [currentStep, setCurrentStep] = useState(1)
-  const [bookingData, setBookingData] = useState<BookingData>({
+  const [bookingData, setBookingData] = useState<ExtendedBookingData>({
+    branch: null,
     service: null,
     dentist: null,
     date: null,
@@ -34,29 +44,37 @@ const Booking = () => {
       calendar: false,
     },
     disclaimerAccepted: false,
+    popiaAccepted: false,
+    paymentMethod: null,
   })
 
-  const updateBookingData = (updates: Partial<BookingData>) => {
+  const updateBookingData = (updates: Partial<ExtendedBookingData>) => {
     setBookingData((prev) => ({ ...prev, ...updates }))
   }
 
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return bookingData.service !== null
+        return bookingData.branch !== null
       case 2:
-        return bookingData.dentist !== null
+        return bookingData.service !== null
       case 3:
-        return bookingData.date !== null && bookingData.time !== ''
+        return bookingData.dentist !== null
       case 4:
+        return bookingData.date !== null && bookingData.time !== ''
+      case 5:
         return (
           bookingData.patientDetails.firstName !== '' &&
           bookingData.patientDetails.lastName !== '' &&
           bookingData.patientDetails.email !== '' &&
           bookingData.patientDetails.phone !== ''
         )
-      case 5:
+      case 6:
         return bookingData.disclaimerAccepted === true
+      case 7:
+        return bookingData.popiaAccepted === true
+      case 8:
+        return bookingData.paymentMethod !== null
       default:
         return false
     }
@@ -77,7 +95,7 @@ const Booking = () => {
     }
   }
 
-  const handlePatientDetailsChange = useCallback((updates: Partial<BookingData['patientDetails']> | { reminders: BookingData['reminders'] }) => {
+  const handlePatientDetailsChange = useCallback((updates: Partial<ExtendedBookingData['patientDetails']> | { reminders: ExtendedBookingData['reminders'] }) => {
     if ('reminders' in updates) {
       updateBookingData({ reminders: updates.reminders })
     } else {
@@ -90,6 +108,11 @@ const Booking = () => {
       }))
     }
   }, [])
+
+  // When branch changes, reset dentist selection
+  const handleBranchSelect = (branch: string) => {
+    updateBookingData({ branch, dentist: null })
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-6 md:py-12 pb-16 md:pb-20">
@@ -108,20 +131,28 @@ const Booking = () => {
         >
           <AnimatePresence mode="wait">
             {currentStep === 1 && (
+              <BranchSelection
+                selectedBranch={bookingData.branch}
+                onSelect={handleBranchSelect}
+              />
+            )}
+
+            {currentStep === 2 && (
               <ServiceSelection
                 selectedService={bookingData.service}
                 onSelect={(service: Service) => updateBookingData({ service })}
               />
             )}
 
-            {currentStep === 2 && (
+            {currentStep === 3 && (
               <DentistSelection
                 selectedDentist={bookingData.dentist}
                 onSelect={(dentist: Dentist) => updateBookingData({ dentist })}
+                selectedBranch={bookingData.branch}
               />
             )}
 
-            {currentStep === 3 && (
+            {currentStep === 4 && (
               <DateTimeSelection
                 selectedDate={bookingData.date}
                 selectedTime={bookingData.time}
@@ -132,17 +163,32 @@ const Booking = () => {
               />
             )}
 
-            {currentStep === 4 && (
+            {currentStep === 5 && (
               <PatientDetails
                 data={bookingData}
                 onChange={handlePatientDetailsChange}
               />
             )}
 
-            {currentStep === 5 && (
+            {currentStep === 6 && (
               <DisclaimerStep
                 accepted={bookingData.disclaimerAccepted}
                 onAccept={(accepted) => updateBookingData({ disclaimerAccepted: accepted })}
+              />
+            )}
+
+            {currentStep === 7 && (
+              <POPIAConsentStep
+                accepted={bookingData.popiaAccepted}
+                onAccept={(accepted) => updateBookingData({ popiaAccepted: accepted })}
+              />
+            )}
+
+            {currentStep === 8 && (
+              <PaymentStep
+                selectedMethod={bookingData.paymentMethod}
+                onSelect={(method) => updateBookingData({ paymentMethod: method })}
+                servicePrice={bookingData.service?.price || 0}
               />
             )}
           </AnimatePresence>
@@ -165,11 +211,12 @@ const Booking = () => {
             <button
               onClick={handleNext}
               disabled={!canProceed()}
-              className={`btn-primary flex items-center justify-center space-x-2 text-sm w-full sm:w-auto ${
-                !canProceed() ? 'opacity-40 cursor-not-allowed' : ''
+              className={`flex items-center justify-center space-x-2 text-sm w-full sm:w-auto py-3 px-6 rounded-lg text-white font-semibold transition-all ${
+                !canProceed() ? 'opacity-40 cursor-not-allowed' : 'hover:opacity-90'
               }`}
+              style={{ backgroundColor: '#4E4D50' }}
             >
-              <span>{currentStep === STEPS.length ? 'Complete Booking' : 'Continue'}</span>
+              <span>{currentStep === STEPS.length ? 'Pay R50 & Complete Booking' : 'Continue'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

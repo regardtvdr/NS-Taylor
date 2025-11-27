@@ -23,6 +23,7 @@ export interface Dentist {
   qualifications?: string
   bio?: string
   avatar?: string
+  branch?: string
 }
 
 export interface BookingData {

@@ -7,7 +7,7 @@ const TermsOfService = () => {
       icon: FileText,
       title: 'Acceptance of Terms',
       content: [
-        'By accessing and using the Premium Dental Practice website and booking platform, you agree to be bound by these Terms of Service.',
+        'By accessing and using the Dr. NS Taylor and Associates Inc. website and booking platform, you agree to be bound by these Terms of Service.',
         'If you do not agree to these terms, please do not use our services.',
         'These terms apply to all users of the website, including patients, visitors, and staff members.',
         'We reserve the right to modify these terms at any time, and your continued use constitutes acceptance of modified terms.',
@@ -95,7 +95,7 @@ const TermsOfService = () => {
       icon: FileText,
       title: 'Intellectual Property',
       content: [
-        'All content on this website, including text, graphics, logos, and images, is the property of Premium Dental Practice.',
+        'All content on this website, including text, graphics, logos, and images, is the property of Dr. NS Taylor and Associates Inc.',
         'You may not reproduce, distribute, or use our content without prior written permission.',
         'The website design and booking platform are proprietary and protected by copyright.',
         'You may not use our trademarks or branding without authorization.',
@@ -105,7 +105,7 @@ const TermsOfService = () => {
       icon: AlertCircle,
       title: 'Limitation of Liability',
       content: [
-        'To the maximum extent permitted by law, Premium Dental Practice shall not be liable for any direct, indirect, incidental, special, or consequential damages.',
+        'To the maximum extent permitted by law, Dr. NS Taylor and Associates Inc. shall not be liable for any direct, indirect, incidental, special, or consequential damages.',
         'Our total liability for any claims arising from these terms or our services shall not exceed the amount you paid for the specific service.',
         'We are not liable for any loss or damage resulting from your failure to comply with these terms.',
         'We are not responsible for any third-party services or websites linked from our platform.',
@@ -155,7 +155,7 @@ const TermsOfService = () => {
           className="card p-8 md:p-12 mb-8"
         >
           <p className="text-lg text-gray-700 leading-relaxed mb-6">
-            Welcome to Premium Dental Practice. These Terms of Service ("Terms") govern your use of our
+            Welcome to Dr. NS Taylor and Associates Inc. These Terms of Service ("Terms") govern your use of our
             website, booking platform, and dental services. By accessing or using our services, you agree
             to be bound by these Terms. If you do not agree to these Terms, please do not use our services.
           </p>
@@ -214,7 +214,7 @@ const TermsOfService = () => {
           </p>
           <div className="space-y-2 text-gray-700 mb-6">
             <p>
-              <strong>Email:</strong> info@premiumdental.co.za
+              <strong>Email:</strong> info@drnstaylor.co.za
             </p>
             <p>
               <strong>Phone:</strong> +27 11 123 4567

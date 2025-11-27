@@ -6,7 +6,7 @@ import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
 
 const CTA = () => {
   return (
-    <section className="py-12 md:py-16 lg:py-20 bg-gray-900 relative overflow-hidden">
+    <section className="py-12 md:py-16 lg:py-20 relative overflow-hidden" style={{ backgroundColor: '#434448' }}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

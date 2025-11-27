@@ -157,7 +157,7 @@ const PrivacyPolicy = () => {
           className="card p-8 md:p-12 mb-8"
         >
           <p className="text-lg text-gray-700 leading-relaxed mb-6">
-            At Premium Dental Practice, we are committed to protecting your privacy and ensuring
+            At Dr. NS Taylor and Associates Inc., we are committed to protecting your privacy and ensuring
             the security of your personal information. This Privacy Policy explains how
             we collect, use, disclose, and safeguard your information when you use our
             booking platform and services, in compliance with South African legislation including
@@ -220,7 +220,7 @@ const PrivacyPolicy = () => {
           </p>
           <div className="space-y-2 text-gray-700 mb-6">
             <p>
-              <strong>Email:</strong> privacy@premiumdental.co.za
+              <strong>Email:</strong> privacy@drnstaylor.co.za
             </p>
             <p>
               <strong>Phone:</strong> +27 11 123 4567

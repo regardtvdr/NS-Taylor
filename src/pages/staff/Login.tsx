@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Eye, EyeOff, AlertCircle, Calendar } from 'lucide-react'
+import { Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 
 const Login = () => {
@@ -51,17 +51,17 @@ const Login = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: 'spring' }}
-              className="w-20 h-20 bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
+              className="mx-auto mb-4"
             >
-              <Calendar className="w-10 h-10 text-white" />
+              <img src="/logo.jpg" alt="Dr. NS Taylor and Associates Inc." className="h-20 w-auto object-contain mx-auto" />
             </motion.div>
             <motion.h1
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-3xl font-display font-bold text-gray-800 mb-2"
+              className="text-2xl font-display font-bold text-taylor mb-2"
             >
-              Premium Dental
+              Dr. NS Taylor & Associates
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}

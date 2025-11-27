@@ -1,7 +1,7 @@
 # PowerShell script to start the development server
 # This bypasses PowerShell execution policy issues
 
-Write-Host "Starting Premium Dental Booking System..." -ForegroundColor Cyan
+Write-Host "Starting Dr. NS Taylor and Associates Inc. Booking System..." -ForegroundColor Cyan
 Write-Host ""
 
 # Check if node_modules exists

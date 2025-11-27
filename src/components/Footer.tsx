@@ -3,43 +3,51 @@ import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from 'lucide-react'
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white border-0 outline-none overflow-hidden">
+    <footer className="text-white border-0 outline-none overflow-hidden" style={{ backgroundColor: '#434448' }}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 border-0 outline-none">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Brand */}
           <div>
-            <h3 className="text-xl font-display font-bold mb-4">Premium Dental</h3>
-            <p className="text-gray-400 text-sm">
+            <h3 className="text-xl font-display font-bold text-white mb-3">Dr. NS Taylor & Associates Inc.</h3>
+            <p className="text-gray-200 text-sm mb-4">
               Your trusted partner for exceptional dental care in South Africa.
             </p>
+            <img 
+              src="/logo.jpg" 
+              alt="Dr. NS Taylor & Associates Inc. Logo" 
+              className="h-24 w-24 object-contain"
+              width="96"
+              height="96"
+              loading="lazy"
+            />
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold mb-4">Quick Links</h4>
+            <h4 className="font-semibold text-white mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/" className="text-gray-400 hover:text-gray-300 transition-colors">
+                <Link to="/" className="text-gray-200 hover:text-white transition-colors">
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="text-gray-400 hover:text-teal-400 transition-colors">
+                <Link to="/about" className="text-gray-200 hover:text-white transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link to="/booking" className="text-gray-400 hover:text-teal-400 transition-colors">
+                <Link to="/booking" className="text-gray-200 hover:text-white transition-colors">
                   Book Appointment
                 </Link>
               </li>
               <li>
-                <Link to="/location" className="text-gray-400 hover:text-teal-400 transition-colors">
+                <Link to="/location" className="text-gray-200 hover:text-white transition-colors">
                   Location
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-gray-400 hover:text-teal-400 transition-colors">
+                <Link to="/contact" className="text-gray-200 hover:text-white transition-colors">
                   Contact
                 </Link>
               </li>
@@ -48,15 +56,15 @@ const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
+            <h4 className="font-semibold text-white mb-4">Legal</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/privacy" className="text-gray-400 hover:text-teal-400 transition-colors">
+                <Link to="/privacy" className="text-gray-200 hover:text-white transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms" className="text-gray-400 hover:text-teal-400 transition-colors">
+                <Link to="/terms" className="text-gray-200 hover:text-white transition-colors">
                   Terms of Service
                 </Link>
               </li>
@@ -65,40 +73,40 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h4 className="font-semibold mb-4">Contact</h4>
+            <h4 className="font-semibold text-white mb-4">Contact</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex items-center space-x-2">
-                <Phone className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-400">+27 11 123 4567</span>
+                <Phone className="w-4 h-4 text-gray-200" />
+                <span className="text-gray-200">+27 11 123 4567</span>
               </li>
               <li className="flex items-center space-x-2">
-                <Mail className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-400">info@premiumdental.co.za</span>
+                <Mail className="w-4 h-4 text-gray-200" />
+                <span className="text-gray-200">info@drnstaylor.co.za</span>
               </li>
               <li className="flex items-start space-x-2">
-                <MapPin className="w-4 h-4 text-gray-400 mt-1" />
-                <span className="text-gray-400">
+                <MapPin className="w-4 h-4 text-gray-200 mt-1" />
+                <span className="text-gray-200">
                   123 Medical Boulevard<br />
                   Sandton, Johannesburg 2196
                 </span>
               </li>
             </ul>
             <div className="flex space-x-4 mt-4">
-              <a href="#" className="text-gray-400 hover:text-teal-400 transition-colors">
-                <Facebook className="w-5 h-5" />
+              <a href="#" className="text-gray-200 hover:text-white transition-colors p-2 -m-2" aria-label="Visit our Facebook page">
+                <Facebook className="w-5 h-5" aria-hidden="true" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-teal-400 transition-colors">
-                <Instagram className="w-5 h-5" />
+              <a href="#" className="text-gray-200 hover:text-white transition-colors p-2 -m-2" aria-label="Visit our Instagram page">
+                <Instagram className="w-5 h-5" aria-hidden="true" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-teal-400 transition-colors">
-                <Twitter className="w-5 h-5" />
+              <a href="#" className="text-gray-200 hover:text-white transition-colors p-2 -m-2" aria-label="Visit our Twitter page">
+                <Twitter className="w-5 h-5" aria-hidden="true" />
               </a>
             </div>
           </div>
         </div>
 
-        <div className="mt-8 pt-8 text-center text-sm text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Premium Dental Practice. All rights reserved.</p>
+        <div className="mt-8 pt-8 border-t border-gray-500 text-center text-sm text-gray-200">
+          <p>&copy; {new Date().getFullYear()} Dr. NS Taylor and Associates Inc. All rights reserved.</p>
         </div>
       </div>
     </footer>

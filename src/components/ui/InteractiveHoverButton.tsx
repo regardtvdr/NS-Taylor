@@ -15,8 +15,10 @@ const InteractiveHoverButton = React.forwardRef<
   const baseClasses = "group relative cursor-pointer overflow-hidden rounded-full border p-2 text-center font-semibold transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
   
   const variantClasses = variant === "primary"
-    ? "bg-gray-800 border-gray-800 text-white"
+    ? "text-white"
     : "bg-white border-gray-300 text-gray-800"
+  
+  const primaryStyle = variant === "primary" ? { backgroundColor: '#4E4D50', borderColor: '#4E4D50' } : {}
 
   const content = (
     <>
@@ -35,6 +37,7 @@ const InteractiveHoverButton = React.forwardRef<
     return (
       <div
         className={`${baseClasses} ${variantClasses} ${className}`}
+        style={primaryStyle}
         {...(props as any)}
       >
         {content}
@@ -46,6 +49,7 @@ const InteractiveHoverButton = React.forwardRef<
     <button
       ref={ref}
       className={`${baseClasses} ${variantClasses} ${className}`}
+      style={primaryStyle}
       {...props}
     >
       {content}

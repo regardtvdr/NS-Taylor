@@ -95,6 +95,7 @@ export const REVIEWS: Review[] = [
 ]
 
 export const DENTISTS: Dentist[] = [
+  // Ruimsig Branch
   {
     id: '1',
     name: 'Dr. Sarah Johnson',
@@ -105,6 +106,7 @@ export const DENTISTS: Dentist[] = [
     qualifications: 'BDS, MDS',
     bio: 'Specialized in preventive care and cosmetic dentistry with over 12 years of experience.',
     avatar: 'https://i.pravatar.cc/150?img=47',
+    branch: 'Ruimsig',
   },
   {
     id: '2',
@@ -116,6 +118,7 @@ export const DENTISTS: Dentist[] = [
     qualifications: 'BDS, MDS, PhD',
     bio: 'Expert in orthodontic treatments and dental implants. Known for precision and patient care.',
     avatar: 'https://i.pravatar.cc/150?img=12',
+    branch: 'Ruimsig',
   },
   {
     id: '3',
@@ -127,6 +130,44 @@ export const DENTISTS: Dentist[] = [
     qualifications: 'BDS, MDS',
     bio: 'Passionate about creating beautiful smiles through advanced cosmetic and restorative procedures.',
     avatar: 'https://i.pravatar.cc/150?img=33',
+    branch: 'Ruimsig',
+  },
+  // Weltevreden Park Branch
+  {
+    id: '4',
+    name: 'Dr. Amanda Nkosi',
+    specialization: 'Prosthodontics',
+    experience: 14,
+    rating: 4.9,
+    reviews: 198,
+    qualifications: 'BChD, MChD (Prosthodontics)',
+    bio: 'Specialist in removable and fixed prosthodontic treatments, restoring smiles with precision and care.',
+    avatar: 'https://i.pravatar.cc/150?img=44',
+    branch: 'Weltevreden Park',
+  },
+  {
+    id: '5',
+    name: 'Dr. David van der Berg',
+    specialization: 'Endodontics',
+    experience: 11,
+    rating: 4.8,
+    reviews: 167,
+    qualifications: 'BDS, MDS (Endodontics)',
+    bio: 'Expert in root canal treatments and saving natural teeth. Committed to pain-free procedures.',
+    avatar: 'https://i.pravatar.cc/150?img=68',
+    branch: 'Weltevreden Park',
+  },
+  {
+    id: '6',
+    name: 'Dr. Thandi Mkhize',
+    specialization: 'Pediatric Dentistry',
+    experience: 9,
+    rating: 4.9,
+    reviews: 145,
+    qualifications: 'BDS, PDD (Pediatric Dentistry)',
+    bio: 'Dedicated to making dental visits fun for children. Specializes in family-friendly dental care.',
+    avatar: 'https://i.pravatar.cc/150?img=48',
+    branch: 'Weltevreden Park',
   },
 ]
 

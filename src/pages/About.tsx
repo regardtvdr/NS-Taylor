@@ -35,7 +35,7 @@ const About = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+      <section className="relative py-20 text-white" style={{ backgroundColor: '#434448' }}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -44,11 +44,11 @@ const About = () => {
             className="max-w-3xl"
           >
             <h1 className="text-5xl md:text-6xl font-display font-bold mb-6">
-              About Premium Dental
+              About Dr. NS Taylor & Associates Inc.
             </h1>
             <p className="text-xl text-gray-200 mb-8">
-              We are a premier dental practice in South Africa, dedicated to providing
-              exceptional dental care with a focus on patient comfort and satisfaction.
+              A family-oriented dental practice dedicated to providing compassionate, 
+              comprehensive dental care for patients of all ages.
             </p>
           </motion.div>
         </div>
@@ -65,18 +65,17 @@ const About = () => {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-4xl font-display font-bold text-gray-800 mb-6">
-                Our Mission
+                About Us
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                At Premium Dental, we believe that everyone deserves access to world-class
-                dental care. Our mission is to provide exceptional dental services in a
-                comfortable, modern environment while making the booking process as simple
-                and convenient as possible.
+                DR NS Taylor & Associates Inc. is a family-oriented dental practice dedicated to providing 
+                compassionate, comprehensive dental care for patients of all ages. We offer a full range of 
+                services, from routine cleanings and exams to advanced procedures, including removable and 
+                fixed prosthodontic treatments - all in one convenient and safe location.
               </p>
               <p className="text-lg text-gray-600 leading-relaxed">
-                We've revolutionized the appointment booking experience with our innovative
-                online platform, reducing no-shows by 42% and ensuring that every patient
-                receives the care they need when they need it.
+                Our experienced team is committed to creating a comfortable, welcoming environment where 
+                families feel at ease. Your smile is our priority!
               </p>
             </motion.div>
           </div>
@@ -116,9 +115,10 @@ const About = () => {
                   initial={{ opacity: 0, y: 30 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: index * 0.1, duration: 0.6 }}
-                  className="card p-6 text-center border-2 border-gray-800"
+                  className="card p-6 text-center border-2"
+                  style={{ borderColor: '#4E4D50' }}
                 >
-                  <div className="w-16 h-16 bg-gradient-to-br from-gray-700 to-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#4E4D50' }}>
                     <Icon className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -133,7 +133,7 @@ const About = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-br from-gray-700 to-gray-800 text-white">
+      <section className="py-20 text-white" style={{ backgroundColor: '#434448' }}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

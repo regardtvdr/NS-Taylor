@@ -1,17 +1,32 @@
 import { motion } from 'framer-motion'
-import { useScrollAnimation } from '../hooks/useScrollAnimation'
-import { MapPin, Phone, Mail, Clock, Navigation } from 'lucide-react'
+import { MapPin, Phone, Clock, Navigation } from 'lucide-react'
 
 const Location = () => {
-  const { ref, isInView } = useScrollAnimation()
-
-  // Sandton, Johannesburg coordinates (example location)
-  const mapEmbedUrl = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3580.1234567890!2d28.0544!3d-26.1076!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDA2JzI3LjQiUyAyOMKwMDMnMTUuOCJF!5e0!3m2!1sen!2sza!4v1234567890123!5m2!1sen!2sza"
+  const locations = [
+    {
+      name: 'Ruimsig',
+      address: 'Unit 5, Ruimsig Country Office Park',
+      street: '129 Hole In One St, Ruimsig',
+      postalCode: '1724',
+      phone: '+27 11 123 4567',
+      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3580.5!2d27.8727!3d-26.0833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDA1JzAwLjAiUyAyN8KwNTInMjEuNyJF!5e0!3m2!1sen!2sza!4v1234567890123!5m2!1sen!2sza',
+      directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=Ruimsig+Country+Office+Park+129+Hole+In+One+St+Ruimsig',
+    },
+    {
+      name: 'Weltevreden Park',
+      address: 'The Gables Unit no.2',
+      street: '879 Tennis Rd, Weltevreden Park Ext 25',
+      postalCode: '1709',
+      phone: '+27 11 123 4567',
+      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3580.5!2d27.9167!3d-26.1333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDA4JzAwLjAiUyAyN8KwNTUnMDAuMCJF!5e0!3m2!1sen!2sza!4v1234567890123!5m2!1sen!2sza',
+      directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=The+Gables+879+Tennis+Rd+Weltevreden+Park',
+    },
+  ]
 
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative bg-gray-800 z-10 -mt-20 md:-mt-24">
+      <section className="relative z-10 -mt-20 md:-mt-24" style={{ backgroundColor: '#434448' }}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 pt-32 md:pt-40">
           <motion.div
             initial={{ opacity: 0.0, y: 40 }}
@@ -25,31 +40,33 @@ const Location = () => {
             className="max-w-3xl mx-auto text-center"
           >
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 tracking-tight text-white">
-              Visit Our Practice
+              Visit Our Practices
             </h1>
             <p className="text-lg text-gray-300">
-              Located in the heart of Sandton, Johannesburg
+              Two convenient locations to serve you better
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Map Section */}
-      <section className="relative py-8 md:py-12 bg-white z-10">
+      {/* Locations Section */}
+      <section className="relative py-12 md:py-16 bg-white z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-            {/* Map */}
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+            {locations.map((location, index) => (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                key={location.name}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                className="rounded-lg overflow-hidden shadow-md border border-gray-200"
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                className="bg-white rounded-lg border-2 overflow-hidden"
+                style={{ borderColor: '#4E4D50' }}
               >
+                {/* Map */}
                 <div className="aspect-video w-full">
                   <iframe
-                    src={mapEmbedUrl}
+                    src={location.mapUrl}
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
@@ -57,102 +74,78 @@ const Location = () => {
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                     className="w-full h-full"
-                    title="Premium Dental Practice Location"
+                    title={`${location.name} Location`}
                   />
                 </div>
-              </motion.div>
-            </div>
 
-            {/* Contact Info */}
-            <div className="lg:col-span-1">
-              <motion.div
-                ref={ref}
-                initial={{ opacity: 0, x: 20 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.6 }}
-                className="bg-white rounded-lg border-2 border-gray-800 p-4 md:p-6 space-y-4 md:space-y-6"
-              >
-                <div>
-                  <h2 className="text-lg md:text-xl font-display font-semibold text-gray-800 mb-3 md:mb-4 tracking-tight">
-                    Contact Information
+                {/* Location Details */}
+                <div className="p-6 space-y-4">
+                  <h2 className="text-2xl font-display font-bold text-gray-800">
+                    {location.name}
                   </h2>
-                </div>
 
-                <div className="space-y-4 md:space-y-5">
                   {/* Address */}
-                  <div className="flex items-start space-x-2 md:space-x-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-50 rounded-md flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#4E4D50' }}>
+                      <MapPin className="w-5 h-5 text-white" />
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900 mb-1">Address</h3>
                       <p className="text-sm text-gray-600 leading-relaxed">
-                        123 Medical Boulevard<br />
-                        Sandton, Johannesburg 2196<br />
-                        South Africa
+                        {location.address}<br />
+                        {location.street}<br />
+                        {location.postalCode}
                       </p>
                     </div>
                   </div>
 
                   {/* Phone */}
-                  <div className="flex items-start space-x-2 md:space-x-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-50 rounded-md flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#4E4D50' }}>
+                      <Phone className="w-5 h-5 text-white" />
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900 mb-1">Phone</h3>
-                      <p className="text-sm text-gray-600">+27 11 123 4567</p>
-                      <p className="text-xs text-gray-500 mt-0.5">Mon-Fri: 8:00 AM - 5:00 PM</p>
-                    </div>
-                  </div>
-
-                  {/* Email */}
-                  <div className="flex items-start space-x-2 md:space-x-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-50 rounded-md flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-900 mb-1">Email</h3>
-                      <p className="text-sm text-gray-600">info@premiumdental.co.za</p>
+                      <p className="text-sm text-gray-600">{location.phone}</p>
                     </div>
                   </div>
 
                   {/* Hours */}
-                  <div className="flex items-start space-x-2 md:space-x-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-50 rounded-md flex items-center justify-center flex-shrink-0">
-                      <Clock className="w-4 h-4 md:w-5 md:h-5 text-gray-700" />
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 rounded-md flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#4E4D50' }}>
+                      <Clock className="w-5 h-5 text-white" />
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900 mb-1">Business Hours</h3>
                       <div className="text-sm text-gray-600 space-y-0.5">
-                        <p>Monday - Friday: 8:00 AM - 5:00 PM</p>
-                        <p>Saturday: 9:00 AM - 1:00 PM</p>
-                        <p>Sunday: Closed</p>
+                        <p>Monday - Friday: 8:00 AM - 4:30 PM</p>
+                        <p>Saturday & Sunday: Closed</p>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Directions Button */}
-                <div className="pt-4 border-t border-gray-100">
-                  <a
-                    href="https://www.google.com/maps/dir/?api=1&destination=Sandton+Johannesburg"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full btn-primary flex items-center justify-center space-x-2 text-sm"
-                  >
-                    <Navigation className="w-4 h-4" />
-                    <span>Get Directions</span>
-                  </a>
+                  {/* Directions Button */}
+                  <div className="pt-4">
+                    <a
+                      href={location.directionsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full flex items-center justify-center space-x-2 text-sm py-3 px-6 rounded-lg text-white font-semibold transition-all hover:opacity-90"
+                      style={{ backgroundColor: '#4E4D50' }}
+                    >
+                      <Navigation className="w-4 h-4" />
+                      <span>Get Directions to {location.name}</span>
+                    </a>
+                  </div>
                 </div>
               </motion.div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Additional Info Section */}
-      <section className="relative py-8 md:py-12 pb-16 md:pb-20 bg-white z-10">
+      {/* General Info Section */}
+      <section className="relative py-8 md:py-12 pb-16 md:pb-20 bg-gray-50 z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -166,23 +159,23 @@ const Location = () => {
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              <div className="bg-white rounded-lg border-2 border-gray-800 p-6">
+              <div className="bg-white rounded-lg border-2 p-6" style={{ borderColor: '#4E4D50' }}>
                 <h3 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-wide">
                   By Car
                 </h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  We're located on Medical Boulevard, with easy access from the N1 and M1 highways. 
-                  Free parking is available on-site for all patients.
+                  Both our practices have easy access from major routes. 
+                  Free parking is available on-site at both locations for all patients.
                 </p>
               </div>
 
-              <div className="bg-white rounded-lg border-2 border-gray-800 p-6">
+              <div className="bg-white rounded-lg border-2 p-6" style={{ borderColor: '#4E4D50' }}>
                 <h3 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-wide">
-                  Public Transport
+                  Contact Us
                 </h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  The practice is easily accessible via the Gautrain Sandton Station, 
-                  located just 5 minutes walk away. Multiple bus routes also serve the area.
+                  Not sure which location is best for you? Contact us and we'll help you 
+                  find the most convenient practice for your needs.
                 </p>
               </div>
             </div>
@@ -194,4 +187,3 @@ const Location = () => {
 }
 
 export default Location
-

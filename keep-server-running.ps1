@@ -1,7 +1,7 @@
 # Keep Server Running Script
 # This script will restart the server if it stops
 
-Write-Host "Starting Premium Dental Booking Server..." -ForegroundColor Cyan
+Write-Host "Starting Dr. NS Taylor and Associates Inc. Booking Server..." -ForegroundColor Cyan
 Write-Host "Press Ctrl+C to stop" -ForegroundColor Yellow
 Write-Host ""
 

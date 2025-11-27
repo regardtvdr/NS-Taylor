@@ -6,20 +6,32 @@ import { DENTISTS } from '../../utils/constants'
 interface DentistSelectionProps {
   selectedDentist: Dentist | null
   onSelect: (dentist: Dentist) => void
+  selectedBranch?: string | null
 }
 
-const DentistSelection = ({ selectedDentist, onSelect }: DentistSelectionProps) => {
+const DentistSelection = ({ selectedDentist, onSelect, selectedBranch }: DentistSelectionProps) => {
+  // Filter dentists based on selected branch
+  const branchName = selectedBranch === 'weltevreden' ? 'Weltevreden Park' : selectedBranch === 'ruimsig' ? 'Ruimsig' : null
+  const filteredDentists = branchName 
+    ? DENTISTS.filter(d => d.branch === branchName)
+    : DENTISTS
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl md:text-2xl font-display font-semibold text-gray-800 mb-1.5 tracking-tight">
           Select Your Dentist
         </h2>
-        <p className="text-xs md:text-sm text-gray-500">Choose your preferred dental professional</p>
+        <p className="text-xs md:text-sm text-gray-500">
+          {branchName 
+            ? `Choose your preferred dental professional at ${branchName}`
+            : 'Choose your preferred dental professional'
+          }
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-        {DENTISTS.map((dentist, index) => (
+        {filteredDentists.map((dentist, index) => (
           <motion.button
             key={dentist.id}
             initial={{ opacity: 0, y: 20 }}
