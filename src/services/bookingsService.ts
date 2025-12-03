@@ -7,6 +7,7 @@ const bookingsService = new FirestoreService('bookings')
 
 export interface FirestoreBooking {
   id?: string
+  practiceId: string // Required: 'ruimsig' | 'weltevreden'
   patient: string
   email?: string
   phone?: string
@@ -15,6 +16,7 @@ export interface FirestoreBooking {
   date: string | any
   time: string
   status: 'confirmed' | 'pending' | 'cancelled' | 'completed' | 'arrived' | 'no-show'
+  source?: 'online' | 'phone' | 'walk-in'
   deposit?: number
   total?: number
   isRecurring?: boolean
@@ -33,6 +35,7 @@ export interface FirestoreBooking {
 const convertFirestoreBooking = (fb: FirestoreBooking): BookingDetail => {
   return {
     id: fb.id || '',
+    practiceId: fb.practiceId || 'ruimsig', // Default for legacy bookings
     patient: fb.patient,
     email: fb.email || '',
     phone: fb.phone || '',
@@ -41,16 +44,20 @@ const convertFirestoreBooking = (fb: FirestoreBooking): BookingDetail => {
     date: timestampToDateString(fb.date),
     time: fb.time,
     status: fb.status,
+    source: fb.source || 'online',
     deposit: fb.deposit || 0,
     total: fb.total || 0,
     isRecurring: fb.isRecurring || false,
     recurrence: fb.recurrence,
+    createdAt: fb.createdAt ? timestampToDateString(fb.createdAt) : undefined,
+    updatedAt: fb.updatedAt ? timestampToDateString(fb.updatedAt) : undefined,
   }
 }
 
 // Convert app booking to Firestore format
 const convertToFirestore = (booking: Partial<BookingDetail>): Partial<FirestoreBooking> => {
   const firestoreBooking: Partial<FirestoreBooking> = {
+    practiceId: booking.practiceId,
     patient: booking.patient,
     email: booking.email,
     phone: booking.phone,
@@ -59,6 +66,7 @@ const convertToFirestore = (booking: Partial<BookingDetail>): Partial<FirestoreB
     date: booking.date ? dateStringToTimestamp(booking.date) : undefined,
     time: booking.time,
     status: booking.status,
+    source: booking.source || 'online',
     deposit: booking.deposit,
     total: booking.total,
     isRecurring: booking.isRecurring,
@@ -172,6 +180,62 @@ export const bookingsServiceMethods = {
   // Update booking status
   async updateStatus(id: string, status: BookingDetail['status']): Promise<void> {
     await bookingsService.update(id, { status })
+  },
+
+  // Get bookings for specific practices (for staff dashboard)
+  async getByPractices(practiceIds: string[]): Promise<BookingDetail[]> {
+    if (!practiceIds || practiceIds.length === 0) {
+      return []
+    }
+    
+    const collectionRef = collection(db, 'bookings')
+    const q = query(
+      collectionRef,
+      where('practiceId', 'in', practiceIds),
+      orderBy('date', 'desc'),
+      orderBy('time', 'asc')
+    )
+    const querySnapshot = await getDocs(q)
+    const bookings = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+    return bookings.map((b) => convertFirestoreBooking(b as FirestoreBooking))
+  },
+
+  // Get bookings for a single practice
+  async getByPractice(practiceId: string): Promise<BookingDetail[]> {
+    const collectionRef = collection(db, 'bookings')
+    const q = query(
+      collectionRef,
+      where('practiceId', '==', practiceId),
+      orderBy('date', 'desc'),
+      orderBy('time', 'asc')
+    )
+    const querySnapshot = await getDocs(q)
+    const bookings = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+    return bookings.map((b) => convertFirestoreBooking(b as FirestoreBooking))
+  },
+
+  // Get bookings for a practice on a specific date
+  async getByPracticeAndDate(practiceId: string, date: string): Promise<BookingDetail[]> {
+    const dateTimestamp = dateStringToTimestamp(date)
+    const collectionRef = collection(db, 'bookings')
+    const q = query(
+      collectionRef,
+      where('practiceId', '==', practiceId),
+      where('date', '==', dateTimestamp),
+      orderBy('time', 'asc')
+    )
+    const querySnapshot = await getDocs(q)
+    const bookings = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+    return bookings.map((b) => convertFirestoreBooking(b as FirestoreBooking))
   },
 }
 

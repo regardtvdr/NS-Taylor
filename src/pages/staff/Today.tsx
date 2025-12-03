@@ -1,19 +1,21 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Phone, MessageCircle, CheckCircle, Clock, User, Plus, UserPlus, LayoutGrid, List, AlertCircle, Move, Mail, Search, X } from 'lucide-react'
-import { format, isSameDay } from 'date-fns'
+import { Phone, MessageCircle, CheckCircle, Clock, User, Plus, UserPlus, LayoutGrid, List, AlertCircle, Move, Mail, Search, X, Eye } from 'lucide-react'
+import { format, isSameDay, isToday } from 'date-fns'
 import { useToast } from '../../contexts/ToastContext'
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts'
 import CreateBookingModal from '../../components/staff/CreateBookingModal'
 import BookingDetailModal from '../../components/staff/BookingDetailModal'
 import PatientSearch from '../../components/staff/PatientSearch'
-import { DENTISTS } from '../../utils/constants'
 import { Patient } from '../../types'
 import { useBookings } from '../../hooks/useBookings'
 import { usePatients } from '../../hooks/usePatients'
+import { useFilteredDentists } from '../../hooks/useFilteredDentists'
+import { checkBookingConflict, isPastBooking } from '../../utils/conflictDetection'
 
 type TodayAppointment = {
   id: string
+  practiceId: string
   time: string
   patient: string
   service: string
@@ -25,8 +27,9 @@ type TodayAppointment = {
 }
 
 const Today = () => {
-  const { bookings, createBooking, updateBooking, updateBookingStatus } = useBookings()
+  const { bookings, createBooking, updateBooking, updateBookingStatus } = useBookings({ filterByUserPractices: true })
   const { patients, createPatient } = usePatients()
+  const { dentists: DENTISTS } = useFilteredDentists()
   
   const [dentistDates, setDentistDates] = useState<Record<string, Date>>(() => {
     const today = new Date()
@@ -36,6 +39,19 @@ const Today = () => {
     })
     return dates
   })
+
+  // Reset to today when component mounts or dentists change
+  useEffect(() => {
+    const today = new Date()
+    setDentistDates((prev) => {
+      const updated: Record<string, Date> = {}
+      DENTISTS.forEach((dentist) => {
+        // Only update if not already set or if it's a future date
+        updated[dentist.name] = prev[dentist.name] || today
+      })
+      return updated
+    })
+  }, [DENTISTS])
 
   // Convert bookings to appointments format - filter by selected dates from dentistDates
   const appointments = useMemo(() => {
@@ -48,10 +64,13 @@ const Today = () => {
         if (!dentistSelectedDate) return false
         const bookingDateStr = b.date
         const selectedDateStr = format(dentistSelectedDate, 'yyyy-MM-dd')
-        return bookingDateStr === selectedDateStr && (b.status === 'confirmed' || b.status === 'pending' || b.status === 'arrived' || b.status === 'no-show')
+        // Strict equality check - must match exactly
+        const matches = bookingDateStr === selectedDateStr
+        return matches && (b.status === 'confirmed' || b.status === 'pending' || b.status === 'arrived' || b.status === 'no-show')
       })
       .map(b => ({
         id: b.id,
+        practiceId: b.practiceId, // Store practiceId for later use
         time: b.time,
         patient: b.patient,
         service: b.service,
@@ -76,8 +95,9 @@ const Today = () => {
   const dragStartPositionRef = useRef<{ x: number; y: number; scrollTop: number } | null>(null)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'timeline' | 'hourly'>('timeline')
+  const [highlightEmptySlots, setHighlightEmptySlots] = useState(false)
   const [selectedEmergencyPatient, setSelectedEmergencyPatient] = useState<Patient | null>(null)
-  const [pendingEmergencyBooking, setPendingEmergencyBooking] = useState<{ id: string; patient: string; time: string; dentist: string } | null>(null)
+  const [pendingEmergencyBooking, setPendingEmergencyBooking] = useState<{ id: string; patient: string; time: string; dentist: string; patientData: Patient | null } | null>(null)
   const [pendingTimeChange, setPendingTimeChange] = useState<{ appointmentId: string; patient: string; oldTime: string; oldDentist: string; newTime: string; newDentist: string } | null>(null)
   const [timeChangeMode, setTimeChangeMode] = useState(false)
   const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false)
@@ -168,7 +188,30 @@ const Today = () => {
     const offsetX = e.clientX - rect.left - rect.width / 2
     const offsetY = e.clientY - rect.top - rect.height / 2
     
-    draggedElementRef.current = element
+    // Clone the element for dragging (don't move the React-managed element)
+    const clonedElement = element.cloneNode(true) as HTMLElement
+    clonedElement.style.position = 'fixed'
+    clonedElement.style.left = `${rect.left}px`
+    clonedElement.style.top = `${rect.top}px`
+    clonedElement.style.width = `${rect.width}px`
+    clonedElement.style.zIndex = '999999'
+    clonedElement.style.pointerEvents = 'none'
+    clonedElement.style.opacity = '1'
+    clonedElement.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.5)'
+    clonedElement.style.border = '2px solid #3b82f6'
+    clonedElement.style.borderRadius = '8px'
+    // Ensure solid background
+    const computedBg = window.getComputedStyle(element).backgroundColor
+    if (!computedBg || computedBg === 'rgba(0, 0, 0, 0)' || computedBg === 'transparent') {
+      clonedElement.style.backgroundColor = 'white'
+    } else {
+      clonedElement.style.backgroundColor = computedBg
+    }
+    document.body.appendChild(clonedElement)
+    
+    // Hide the original element during drag
+    element.style.opacity = '0.3'
+    
     dragOffsetRef.current = { x: offsetX, y: offsetY }
     dragStartPositionRef.current = {
       x: startX,
@@ -182,6 +225,9 @@ const Today = () => {
       startY,
     })
     setDraggedItem(appointmentId)
+    
+    // Store reference to the cloned element (not the original)
+    draggedElementRef.current = clonedElement
     
     // Store initial rect for width calculation
     const initialRect = rect
@@ -200,13 +246,9 @@ const Today = () => {
       // Update position directly via CSS for smooth performance
       requestAnimationFrame(() => {
         if (draggedElementRef.current) {
-          draggedElementRef.current.style.position = 'fixed'
+          // Update the cloned element's position
           draggedElementRef.current.style.left = `${left}px`
           draggedElementRef.current.style.top = `${top}px`
-          draggedElementRef.current.style.width = `${initialRect.width}px`
-          draggedElementRef.current.style.zIndex = '1000'
-          draggedElementRef.current.style.transform = 'none'
-          draggedElementRef.current.style.pointerEvents = 'none'
         }
       })
       
@@ -214,18 +256,22 @@ const Today = () => {
       const timelineContainerEl = document.getElementById('timeline-container')
       if (timelineContainerEl) {
         const containerRect = timelineContainerEl.getBoundingClientRect()
-        const y = moveEvent.clientY - containerRect.top + timelineContainerEl.scrollTop
+        const x = moveEvent.clientX - containerRect.left
+        const y = moveEvent.clientY - containerRect.top + window.scrollY
         
-        // Find the slot element at this position
+        // Find the slot element at this position (check both X and Y)
         const slotElements = timelineContainerEl.querySelectorAll('[data-slot-time]')
         let foundSlot: { time: string; dentist: string } | null = null
         
         for (const slotEl of slotElements) {
           const slotRect = slotEl.getBoundingClientRect()
-          const slotTop = slotRect.top - containerRect.top + timelineContainerEl.scrollTop
+          const slotLeft = slotRect.left - containerRect.left
+          const slotRight = slotLeft + slotRect.width
+          const slotTop = slotRect.top - containerRect.top + window.scrollY
           const slotBottom = slotTop + slotRect.height
           
-          if (y >= slotTop && y <= slotBottom) {
+          // Check both X (column) and Y (time) positions
+          if (x >= slotLeft && x <= slotRight && y >= slotTop && y <= slotBottom) {
             const timeSlot = slotEl.getAttribute('data-slot-time')
             const dentist = slotEl.getAttribute('data-slot-dentist')
             if (timeSlot && dentist) {
@@ -266,41 +312,65 @@ const Today = () => {
       document.removeEventListener('pointermove', handleGlobalPointerMove)
       document.removeEventListener('pointerup', handleGlobalPointerUp)
       
-      if (timelineContainerEl) {
-        timelineContainerEl.removeEventListener('scroll', handleScroll)
-      }
+      window.removeEventListener('scroll', handleScroll)
       
       if (draggedElementRef.current) {
-        // Reset all styles
-        draggedElementRef.current.style.position = ''
-        draggedElementRef.current.style.left = ''
-        draggedElementRef.current.style.top = ''
-        draggedElementRef.current.style.width = ''
-        draggedElementRef.current.style.transform = ''
-        draggedElementRef.current.style.zIndex = ''
-        draggedElementRef.current.style.pointerEvents = ''
+        // Remove the cloned element from body
+        if (draggedElementRef.current.parentElement === document.body) {
+          document.body.removeChild(draggedElementRef.current)
+        }
+        draggedElementRef.current = null
       }
       
-      // Find which time slot the pointer is over
-      if (timelineContainerEl) {
-        const rect = timelineContainerEl.getBoundingClientRect()
-        const y = upEvent.clientY - rect.top + timelineContainerEl.scrollTop
+      // Restore original element visibility (find it by appointmentId)
+      if (appointmentId) {
+        const timelineContainer = document.getElementById('timeline-container')
+        if (timelineContainer) {
+          const originalElement = timelineContainer.querySelector(`[data-appointment-id="${appointmentId}"]`) as HTMLElement
+          if (originalElement) {
+            originalElement.style.opacity = ''
+          }
+        }
+      }
+      
+      // Find which time slot the pointer is over using accurate mouse coordinates
+      if (timelineContainerEl && appointmentId) {
+        // Use clientX/clientY directly for more accurate detection
+        const mouseX = upEvent.clientX
+        const mouseY = upEvent.clientY
         
-        // Find the slot element at this position
         const slotElements = timelineContainerEl.querySelectorAll('[data-slot-time]')
+        let bestMatch: { time: string; dentist: string; distance: number } | null = null
+        
         for (const slotEl of slotElements) {
           const slotRect = slotEl.getBoundingClientRect()
-          const slotTop = slotRect.top - rect.top + timelineContainerEl.scrollTop
-          const slotBottom = slotTop + slotRect.height
+          const slotLeft = slotRect.left
+          const slotRight = slotRect.right
+          const slotTop = slotRect.top
+          const slotBottom = slotRect.bottom
           
-          if (y >= slotTop && y <= slotBottom) {
+          // Check if mouse is within the slot bounds
+          if (mouseX >= slotLeft && mouseX <= slotRight && mouseY >= slotTop && mouseY <= slotBottom) {
             const timeSlot = slotEl.getAttribute('data-slot-time')
             const dentist = slotEl.getAttribute('data-slot-dentist')
-            if (timeSlot && dentist && appointmentId) {
-              handleAppointmentTimeDrop(appointmentId, timeSlot, dentist)
+            
+            if (timeSlot && dentist) {
+              // Calculate distance from center of slot to mouse position
+              const centerX = (slotLeft + slotRight) / 2
+              const centerY = (slotTop + slotBottom) / 2
+              const distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2))
+              
+              // Keep the closest match (in case of overlapping slots)
+              if (!bestMatch || distance < bestMatch.distance) {
+                bestMatch = { time: timeSlot, dentist, distance }
+              }
             }
-            break
           }
+        }
+        
+        // Use the best match (closest slot to mouse position)
+        if (bestMatch) {
+          handleAppointmentTimeDrop(appointmentId, bestMatch.time, bestMatch.dentist)
         }
       }
       
@@ -324,47 +394,100 @@ const Today = () => {
     e.preventDefault()
     e.currentTarget.releasePointerCapture(e.pointerId)
     
-    // Find which time slot the pointer is over
+    // Find which time slot the pointer is over using accurate mouse coordinates
     const timelineContainer = document.getElementById('timeline-container')
-    if (timelineContainer) {
-      const rect = timelineContainer.getBoundingClientRect()
-      const y = e.clientY - rect.top + timelineContainer.scrollTop
+    if (timelineContainer && pointerDragState.appointmentId) {
+      // Use clientX/clientY directly for more accurate detection
+      const mouseX = e.clientX
+      const mouseY = e.clientY
       
-      // Find the slot element at this position
       const slotElements = timelineContainer.querySelectorAll('[data-slot-time]')
+      let bestMatch: { time: string; dentist: string; distance: number } | null = null
+      
       for (const slotEl of slotElements) {
         const slotRect = slotEl.getBoundingClientRect()
-        const slotTop = slotRect.top - rect.top + timelineContainer.scrollTop
-        const slotBottom = slotTop + slotRect.height
+        const slotLeft = slotRect.left
+        const slotRight = slotRect.right
+        const slotTop = slotRect.top
+        const slotBottom = slotRect.bottom
         
-        if (y >= slotTop && y <= slotBottom) {
+        // Check if mouse is within the slot bounds
+        if (mouseX >= slotLeft && mouseX <= slotRight && mouseY >= slotTop && mouseY <= slotBottom) {
           const timeSlot = slotEl.getAttribute('data-slot-time')
           const dentist = slotEl.getAttribute('data-slot-dentist')
-          if (timeSlot && dentist && pointerDragState.appointmentId) {
-            handleAppointmentTimeDrop(pointerDragState.appointmentId, timeSlot, dentist)
+          
+          if (timeSlot && dentist) {
+            // Calculate distance from center of slot to mouse position
+            const centerX = (slotLeft + slotRight) / 2
+            const centerY = (slotTop + slotBottom) / 2
+            const distance = Math.sqrt(Math.pow(mouseX - centerX, 2) + Math.pow(mouseY - centerY, 2))
+            
+            // Keep the closest match (in case of overlapping slots)
+            if (!bestMatch || distance < bestMatch.distance) {
+              bestMatch = { time: timeSlot, dentist, distance }
+            }
           }
-          break
         }
+      }
+      
+      // Use the best match (closest slot to mouse position)
+      if (bestMatch) {
+        handleAppointmentTimeDrop(pointerDragState.appointmentId, bestMatch.time, bestMatch.dentist)
       }
     }
     
     setPointerDragState(null)
     setDraggedItem(null)
+    
+    // Restore original element visibility
+    if (pointerDragState?.appointmentId) {
+      const timelineContainer = document.getElementById('timeline-container')
+      if (timelineContainer) {
+        const originalElement = timelineContainer.querySelector(`[data-appointment-id="${pointerDragState.appointmentId}"]`) as HTMLElement
+        if (originalElement) {
+          originalElement.style.opacity = ''
+        }
+      }
+    }
   }
 
   const handleAppointmentTimeDrop = (appointmentId: string, newTimeSlot: string, newDentist: string) => {
     const appointment = appointments.find(a => a.id === appointmentId)
     if (!appointment) return
 
-    // Check for conflicts
-    const hasConflict = appointments.some(apt => 
-      apt.id !== appointmentId &&
-      apt.time === newTimeSlot &&
-      apt.dentist === newDentist
-    )
+    // Get the selected date for the dentist
+    const dentistDate = dentistDates[newDentist] || new Date()
+    const dateStr = format(dentistDate, 'yyyy-MM-dd')
 
-    if (hasConflict) {
-      showToast('Time slot is already occupied. Please choose another slot.', 'error')
+    // Check for conflicts using duration-aware conflict detection
+    const relevantBookings = bookings
+      .filter(b => 
+        b.date === dateStr && 
+        b.dentist === newDentist && 
+        b.status !== 'cancelled' &&
+        b.status !== 'no-show' &&
+        b.id !== appointmentId // Exclude the appointment being moved
+      )
+      .map(b => ({
+        id: b.id,
+        dentist: b.dentist,
+        date: b.date,
+        time: b.time,
+        duration: b.duration || 15,
+      }))
+
+    const newBooking = {
+      id: appointmentId,
+      dentist: newDentist,
+      date: dateStr,
+      time: newTimeSlot,
+      duration: appointment.date ? (bookings.find(b => b.id === appointmentId)?.duration || 15) : 15,
+    }
+
+    const conflictCheck = checkBookingConflict(newBooking, relevantBookings)
+    if (conflictCheck.hasConflict) {
+      showToast(conflictCheck.message, 'error')
+      setPreviewSlot(null)
       return
     }
 
@@ -385,9 +508,48 @@ const Today = () => {
     if (!pendingTimeChange) return
 
     try {
+      // Get the selected date for the dentist
+      const dentistDate = dentistDates[pendingTimeChange.newDentist] || new Date()
+      const dateStr = format(dentistDate, 'yyyy-MM-dd')
+
+      // Final conflict check before confirming
+      const relevantBookings = bookings
+        .filter(b => 
+          b.date === dateStr && 
+          b.dentist === pendingTimeChange.newDentist && 
+          b.status !== 'cancelled' &&
+          b.status !== 'no-show' &&
+          b.id !== pendingTimeChange.appointmentId // Exclude the appointment being moved
+        )
+        .map(b => ({
+          id: b.id,
+          dentist: b.dentist,
+          date: b.date,
+          time: b.time,
+          duration: b.duration || 15,
+        }))
+
+      const originalBooking = bookings.find(b => b.id === pendingTimeChange.appointmentId)
+      const newBooking = {
+        id: pendingTimeChange.appointmentId,
+        dentist: pendingTimeChange.newDentist,
+        date: dateStr,
+        time: pendingTimeChange.newTime,
+        duration: originalBooking?.duration || 15,
+      }
+
+      const conflictCheck = checkBookingConflict(newBooking, relevantBookings)
+      if (conflictCheck.hasConflict) {
+        showToast(conflictCheck.message, 'error')
+        setPendingTimeChange(null)
+        setPreviewSlot(null)
+        return
+      }
+
       await updateBooking(pendingTimeChange.appointmentId, {
         time: pendingTimeChange.newTime,
         dentist: pendingTimeChange.newDentist,
+        date: dateStr, // Ensure date is updated too
       })
       showToast(`Appointment moved to ${pendingTimeChange.newTime} with ${pendingTimeChange.newDentist}`, 'success')
       setPendingTimeChange(null)
@@ -395,6 +557,8 @@ const Today = () => {
     } catch (error) {
       console.error('Failed to update booking time:', error)
       showToast('Failed to update appointment time', 'error')
+      setPendingTimeChange(null)
+      setPreviewSlot(null)
     }
   }
 
@@ -410,8 +574,9 @@ const Today = () => {
   // Note: HTML5 drag API may block wheel events, so we use both document-level and container-level handlers
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      // Only handle scrolling during drag operations
-      if (!draggedItem && !draggedPatient && !timeChangeMode) return
+      // Only handle scrolling during active drag operations (when actually dragging an item)
+      // Don't block scrolling when timeChangeMode is on but not actively dragging
+      if (!draggedItem && !draggedPatient && !pointerDragState) return
 
       const timelineContainer = document.getElementById('timeline-container')
       if (timelineContainer) {
@@ -420,17 +585,19 @@ const Today = () => {
         const isOverContainer = e.clientX >= rect.left && e.clientX <= rect.right && 
                                 e.clientY >= rect.top && e.clientY <= rect.bottom
         
-        if (isOverContainer) {
-          // Manually scroll the container with bounds checking
-          const currentScroll = timelineContainer.scrollTop
-          const maxScroll = timelineContainer.scrollHeight - timelineContainer.clientHeight
-          const newScroll = Math.max(0, Math.min(maxScroll, currentScroll + e.deltaY))
-          timelineContainer.scrollTop = newScroll
+        if (isOverContainer && (draggedItem || draggedPatient || pointerDragState)) {
+          // Only prevent default if actively dragging over the timeline container
+          // Use window scroll instead since we removed container scrollbar
+          window.scrollBy({
+            top: e.deltaY,
+            behavior: 'auto'
+          })
           e.preventDefault()
           e.stopPropagation()
           return false
         }
       }
+      // If not over container or not actively dragging, allow normal scrolling
     }
 
     // Use capture phase and non-passive to ensure we can prevent default
@@ -440,7 +607,7 @@ const Today = () => {
     return () => {
       document.removeEventListener('wheel', handleWheel, { capture: true })
     }
-  }, [draggedItem, draggedPatient, timeChangeMode])
+  }, [draggedItem, draggedPatient, pointerDragState])
 
 
   const handlePatientDragStart = (patient: Patient) => {
@@ -457,26 +624,70 @@ const Today = () => {
       patient: `${draggedPatient.firstName} ${draggedPatient.lastName}`,
       time: timeSlot,
       dentist: dentist,
+      patientData: draggedPatient, // Store patient data for confirmation
     })
     setDraggedPatient(null)
     showToast(`Emergency booking created for ${draggedPatient.firstName} ${draggedPatient.lastName}. Please confirm.`, 'info')
   }
 
   const handleConfirmEmergencyBooking = async () => {
-    if (!pendingEmergencyBooking || !draggedPatient) return
+    if (!pendingEmergencyBooking || !pendingEmergencyBooking.patientData) return
     
     try {
+      const patientData = pendingEmergencyBooking.patientData
+      
       // Use the selected date for the dentist, or today if not set
       const dentistDate = dentistDates[pendingEmergencyBooking.dentist] || new Date()
+      const dateStr = format(dentistDate, 'yyyy-MM-dd')
+      
+      // Determine practiceId from dentist's branch
+      const dentist = DENTISTS.find(d => d.name === pendingEmergencyBooking.dentist)
+      const practiceId = dentist?.branch === 'Weltevreden Park' ? 'weltevreden' :
+                        dentist?.branch === 'Ruimsig' ? 'ruimsig' :
+                        'weltevreden' // Default fallback
+      
+      // Check for conflicts before creating
+      const relevantBookings = bookings
+        .filter(b => 
+          b.date === dateStr && 
+          b.dentist === pendingEmergencyBooking.dentist && 
+          b.status !== 'cancelled' &&
+          b.status !== 'no-show'
+        )
+        .map(b => ({
+          id: b.id,
+          dentist: b.dentist,
+          date: b.date,
+          time: b.time,
+          duration: b.duration || 15,
+        }))
+
+      const newBooking = {
+        id: '',
+        dentist: pendingEmergencyBooking.dentist,
+        date: dateStr,
+        time: pendingEmergencyBooking.time,
+        duration: 15, // Emergency visits are typically 15 minutes
+      }
+
+      const conflictCheck = checkBookingConflict(newBooking, relevantBookings)
+      if (conflictCheck.hasConflict) {
+        showToast(conflictCheck.message, 'error')
+        return
+      }
+      
       await createBooking({
+        practiceId: practiceId, // REQUIRED: Include practiceId
         patient: pendingEmergencyBooking.patient,
-        email: draggedPatient.email,
-        phone: draggedPatient.phone,
+        email: patientData.email,
+        phone: patientData.phone,
         service: 'Emergency Visit',
         dentist: pendingEmergencyBooking.dentist,
-        date: format(dentistDate, 'yyyy-MM-dd'),
+        date: dateStr,
         time: pendingEmergencyBooking.time,
         status: 'confirmed',
+        source: 'walk-in',
+        duration: 15,
       })
       setPendingEmergencyBooking(null)
       setSelectedEmergencyPatient(null)
@@ -539,17 +750,64 @@ const Today = () => {
         ? format(dentistDates[newBooking.dentist], 'yyyy-MM-dd')
         : format(new Date(), 'yyyy-MM-dd')
       
+      // Determine practiceId from dentist's branch
+      const dentist = DENTISTS.find(d => d.name === newBooking.dentist)
+      const practiceId = dentist?.branch === 'Weltevreden Park' ? 'weltevreden' :
+                        dentist?.branch === 'Ruimsig' ? 'ruimsig' :
+                        'weltevreden' // Default fallback
+      
+      const finalDate = newBooking.date || dentistDate
+      
+      // Validate date is not in the past
+      if (isPastBooking(finalDate, newBooking.time)) {
+        showToast('Cannot create bookings in the past', 'error')
+        return
+      }
+      
+      // Check for conflicts before creating
+      const relevantBookings = bookings
+        .filter(b => 
+          b.date === finalDate && 
+          b.dentist === newBooking.dentist && 
+          b.status !== 'cancelled' &&
+          b.status !== 'no-show'
+        )
+        .map(b => ({
+          id: b.id,
+          dentist: b.dentist,
+          date: b.date,
+          time: b.time,
+          duration: b.duration || (newBooking.duration || 15),
+        }))
+
+      const bookingToCheck = {
+        id: '',
+        dentist: newBooking.dentist,
+        date: finalDate,
+        time: newBooking.time,
+        duration: newBooking.duration || (newBooking.slotCount ? newBooking.slotCount * 15 : 15),
+      }
+
+      const conflictCheck = checkBookingConflict(bookingToCheck, relevantBookings)
+      if (conflictCheck.hasConflict) {
+        showToast(conflictCheck.message, 'error')
+        return
+      }
+      
       await createBooking({
+        practiceId: practiceId, // REQUIRED: Maps from dentist's branch
         patient: newBooking.patient,
         email: newBooking.email,
         phone: newBooking.phone,
         service: newBooking.service,
         dentist: newBooking.dentist,
-        date: newBooking.date || dentistDate,
+        date: finalDate,
         time: newBooking.time,
         status: 'confirmed',
+        source: 'walk-in', // Staff-created bookings are walk-ins
         deposit: newBooking.deposit,
         total: newBooking.total,
+        duration: newBooking.duration || (newBooking.slotCount ? newBooking.slotCount * 15 : 15),
       })
       showToast('Walk-in appointment added!', 'success')
     } catch (error) {
@@ -652,6 +910,21 @@ const Today = () => {
             <p className="text-gray-600 dark:text-gray-400">Manage today's appointments • {format(new Date(), 'EEEE, MMMM d, yyyy')}</p>
           </div>
           <div className="flex items-center space-x-3">
+            {/* Highlight Empty Slots Toggle */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setHighlightEmptySlots(!highlightEmptySlots)}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2 ${
+                highlightEmptySlots
+                  ? 'bg-green-500 hover:bg-green-600 text-white shadow-sm'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              }`}
+              title={highlightEmptySlots ? 'Hide empty slots' : 'Highlight empty slots in green'}
+            >
+              <Eye className="w-4 h-4" />
+              <span className="hidden sm:inline">Show Available</span>
+            </motion.button>
             {/* View Toggle */}
             <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
               <button
@@ -716,48 +989,72 @@ const Today = () => {
                 >
                   {/* Date Selectors for Each Dentist */}
                   <div className="mb-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    {DENTISTS.map((dentist) => (
-                      <div key={dentist.id} className="flex items-center space-x-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[120px]">
-                          {dentist.name}:
-                        </label>
-                        <input
-                          type="date"
-                          value={format(dentistDates[dentist.name] || new Date(), 'yyyy-MM-dd')}
-                          onChange={(e) => {
-                            const newDate = new Date(e.target.value)
-                            setDentistDates((prev) => ({
-                              ...prev,
-                              [dentist.name]: newDate,
-                            }))
-                          }}
-                          className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400"
-                        />
-                      </div>
-                    ))}
+                    {DENTISTS.map((dentist) => {
+                      const today = new Date()
+                      const dentistDate = dentistDates[dentist.name] || today
+                      const isDentistDateToday = isToday(dentistDate)
+                      
+                      return (
+                        <div key={dentist.id} className="flex items-center space-x-2">
+                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[120px]">
+                            {dentist.name}:
+                          </label>
+                          <input
+                            type="date"
+                            value={format(dentistDate, 'yyyy-MM-dd')}
+                            onChange={(e) => {
+                              // Handle empty value (when calendar clear button is clicked)
+                              if (!e.target.value) {
+                                setDentistDates((prev) => ({
+                                  ...prev,
+                                  [dentist.name]: today,
+                                }))
+                                return
+                              }
+                              const newDate = new Date(e.target.value)
+                              // Validate date
+                              if (!isNaN(newDate.getTime())) {
+                                setDentistDates((prev) => ({
+                                  ...prev,
+                                  [dentist.name]: newDate,
+                                }))
+                              } else {
+                                // If invalid, default to today
+                                setDentistDates((prev) => ({
+                                  ...prev,
+                                  [dentist.name]: today,
+                                }))
+                              }
+                            }}
+                            className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400"
+                          />
+                          {!isDentistDateToday && (
+                            <motion.button
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => {
+                                setDentistDates((prev) => ({
+                                  ...prev,
+                                  [dentist.name]: today,
+                                }))
+                              }}
+                              className="flex items-center space-x-1 px-3 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors"
+                              title="Clear and return to today"
+                            >
+                              <X className="w-4 h-4" />
+                              <span className="text-sm">Clear</span>
+                            </motion.button>
+                          )}
+                        </div>
+                      )
+                    })}
                   </div>
 
                   <div 
-                    className="flex overflow-x-hidden overflow-y-scroll max-h-[calc(100vh-300px)]" 
+                    className="flex overflow-x-auto" 
                     id="timeline-container" 
-                    style={{ scrollBehavior: 'smooth' }}
-                    onWheel={(e) => {
-                      // Only intercept scrolling when actively dragging an item
-                      // This allows normal native scrolling when time change mode is on but not dragging
-                      if (draggedItem || draggedPatient) {
-                        const container = e.currentTarget
-                        const currentScroll = container.scrollTop
-                        const maxScroll = container.scrollHeight - container.clientHeight
-                        // Use much faster scroll speed (6x deltaY for quick scrolling up and down)
-                        const scrollAmount = e.deltaY * 6
-                        const newScroll = Math.max(0, Math.min(maxScroll, currentScroll + scrollAmount))
-                        container.scrollTop = newScroll
-                        e.preventDefault()
-                        e.stopPropagation()
-                        return false
-                      }
-                      // If not dragging, let native scroll work normally
-                    }}
                   >
                     {/* Timeline */}
                     <div className="w-24 flex-shrink-0">
@@ -822,6 +1119,7 @@ const Today = () => {
                           </div>
                           {timeSlots.map((slot) => {
                             const slotAppointments = appointmentsByTimeSlotAndDentist[slot]?.[dentist.name] || []
+                            const isEmpty = slotAppointments.length === 0
                             const [, minute] = slot.split(':')
                             const isHourly = minute === '00'
                             return (
@@ -829,9 +1127,11 @@ const Today = () => {
                                 key={slot}
                                 data-slot-time={slot}
                                 data-slot-dentist={dentist.name}
-                                className={`border-b border-gray-200 dark:border-gray-700 relative h-16 ${isHourly ? 'border-t-2 border-gray-400 dark:border-gray-500' : ''} ${pointerDragState && pointerDragState.appointmentId ? 'bg-blue-50 dark:bg-blue-900' : ''}`}
+                                className={`border-b border-gray-200 dark:border-gray-700 relative h-16 ${isHourly ? 'border-t-2 border-gray-400 dark:border-gray-500' : ''} ${pointerDragState && pointerDragState.appointmentId ? 'bg-blue-50 dark:bg-blue-900' : ''} ${highlightEmptySlots && isEmpty ? 'bg-green-50 dark:bg-green-900/30 border-green-300 dark:border-green-700' : ''}`}
+                                style={{ zIndex: 0, position: 'relative' }}
                                 onDragOver={(e) => {
                                   e.preventDefault()
+                                  e.stopPropagation()
                                   if (!timeChangeMode) {
                                     e.currentTarget.classList.add('bg-blue-50', 'dark:bg-blue-900')
                                   }
@@ -843,21 +1143,33 @@ const Today = () => {
                                 }}
                                 onDrop={(e) => {
                                   e.preventDefault()
+                                  e.stopPropagation()
                                   e.currentTarget.classList.remove('bg-blue-50', 'dark:bg-blue-900')
                                   if (!timeChangeMode && draggedItem) {
                                     handleAppointmentTimeDrop(draggedItem, slot, dentist.name)
                                   } else if (draggedPatient) {
                                     handlePatientDrop(slot, dentist.name)
+                                  } else if (timeChangeMode && draggedItem) {
+                                    // Allow drops in timeChangeMode as well
+                                    handleAppointmentTimeDrop(draggedItem, slot, dentist.name)
                                   }
                                 }}
                               >
-                                <div className="flex flex-col space-y-1 pt-1">
+                                <div 
+                                  className="flex flex-col space-y-1 pt-1"
+                                  style={{ pointerEvents: draggedItem || draggedPatient ? 'auto' : 'auto' }}
+                                  onDragOver={(e) => {
+                                    // Ensure child container doesn't block parent drop zone
+                                    e.stopPropagation()
+                                  }}
+                                >
                                   {/* Preview slot when dragging */}
                                   {previewSlot && previewSlot.time === slot && previewSlot.dentist === dentist.name && previewSlot.appointment && (
                                     <motion.div
                                       initial={{ opacity: 0.3 }}
                                       animate={{ opacity: 0.5 }}
-                                      className="flex items-center space-x-2 p-2 rounded border border-gray-300 dark:border-gray-600 bg-gray-200 dark:bg-gray-700 opacity-50"
+                                      className="flex items-center space-x-2 p-2 rounded border border-gray-300 dark:border-gray-600 bg-gray-200 dark:bg-gray-700 opacity-50 relative z-20"
+                                      style={{ position: 'relative', zIndex: 20 }}
                                     >
                                       <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
                                         <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />
@@ -873,9 +1185,20 @@ const Today = () => {
                                     return (
                                       <motion.div
                                       key={apt.id}
+                                      data-appointment-id={apt.id}
                                       draggable={!timeChangeMode}
-                                      onDragStart={() => !timeChangeMode && handleDragStart(apt.id)}
+                                      onDragStart={(e) => {
+                                        if (!timeChangeMode) {
+                                          handleDragStart(apt.id)
+                                          // Allow drag events to propagate to parent drop zones
+                                          e.stopPropagation()
+                                        }
+                                      }}
                                       onDragEnd={handleDragEnd}
+                                      onDragOver={(e) => {
+                                        // Prevent appointment cards from blocking parent drop zones
+                                        e.stopPropagation()
+                                      }}
                                       onPointerDown={(e) => timeChangeMode && handlePointerDown(e, apt.id)}
                                       onPointerMove={handlePointerMove}
                                       onPointerUp={handlePointerUp}
@@ -905,6 +1228,7 @@ const Today = () => {
                                         position: 'static',
                                         zIndex: matchesSearch ? 10 : 1,
                                         transform: '', // Will be set directly via DOM in handlePointerDown
+                                        pointerEvents: draggedItem || draggedPatient ? 'none' : 'auto', // Allow drops to pass through when dragging
                                       }}
                                       className={`flex items-center space-x-2 p-2 rounded border hover:shadow-md group ${
                                         matchesSearch
@@ -1205,7 +1529,7 @@ const Today = () => {
                           apt.patient.toLowerCase().includes(searchQuery.toLowerCase())
                         )
                         .map((apt, index) => (
-                          <motion.button
+                          <motion.div
                             key={apt.id}
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ 
@@ -1221,36 +1545,48 @@ const Today = () => {
                                 ease: "easeInOut"
                               }
                             }}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => {
-                              setSelectedAppointment(apt)
-                              setIsDetailModalOpen(true)
-                              // Scroll to the appointment in the timeline
-                              const slotElement = document.querySelector(`[data-slot-time="${apt.time}"][data-slot-dentist="${apt.dentist}"]`)
-                              if (slotElement) {
-                                slotElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                              }
-                            }}
-                            className="w-full text-left p-3 rounded-lg bg-teal-50 dark:bg-teal-900/30 hover:bg-teal-100 dark:hover:bg-teal-900/50 border-2 border-teal-300 dark:border-teal-700 transition-colors"
+                            className="relative w-full p-3 rounded-lg bg-teal-50 dark:bg-teal-900/30 hover:bg-teal-100 dark:hover:bg-teal-900/50 border-2 border-teal-300 dark:border-teal-700 transition-colors"
                           >
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1 min-w-0">
-                                <p className="font-semibold text-sm text-gray-800 dark:text-gray-100 truncate">
-                                  {apt.patient}
-                                </p>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                                  {apt.time} • {apt.dentist}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
-                                  {apt.service}
-                                </p>
+                            <button
+                              onClick={() => {
+                                setSelectedAppointment(apt)
+                                setIsDetailModalOpen(true)
+                                // Scroll to the appointment in the timeline
+                                const slotElement = document.querySelector(`[data-slot-time="${apt.time}"][data-slot-dentist="${apt.dentist}"]`)
+                                if (slotElement) {
+                                  slotElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                                }
+                              }}
+                              className="w-full text-left pr-8"
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-semibold text-sm text-gray-800 dark:text-gray-100 truncate">
+                                    {apt.patient}
+                                  </p>
+                                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                    {apt.time} • {apt.dentist}
+                                  </p>
+                                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
+                                    {apt.service}
+                                  </p>
+                                </div>
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium border ml-2 flex-shrink-0 ${getStatusColor(apt.status)}`}>
+                                  {apt.status === 'arrived' ? 'Arrived' : apt.status === 'no-show' ? 'No-Show' : 'Scheduled'}
+                                </span>
                               </div>
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium border ml-2 flex-shrink-0 ${getStatusColor(apt.status)}`}>
-                                {apt.status === 'arrived' ? 'Arrived' : apt.status === 'no-show' ? 'No-Show' : 'Scheduled'}
-                              </span>
-                            </div>
-                          </motion.button>
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setSearchQuery('')
+                              }}
+                              className="absolute top-2 left-2 w-6 h-6 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors z-10"
+                              title="Clear search"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </motion.div>
                         ))}
                     </div>
                   </div>
@@ -1637,6 +1973,7 @@ const Today = () => {
         }}
         booking={selectedAppointment ? {
           id: selectedAppointment.id,
+          practiceId: selectedAppointment.practiceId,
           patient: selectedAppointment.patient,
           email: selectedAppointment.email || '',
           phone: selectedAppointment.phone || '',

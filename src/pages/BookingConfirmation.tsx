@@ -7,15 +7,24 @@ import { BookingData } from '../types'
 import { formatDate } from '../utils/dateUtils'
 import { useBookings } from '../hooks/useBookings'
 import { usePatients } from '../hooks/usePatients'
+import { patientsServiceMethods } from '../services/patientsService'
 import { format } from 'date-fns'
+import { checkBookingConflict, isPastBooking } from '../utils/conflictDetection'
+
+// Extended booking data that includes practiceId (branch)
+interface ExtendedBookingData extends BookingData {
+  branch: string | null // This maps to practiceId in Firestore
+  paymentMethod: 'ozow' | 'instant-eft' | null
+  popiaAccepted: boolean
+}
 
 const BookingConfirmation = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const bookingData = location.state as BookingData | null
+  const bookingData = location.state as ExtendedBookingData | null
   const [confettiFired, setConfettiFired] = useState(false)
-  const { createBooking } = useBookings()
-  const { createPatient, searchPatients } = usePatients()
+  const { createBooking, bookings } = useBookings()
+  const { searchPatients } = usePatients()
   const hasSavedRef = useRef(false) // Use ref to prevent duplicate saves even in StrictMode
   const savedBookingIdRef = useRef<string | null>(null) // Track which booking we've saved
 
@@ -45,32 +54,110 @@ const BookingConfirmation = () => {
         const [firstName, ...lastNameParts] = bookingData.patientDetails.firstName.split(' ')
         const lastName = lastNameParts.join(' ') || bookingData.patientDetails.lastName
         
-        const existingPatients = await searchPatients(bookingData.patientDetails.email)
-        const existingPatient = existingPatients.find(p => p.email === bookingData.patientDetails.email)
+        // Try to search for existing patient, but don't fail if we can't (public users can't read patients)
+        let existingPatient = null
+        try {
+          const existingPatients = await searchPatients(bookingData.patientDetails.email)
+          existingPatient = existingPatients.find(p => p.email === bookingData.patientDetails.email)
+        } catch (searchError) {
+          // If search fails (due to permissions), assume patient doesn't exist and create new one
+          console.log('Could not search for existing patient (permissions), will create new patient')
+        }
         
         if (!existingPatient) {
           // Create new patient silently (don't show toast to patients)
-          await createPatient({
-            firstName: firstName,
-            lastName: lastName,
-            email: bookingData.patientDetails.email,
-            phone: bookingData.patientDetails.phone,
-            idNumber: bookingData.patientDetails.idNumber,
-          }, { silent: true })
+          // Don't reload patients list after creation (public users can't read patients)
+          try {
+            await patientsServiceMethods.create({
+              firstName: firstName,
+              lastName: lastName,
+              email: bookingData.patientDetails.email,
+              phone: bookingData.patientDetails.phone,
+              idNumber: bookingData.patientDetails.idNumber,
+            })
+          } catch (createError) {
+            // If patient creation fails, log but continue with booking
+            console.error('Could not create patient record:', createError)
+            // Continue with booking creation anyway
+          }
+        }
+
+        // Map branch to practiceId
+        // 'weltevreden' -> 'weltevreden', 'ruimsig' -> 'ruimsig'
+        const practiceId = bookingData.branch === 'weltevreden' ? 'weltevreden' : 
+                           bookingData.branch === 'ruimsig' ? 'ruimsig' : 
+                           'weltevreden' // Default fallback
+
+        const dateStr = bookingData.date ? format(bookingData.date, 'yyyy-MM-dd') : ''
+        const dentistName = bookingData.dentist?.name || ''
+        const serviceDuration = bookingData.service?.duration || 15
+
+        // Validate date is not in the past
+        if (isPastBooking(dateStr, bookingData.time)) {
+          console.error('Cannot create booking in the past')
+          hasSavedRef.current = false
+          savedBookingIdRef.current = null
+          navigate('/booking', { replace: true })
+          return
+        }
+
+        // Check for conflicts before creating (final validation)
+        // Filter bookings by practice and check for conflicts
+        const relevantBookings = bookings
+          .filter((b) => 
+            b.practiceId === practiceId &&
+            b.date === dateStr && 
+            b.dentist === dentistName && 
+            b.status !== 'cancelled' &&
+            b.status !== 'no-show'
+          )
+          .map((b) => ({
+            id: b.id,
+            dentist: b.dentist,
+            date: b.date,
+            time: b.time,
+            duration: b.duration || 15,
+          }))
+
+        const bookingToCheck = {
+          id: '',
+          dentist: dentistName,
+          date: dateStr,
+          time: bookingData.time,
+          duration: serviceDuration,
+        }
+
+        const conflictCheck = checkBookingConflict(bookingToCheck, relevantBookings)
+        if (conflictCheck.hasConflict) {
+          console.error('Booking conflict detected:', conflictCheck.message)
+          hasSavedRef.current = false
+          savedBookingIdRef.current = null
+          // Redirect back to booking page - the slot is no longer available
+          navigate('/booking', { 
+            replace: true,
+            state: { 
+              error: 'The selected time slot is no longer available. Please select another time.',
+              bookingData 
+            }
+          })
+          return
         }
 
         // Create booking
         await createBooking({
+          practiceId: practiceId, // REQUIRED: Maps from branch selection
           patient: `${firstName} ${lastName}`,
           email: bookingData.patientDetails.email,
           phone: bookingData.patientDetails.phone,
           service: bookingData.service?.name || '',
-          dentist: bookingData.dentist?.name || '',
-          date: bookingData.date ? format(bookingData.date, 'yyyy-MM-dd') : '',
+          dentist: dentistName,
+          date: dateStr,
           time: bookingData.time,
           status: 'confirmed',
-          deposit: bookingData.service?.price ? bookingData.service.price * 0.1 : 50,
+          source: 'online',
+          deposit: 50, // R50 deposit as per requirements
           total: bookingData.service?.price || 0,
+          duration: serviceDuration, // Include duration for conflict detection
         })
         
       } catch (error) {

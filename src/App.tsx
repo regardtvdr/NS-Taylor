@@ -21,6 +21,8 @@ import Calendar from './pages/staff/Calendar'
 import Schedule from './pages/staff/Schedule'
 import Analytics from './pages/staff/Analytics'
 import HelpME from './pages/staff/HelpME'
+import InitializePractices from './pages/staff/InitializePractices'
+import InitializeStaff from './pages/staff/InitializeStaff'
 import TestFirebase from './pages/TestFirebase'
 
 function App() {
@@ -57,7 +59,18 @@ function App() {
           <Route path="/staff/schedule" element={<Schedule />} />
           <Route path="/staff/analytics" element={<Analytics />} />
           <Route path="/staff/help" element={<HelpME />} />
+          <Route path="/staff/initialize" element={<InitializePractices />} />
         </Route>
+
+        {/* Initialize Staff - accessible without full auth (for setup) */}
+        <Route
+          path="/staff/initialize-staff"
+          element={
+            <Layout>
+              <InitializeStaff />
+            </Layout>
+          }
+        />
 
         {/* Public Routes */}
         <Route

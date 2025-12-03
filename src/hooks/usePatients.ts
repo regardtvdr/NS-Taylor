@@ -18,7 +18,10 @@ export const usePatients = () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load patients'
       setError(errorMessage)
-      showToast(errorMessage, 'error')
+      // Only show toast if it's not a permission error (public users can't load patients)
+      if (!errorMessage.includes('permission') && !errorMessage.includes('Permission')) {
+        showToast(errorMessage, 'error')
+      }
     } finally {
       setLoading(false)
     }
@@ -35,7 +38,14 @@ export const usePatients = () => {
       }
       return await patientsServiceMethods.search(searchTerm)
     } catch (err) {
+      // If search fails due to permissions (public users can't read patients), return empty array
+      // This allows the booking flow to continue and create a new patient
       const errorMessage = err instanceof Error ? err.message : 'Failed to search patients'
+      if (errorMessage.includes('permission') || errorMessage.includes('Permission')) {
+        // Silently return empty array for permission errors (public users)
+        return []
+      }
+      // Only show toast for other errors (staff users)
       showToast(errorMessage, 'error')
       return []
     }

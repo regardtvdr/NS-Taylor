@@ -157,7 +157,13 @@ const Booking = () => {
                 selectedDate={bookingData.date}
                 selectedTime={bookingData.time}
                 selectedDentist={bookingData.dentist?.name || null}
-                bookings={bookings}
+                bookings={bookings.filter(b => {
+                  // Filter bookings by selected branch/practice
+                  if (!bookingData.branch) return true
+                  const practiceId = bookingData.branch === 'weltevreden' ? 'weltevreden' :
+                                    bookingData.branch === 'ruimsig' ? 'ruimsig' : null
+                  return practiceId ? b.practiceId === practiceId : true
+                })}
                 onDateSelect={(date) => updateBookingData({ date })}
                 onTimeSelect={(time) => updateBookingData({ time })}
               />

@@ -132,6 +132,7 @@ export interface RecurringAppointment {
 
 export interface BookingDetail {
   id: string
+  practiceId: string // Required: 'ruimsig' | 'weltevreden'
   patient: string
   email?: string
   phone?: string
@@ -140,12 +141,15 @@ export interface BookingDetail {
   date: string
   time: string
   status: 'confirmed' | 'pending' | 'cancelled' | 'completed' | 'arrived' | 'no-show'
+  source?: 'online' | 'phone' | 'walk-in'
   deposit?: number
   total?: number
+  duration?: number // Duration in minutes
   isRecurring?: boolean
   recurrence?: RecurrencePattern
   notes?: string
   createdAt?: string
+  updatedAt?: string
 }
 
 export interface ScheduleAppointment {
@@ -160,5 +164,38 @@ export interface ScheduleAppointment {
   email?: string
   date: string
   total?: number
+}
+
+export interface Practice {
+  id: string
+  name: string
+  address: string
+  phone: string
+  email: string
+  timezone: string
+  registrationNumber?: string
+  practiceNumber?: string
+  workingHours: {
+    monday: { open: string; close: string } | null
+    tuesday: { open: string; close: string } | null
+    wednesday: { open: string; close: string } | null
+    thursday: { open: string; close: string } | null
+    friday: { open: string; close: string } | null
+    saturday: { open: string; close: string } | null
+    sunday: { open: string; close: string } | null
+  }
+  createdAt?: Date
+  updatedAt?: Date
+}
+
+export interface User {
+  id: string
+  name: string
+  email: string
+  role: 'admin' | 'dentist' | 'reception'
+  practices: string[] // Array of practice IDs the user has access to
+  phone?: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 

@@ -1,12 +1,15 @@
 import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, User, Mail, Phone, Calendar } from 'lucide-react'
+import { X, User, Mail, Phone, Calendar, AlertCircle } from 'lucide-react'
 import { DayPicker } from 'react-day-picker'
-import { format } from 'date-fns'
-import { SERVICES, DENTISTS } from '../../utils/constants'
+import { format, isPast, addMonths } from 'date-fns'
+import { SERVICES } from '../../utils/constants'
 import { Service, Dentist, RecurrencePattern, BookingDetail } from '../../types'
 import { generateTimeSlots } from '../../utils/dateUtils'
 import RecurrenceSelector from './RecurrenceSelector'
+import { useFilteredDentists } from '../../hooks/useFilteredDentists'
+import { checkBookingConflict, isPastBooking } from '../../utils/conflictDetection'
+import { useToast } from '../../contexts/ToastContext'
 import 'react-day-picker/dist/style.css'
 
 interface CreateBookingModalProps {
@@ -26,7 +29,10 @@ interface CreateBookingModalProps {
 }
 
 const CreateBookingModal = ({ isOpen, onClose, onSave, bookings = [], initialDate, initialTime, initialDentist, initialPatient }: CreateBookingModalProps) => {
+  const { dentists: DENTISTS } = useFilteredDentists()
+  const { showToast } = useToast()
   const [step, setStep] = useState(1)
+  const [conflictError, setConflictError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     patientName: initialPatient ? `${initialPatient.firstName} ${initialPatient.lastName}` : '',
     patientEmail: initialPatient?.email || '',
@@ -45,24 +51,80 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, bookings = [], initialDat
 
   const timeSlots = formData.date ? generateTimeSlots(formData.date) : []
 
-  // Check if a time slot is booked for the selected dentist and date
+  // Check if a time slot is booked or would conflict (considering duration)
   const isSlotBooked = useMemo(() => {
     if (!formData.date || !formData.dentist) return () => false
     
     const dateStr = format(formData.date, 'yyyy-MM-dd')
-    const bookedSlots = new Set(
-      bookings
-        .filter(b => 
-          b.date === dateStr && 
-          b.dentist === formData.dentist?.name && 
-          b.status !== 'cancelled' &&
-          b.status !== 'no-show'
-        )
-        .map(b => b.time)
+    const relevantBookings = bookings.filter(b => 
+      b.date === dateStr && 
+      b.dentist === formData.dentist?.name && 
+      b.status !== 'cancelled' &&
+      b.status !== 'no-show'
     )
+    
+    // Create a set of all booked time slots (including duration)
+    const bookedSlots = new Set<string>()
+    relevantBookings.forEach(booking => {
+      const startTime = booking.time
+      const duration = booking.duration || 15 // Default 15 minutes
+      const startMinutes = parseTimeToMinutes(startTime)
+      
+      // Add all slots that would be occupied by this booking
+      for (let i = 0; i < duration; i += 15) {
+        const slotMinutes = startMinutes + i
+        const slotTime = formatMinutesToTime(slotMinutes)
+        bookedSlots.add(slotTime)
+      }
+    })
     
     return (time: string) => bookedSlots.has(time)
   }, [formData.date, formData.dentist, bookings])
+
+  // Helper functions for time conversion
+  const parseTimeToMinutes = (time: string): number => {
+    const [hours, minutes] = time.split(':').map(Number)
+    return hours * 60 + minutes
+  }
+
+  const formatMinutesToTime = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
+  }
+
+  // Check if selected slots would conflict with existing bookings
+  const checkSelectedSlotsConflict = useMemo(() => {
+    if (!formData.date || !formData.dentist || formData.selectedSlots.length === 0) {
+      return null
+    }
+    
+    const dateStr = format(formData.date, 'yyyy-MM-dd')
+    const relevantBookings = bookings
+      .filter(b => 
+        b.date === dateStr && 
+        b.dentist === formData.dentist?.name && 
+        b.status !== 'cancelled' &&
+        b.status !== 'no-show'
+      )
+      .map(b => ({
+        id: b.id,
+        dentist: b.dentist,
+        date: b.date,
+        time: b.time,
+        duration: b.duration || 15,
+      }))
+
+    const newBooking = {
+      id: '',
+      dentist: formData.dentist.name,
+      date: dateStr,
+      time: formData.time,
+      duration: formData.slotCount * 15,
+    }
+
+    return checkBookingConflict(newBooking, relevantBookings)
+  }, [formData.date, formData.dentist, formData.time, formData.selectedSlots, formData.slotCount, bookings])
 
   // Get consecutive time slots starting from a selected time
   const getConsecutiveSlots = (startTime: string, count: number, slots: string[]): string[] => {
@@ -106,7 +168,7 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, bookings = [], initialDat
         }
       }
     }
-  }, [isOpen, initialDate, initialTime, initialDentist, initialPatient, formData.date])
+  }, [isOpen, initialDate, initialTime, initialDentist, initialPatient, formData.date, DENTISTS])
 
   const resetForm = () => {
     setFormData({
@@ -128,7 +190,17 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, bookings = [], initialDat
 
   // Handle time slot selection with multi-slot support
   const handleTimeSlotClick = (time: string) => {
+    // Check if any of the slots would be booked
     const slots = getConsecutiveSlots(time, formData.slotCount, timeSlots)
+    const hasConflict = slots.some(slot => isSlotBooked(slot))
+    
+    if (hasConflict) {
+      setConflictError('One or more selected time slots are already booked. Please choose a different time.')
+      showToast('Selected time slots conflict with existing bookings', 'error')
+      return
+    }
+    
+    setConflictError(null)
     setFormData({
       ...formData,
       time: time,
@@ -137,45 +209,77 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, bookings = [], initialDat
   }
 
   const handleSave = () => {
+    // Validate all required fields
     if (
-      formData.patientName &&
-      formData.patientEmail &&
-      formData.patientPhone &&
-      formData.service &&
-      formData.dentist &&
-      formData.date &&
-      formData.time &&
-      formData.selectedSlots.length > 0
+      !formData.patientName ||
+      !formData.patientEmail ||
+      !formData.patientPhone ||
+      !formData.service ||
+      !formData.dentist ||
+      !formData.date ||
+      !formData.time ||
+      formData.selectedSlots.length === 0
     ) {
-      // Calculate end time based on number of slots
-      const endTime = formData.selectedSlots[formData.selectedSlots.length - 1]
-      const endTimeIndex = timeSlots.indexOf(endTime)
-      const nextSlotIndex = endTimeIndex + 1
-      const calculatedEndTime = nextSlotIndex < timeSlots.length ? timeSlots[nextSlotIndex] : endTime
-
-      onSave({
-        id: `BK-${Date.now()}`,
-        patient: formData.patientName,
-        email: formData.patientEmail,
-        phone: formData.patientPhone,
-        service: formData.service.name,
-        dentist: formData.dentist.name,
-        date: format(formData.date, 'yyyy-MM-dd'),
-        time: formData.time,
-        endTime: calculatedEndTime,
-        duration: formData.slotCount * 15, // Duration in minutes
-        slotCount: formData.slotCount,
-        selectedSlots: formData.selectedSlots,
-        status: 'confirmed',
-        deposit: 0,
-        total: formData.service.price,
-        notes: formData.notes,
-        recurrence: formData.recurrence,
-        isRecurring: formData.recurrence !== null,
-      })
-      resetForm()
-      onClose()
+      showToast('Please fill in all required fields', 'error')
+      return
     }
+
+    // Validate date is not in the past
+    const dateStr = format(formData.date, 'yyyy-MM-dd')
+    if (isPastBooking(dateStr, formData.time)) {
+      showToast('Cannot create bookings in the past', 'error')
+      return
+    }
+
+    // Validate date is not too far in the future (max 2 months)
+    const twoMonthsFromNow = addMonths(new Date(), 2)
+    if (formData.date > twoMonthsFromNow) {
+      showToast('Cannot create bookings more than 2 months in advance', 'error')
+      return
+    }
+
+    // Check for conflicts before saving
+    if (checkSelectedSlotsConflict?.hasConflict) {
+      setConflictError(checkSelectedSlotsConflict.message)
+      showToast(checkSelectedSlotsConflict.message, 'error')
+      return
+    }
+
+    // Determine practiceId from dentist's branch
+    const practiceId = formData.dentist.branch === 'Weltevreden Park' ? 'weltevreden' :
+                      formData.dentist.branch === 'Ruimsig' ? 'ruimsig' :
+                      'weltevreden' // Default fallback
+
+    // Calculate end time based on number of slots
+    const endTime = formData.selectedSlots[formData.selectedSlots.length - 1]
+    const endTimeIndex = timeSlots.indexOf(endTime)
+    const nextSlotIndex = endTimeIndex + 1
+    const calculatedEndTime = nextSlotIndex < timeSlots.length ? timeSlots[nextSlotIndex] : endTime
+
+    onSave({
+      id: `BK-${Date.now()}`,
+      practiceId: practiceId, // REQUIRED: Include practiceId
+      patient: formData.patientName,
+      email: formData.patientEmail,
+      phone: formData.patientPhone,
+      service: formData.service.name,
+      dentist: formData.dentist.name,
+      date: dateStr,
+      time: formData.time,
+      endTime: calculatedEndTime,
+      duration: formData.slotCount * 15, // Duration in minutes
+      slotCount: formData.slotCount,
+      selectedSlots: formData.selectedSlots,
+      status: 'confirmed',
+      deposit: 0,
+      total: formData.service.price,
+      notes: formData.notes,
+      recurrence: formData.recurrence,
+      isRecurring: formData.recurrence !== null,
+    })
+    setConflictError(null)
+    resetForm()
+    onClose()
   }
 
   const handleClose = () => {
@@ -439,13 +543,27 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, bookings = [], initialDat
                         selected={formData.date || undefined}
                         onSelect={(date) => {
                           if (date) {
+                            // Validate date before setting
+                            if (isPast(date)) {
+                              showToast('Cannot select dates in the past', 'error')
+                              return
+                            }
+                            const twoMonthsFromNow = addMonths(new Date(), 2)
+                            if (date > twoMonthsFromNow) {
+                              showToast('Cannot select dates more than 2 months in advance', 'error')
+                              return
+                            }
                             setFormData({ ...formData, date, time: '', selectedSlots: [] })
                             setIsCalendarOpen(false)
                           }
                         }}
                         disabled={(date) => {
                           const day = date.getDay()
-                          return day === 0 || day === 6
+                          const isWeekend = day === 0 || day === 6
+                          const isPastDate = isPast(date)
+                          const twoMonthsFromNow = addMonths(new Date(), 2)
+                          const isTooFarFuture = date > twoMonthsFromNow
+                          return isWeekend || isPastDate || isTooFarFuture
                         }}
                         modifiersClassNames={{
                           selected: 'bg-gray-800 text-white rounded-full',
@@ -612,6 +730,18 @@ const CreateBookingModal = ({ isOpen, onClose, onSave, bookings = [], initialDat
                             {formData.selectedSlots[0]} - {formData.selectedSlots[formData.selectedSlots.length - 1]}
                             {' '}({formData.slotCount * 15} minutes)
                           </p>
+                        </div>
+                      )}
+                      {conflictError && (
+                        <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg mb-3 flex items-start space-x-2">
+                          <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                          <p className="text-sm text-red-800 dark:text-red-200">{conflictError}</p>
+                        </div>
+                      )}
+                      {checkSelectedSlotsConflict?.hasConflict && !conflictError && (
+                        <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg mb-3 flex items-start space-x-2">
+                          <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                          <p className="text-sm text-red-800 dark:text-red-200">{checkSelectedSlotsConflict.message}</p>
                         </div>
                       )}
                     </div>

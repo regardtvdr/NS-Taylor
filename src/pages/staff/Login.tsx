@@ -1,38 +1,45 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, AlertCircle, Mail } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 
 const Login = () => {
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState('')
-  const { login, isAuthenticated } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const { login, isAuthenticated, loading: authLoading } = useAuth()
   const navigate = useNavigate()
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!authLoading && isAuthenticated) {
       navigate('/staff/dashboard', { replace: true })
     }
-  }, [isAuthenticated, navigate])
+  }, [isAuthenticated, authLoading, navigate])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    // playSound('click')
+    setLoading(true)
 
-    if (login(password)) {
-      // playSound('success')
-      if (rememberMe) {
-        localStorage.setItem('remember_staff', 'true')
+    try {
+      const success = await login(email, password)
+      if (success) {
+        if (rememberMe) {
+          localStorage.setItem('remember_staff', 'true')
+        }
+        navigate('/staff/dashboard', { replace: true })
+      } else {
+        setError('Incorrect email or password. Please try again.')
       }
-      navigate('/staff/dashboard', { replace: true })
-    } else {
-      // playSound('error')
-      setError('Incorrect password. Please try again.')
+    } catch (err) {
+      setError('An error occurred. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -80,6 +87,28 @@ const Login = () => {
               transition={{ delay: 0.5 }}
             >
               <label className="block text-sm font-semibold text-gray-800 mb-2">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="input-field pl-12"
+                  placeholder="staff@drnstaylor.co.za"
+                  autoFocus
+                  required
+                />
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.55 }}
+            >
+              <label className="block text-sm font-semibold text-gray-800 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -89,7 +118,7 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="input-field pr-12"
                   placeholder="Enter your password"
-                  autoFocus
+                  required
                 />
                 <button
                   type="button"
@@ -140,25 +169,15 @@ const Login = () => {
 
             <motion.button
               type="submit"
+              disabled={loading}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
-              className="btn-staff-primary w-full"
+              className="btn-staff-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign In
+              {loading ? 'Signing in...' : 'Sign In'}
             </motion.button>
           </form>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="mt-6 text-center"
-          >
-            <p className="text-xs text-gray-500">
-              Demo password: <span className="font-mono font-semibold text-gray-700">smile2025</span>
-            </p>
-          </motion.div>
         </div>
       </motion.div>
     </div>

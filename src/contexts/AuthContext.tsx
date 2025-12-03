@@ -1,37 +1,60 @@
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  User as FirebaseUser
+} from 'firebase/auth'
+import { auth } from '../config/firebase'
 
 interface AuthContextType {
   isAuthenticated: boolean
-  login: (password: string) => boolean
-  logout: () => void
+  currentUser: FirebaseUser | null
+  login: (email: string, password: string) => Promise<boolean>
+  logout: () => Promise<void>
+  loading: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('staff_authenticated') === 'true'
-  })
+  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null)
+  const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  const login = (password: string): boolean => {
-    if (password === 'smile2025') {
-      setIsAuthenticated(true)
-      localStorage.setItem('staff_authenticated', 'true')
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user)
+      setLoading(false)
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
       return true
+    } catch (error) {
+      console.error('Login error:', error)
+      return false
     }
-    return false
   }
 
-  const logout = () => {
-    setIsAuthenticated(false)
-    localStorage.removeItem('staff_authenticated')
-    navigate('/staff/login', { replace: true })
+  const logout = async (): Promise<void> => {
+    try {
+      await signOut(auth)
+      navigate('/staff/login', { replace: true })
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
   }
+
+  const isAuthenticated = currentUser !== null
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, currentUser, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   )

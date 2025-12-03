@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Calendar, BarChart3, TrendingUp, Users, Filter, Download, DollarSign, AlertCircle } from 'lucide-react'
-import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns'
+import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfDay, endOfDay, isSameDay, isWithinInterval } from 'date-fns'
 import { DayPicker } from 'react-day-picker'
-import { DENTISTS } from '../../utils/constants'
+import { useFilteredDentists } from '../../hooks/useFilteredDentists'
 import { useBookings } from '../../hooks/useBookings'
 import 'react-day-picker/dist/style.css'
 
@@ -16,40 +16,81 @@ const Analytics = () => {
   const [customStartDate, setCustomStartDate] = useState<Date | null>(null)
   const [customEndDate, setCustomEndDate] = useState<Date | null>(null)
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
-  const { bookings: allBookings } = useBookings()
+  const { bookings: allBookings } = useBookings({ filterByUserPractices: true })
+  const { dentists: DENTISTS } = useFilteredDentists()
 
   // Calculate date range based on type
   const dateRange = useMemo(() => {
+    const now = new Date()
     switch (dateRangeType) {
       case 'today':
-        return { start: new Date(), end: new Date() }
+        return { 
+          start: startOfDay(now), 
+          end: endOfDay(now) 
+        }
       case 'week':
-        return { start: startOfWeek(new Date()), end: endOfWeek(new Date()) }
+        return { 
+          start: startOfDay(startOfWeek(now, { weekStartsOn: 1 })), // Monday
+          end: endOfDay(endOfWeek(now, { weekStartsOn: 1 })) // Sunday
+        }
       case 'month':
-        return { start: startOfMonth(new Date()), end: endOfMonth(new Date()) }
+        return { 
+          start: startOfDay(startOfMonth(now)), 
+          end: endOfDay(endOfMonth(now)) 
+        }
       case 'custom':
-        return {
-          start: customStartDate || new Date(),
-          end: customEndDate || new Date()
+        if (customStartDate && customEndDate) {
+          return {
+            start: startOfDay(customStartDate),
+            end: endOfDay(customEndDate)
+          }
+        }
+        // If custom dates not set, default to today
+        return { 
+          start: startOfDay(now), 
+          end: endOfDay(now) 
         }
       default:
-        return { start: new Date(), end: new Date() }
+        return { 
+          start: startOfDay(now), 
+          end: endOfDay(now) 
+        }
     }
   }, [dateRangeType, customStartDate, customEndDate])
 
   // Filter bookings for selected date range and dentist
   const filteredBookings = useMemo(() => {
+    if (!dateRange.start || !dateRange.end) {
+      return []
+    }
+    
     return allBookings.filter((booking) => {
+      if (!booking.date) return false
+      
       try {
+        // Parse the booking date (format: YYYY-MM-DD)
         const bookingDate = parseISO(booking.date)
-        const matchesDate = bookingDate >= dateRange.start && bookingDate <= dateRange.end
+        
+        // For today, use isSameDay for exact match
+        if (dateRangeType === 'today') {
+          const matchesDate = isSameDay(bookingDate, dateRange.start)
+          const matchesDentist = selectedDentist === 'all' || booking.dentist === selectedDentist
+          return matchesDate && matchesDentist
+        }
+        
+        // For week, month, and custom ranges, check if date is within interval
+        const matchesDate = isWithinInterval(bookingDate, {
+          start: dateRange.start,
+          end: dateRange.end
+        })
         const matchesDentist = selectedDentist === 'all' || booking.dentist === selectedDentist
         return matchesDate && matchesDentist
-      } catch {
+      } catch (error) {
+        console.warn('Error parsing booking date:', booking.date, error)
         return false
       }
     })
-  }, [dateRange, selectedDentist, allBookings])
+  }, [dateRange, selectedDentist, allBookings, dateRangeType])
 
   // Group bookings by hour (only for today view)
   const bookingsByHour = useMemo(() => {
@@ -99,7 +140,7 @@ const Analytics = () => {
     const totalRevenue = completed.reduce((sum, b) => sum + (b.total || 0), 0)
     const totalDeposits = filteredBookings.reduce((sum, b) => sum + (b.deposit || 50), 0)
     const averageRevenue = completed.length > 0 ? totalRevenue / completed.length : 0
-    const noShows = filteredBookings.filter(b => b.status === 'cancelled').length
+    const noShows = filteredBookings.filter(b => b.status === 'cancelled' || b.status === 'no-show').length
     const noShowRate = filteredBookings.length > 0 ? (noShows / filteredBookings.length) * 100 : 0
 
     return {
@@ -124,7 +165,7 @@ const Analytics = () => {
       if (booking.status === 'completed') {
         metrics[booking.dentist].revenue += booking.total || 0
       }
-      if (booking.status === 'cancelled') {
+      if (booking.status === 'cancelled' || booking.status === 'no-show') {
         metrics[booking.dentist].noShows++
       }
     })
@@ -388,11 +429,19 @@ const Analytics = () => {
                     <span>
                       {customEndDate ? format(customEndDate, 'MMM d, yyyy') : 'End date'}
                     </span>
+                    {(!customStartDate || !customEndDate) && (
+                      <span className="text-xs text-amber-600 dark:text-amber-400 ml-2">
+                        (Please select both dates)
+                      </span>
+                    )}
                   </div>
                 )}
                 {dateRangeType !== 'custom' && (
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    {format(dateRange.start, 'MMM d')} - {format(dateRange.end, 'MMM d, yyyy')}
+                    {dateRangeType === 'today' 
+                      ? format(dateRange.start, 'MMM d, yyyy')
+                      : `${format(dateRange.start, 'MMM d')} - ${format(dateRange.end, 'MMM d, yyyy')}`
+                    }
                   </div>
                 )}
               </div>
@@ -445,29 +494,45 @@ const Analytics = () => {
               <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Start Date</label>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      Start Date {customStartDate && `(${format(customStartDate, 'MMM d, yyyy')})`}
+                    </label>
                     <DayPicker
                       mode="single"
                       selected={customStartDate || undefined}
                       onSelect={(date) => {
-                        setCustomStartDate(date || null)
-                        if (date && customEndDate && date > customEndDate) {
-                          setCustomEndDate(null)
+                        if (date) {
+                          setCustomStartDate(date)
+                          // If end date is before new start date, clear it
+                          if (customEndDate && date > customEndDate) {
+                            setCustomEndDate(null)
+                          }
+                        } else {
+                          setCustomStartDate(null)
                         }
                       }}
                       className="mx-auto"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">End Date</label>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                      End Date {customEndDate && `(${format(customEndDate, 'MMM d, yyyy')})`}
+                    </label>
                     <DayPicker
                       mode="single"
                       selected={customEndDate || undefined}
                       onSelect={(date) => {
-                        if (date && customStartDate && date >= customStartDate) {
-                          setCustomEndDate(date || null)
-                        } else if (date) {
-                          setCustomEndDate(date || null)
+                        if (date) {
+                          // Only allow end date if start date is set and end >= start
+                          if (customStartDate && date >= customStartDate) {
+                            setCustomEndDate(date)
+                          } else if (!customStartDate) {
+                            // If no start date, set end date and also set it as start date
+                            setCustomStartDate(date)
+                            setCustomEndDate(date)
+                          }
+                        } else {
+                          setCustomEndDate(null)
                         }
                       }}
                       disabled={customStartDate ? { before: customStartDate } : undefined}
@@ -475,6 +540,13 @@ const Analytics = () => {
                     />
                   </div>
                 </div>
+                {customStartDate && customEndDate && (
+                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-700">
+                    <p className="text-sm text-blue-800 dark:text-blue-200">
+                      Showing data from <strong>{format(customStartDate, 'MMM d, yyyy')}</strong> to <strong>{format(customEndDate, 'MMM d, yyyy')}</strong>
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>

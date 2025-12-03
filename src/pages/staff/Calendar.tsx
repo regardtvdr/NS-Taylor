@@ -2,12 +2,13 @@ import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Clock, X } from 'lucide-react'
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths } from 'date-fns'
-import { DENTISTS } from '../../utils/constants'
 import CreateBookingModal from '../../components/staff/CreateBookingModal'
 import BookingDetailModal from '../../components/staff/BookingDetailModal'
 import { useToast } from '../../contexts/ToastContext'
 import { useBookings } from '../../hooks/useBookings'
 import { BookingDetail } from '../../types'
+import { useFilteredDentists } from '../../hooks/useFilteredDentists'
+import { checkBookingConflict, isPastBooking } from '../../utils/conflictDetection'
 
 interface LeaveDay {
   date: string
@@ -25,7 +26,8 @@ const Calendar = () => {
   const [selectedBooking, setSelectedBooking] = useState<BookingDetail | null>(null)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const { showToast } = useToast()
-  const { bookings: allBookings, createBooking } = useBookings()
+  const { bookings: allBookings, createBooking } = useBookings({ filterByUserPractices: true })
+  const { dentists: DENTISTS } = useFilteredDentists()
 
   // Generate time slots (8 AM to 5 PM, 15-min intervals)
   const timeSlots = useMemo(() => {
@@ -133,17 +135,65 @@ const Calendar = () => {
 
   const handleCreateBooking = async (newBooking: any) => {
     try {
+      // Determine practiceId from dentist's branch
+      const dentist = DENTISTS.find(d => d.name === newBooking.dentist)
+      const practiceId = dentist?.branch === 'Weltevreden Park' ? 'weltevreden' :
+                        dentist?.branch === 'Ruimsig' ? 'ruimsig' :
+                        'weltevreden' // Default fallback
+
+      const finalDate = newBooking.date || format(selectedDate!, 'yyyy-MM-dd')
+      const finalTime = newBooking.time || selectedTimeSlot || ''
+      
+      // Validate date is not in the past
+      if (isPastBooking(finalDate, finalTime)) {
+        showToast('Cannot create bookings in the past', 'error')
+        return
+      }
+      
+      // Check for conflicts before creating
+      const relevantBookings = allBookings
+        .filter(b => 
+          b.date === finalDate && 
+          b.dentist === newBooking.dentist && 
+          b.status !== 'cancelled' &&
+          b.status !== 'no-show'
+        )
+        .map(b => ({
+          id: b.id,
+          dentist: b.dentist,
+          date: b.date,
+          time: b.time,
+          duration: b.duration || 15,
+        }))
+
+      const bookingToCheck = {
+        id: '',
+        dentist: newBooking.dentist,
+        date: finalDate,
+        time: finalTime,
+        duration: newBooking.duration || (newBooking.slotCount ? newBooking.slotCount * 15 : 15),
+      }
+
+      const conflictCheck = checkBookingConflict(bookingToCheck, relevantBookings)
+      if (conflictCheck.hasConflict) {
+        showToast(conflictCheck.message, 'error')
+        return
+      }
+
       await createBooking({
+        practiceId: practiceId, // REQUIRED: Maps from dentist's branch
         patient: newBooking.patient,
         email: newBooking.email,
         phone: newBooking.phone,
         service: newBooking.service,
         dentist: newBooking.dentist,
-        date: newBooking.date || format(selectedDate!, 'yyyy-MM-dd'),
-        time: newBooking.time || selectedTimeSlot || '',
+        date: finalDate,
+        time: finalTime,
         status: (newBooking.status || 'confirmed') as BookingDetail['status'],
+        source: 'walk-in', // Staff-created bookings are walk-ins
         deposit: newBooking.deposit,
         total: newBooking.total,
+        duration: newBooking.duration || (newBooking.slotCount ? newBooking.slotCount * 15 : 15),
       })
       showToast('Booking created successfully!', 'success')
       setSelectedTimeSlot(null)
@@ -566,6 +616,7 @@ const Calendar = () => {
         }}
         booking={selectedBooking ? {
           id: selectedBooking.id,
+          practiceId: selectedBooking.practiceId,
           patient: selectedBooking.patient,
           email: selectedBooking.email || '',
           phone: selectedBooking.phone || '',

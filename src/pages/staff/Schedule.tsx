@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams } from 'react-router-dom'
 import { Search, Calendar, Clock, User, Phone, Edit2, Trash2, X, AlertTriangle, Plus, History } from 'lucide-react'
-import { format, parseISO, isSameDay } from 'date-fns'
+import { format, parseISO, isSameDay, isPast } from 'date-fns'
 import { DayPicker } from 'react-day-picker'
 import { generateTimeSlots } from '../../utils/dateUtils'
 import { useToast } from '../../contexts/ToastContext'
@@ -13,10 +13,13 @@ import BookingDetailModal from '../../components/staff/BookingDetailModal'
 import { Patient } from '../../types'
 import { useBookings } from '../../hooks/useBookings'
 import { usePatients } from '../../hooks/usePatients'
+import { useFilteredDentists } from '../../hooks/useFilteredDentists'
+import { checkBookingConflict, isPastBooking } from '../../utils/conflictDetection'
 import 'react-day-picker/dist/style.css'
 
 interface ScheduleAppointment {
   id: string
+  practiceId: string
   time: string
   patient: string
   service: string
@@ -49,8 +52,9 @@ const Schedule = () => {
   const initialViewMode = searchParams.get('view') === 'patients' ? 'patients' : 'appointments'
   const [viewMode, setViewMode] = useState<'appointments' | 'patients'>(initialViewMode)
   const { showToast } = useToast()
-  const { bookings, createBooking, updateBooking, deleteBooking } = useBookings()
+  const { bookings, createBooking, updateBooking, deleteBooking } = useBookings({ filterByUserPractices: true })
   const { patients } = usePatients()
+  const { dentists: DENTISTS } = useFilteredDentists()
 
   // Update viewMode when URL parameter changes
   useEffect(() => {
@@ -66,6 +70,7 @@ const Schedule = () => {
   const allAppointments = useMemo(() => {
     return bookings.map(b => ({
       id: b.id,
+      practiceId: b.practiceId,
       time: b.time,
       patient: b.patient,
       service: b.service,
@@ -160,8 +165,47 @@ const Schedule = () => {
     if (!selectedAppointment || !rescheduleDate || !rescheduleTime) return
 
     try {
+      const newDate = format(rescheduleDate, 'yyyy-MM-dd')
+      
+      // Validate date is not in the past
+      if (isPastBooking(newDate, rescheduleTime)) {
+        showToast('Cannot reschedule to a time in the past', 'error')
+        return
+      }
+      
+      // Check for conflicts before rescheduling (exclude the current booking being rescheduled)
+      const relevantBookings = bookings
+        .filter(b => 
+          b.id !== selectedAppointment.id && // Exclude the booking being rescheduled
+          b.date === newDate && 
+          b.dentist === selectedAppointment.dentist && 
+          b.status !== 'cancelled' &&
+          b.status !== 'no-show'
+        )
+        .map(b => ({
+          id: b.id,
+          dentist: b.dentist,
+          date: b.date,
+          time: b.time,
+          duration: b.duration || 15,
+        }))
+
+      const bookingToCheck = {
+        id: selectedAppointment.id, // Include ID so it's excluded from conflict check
+        dentist: selectedAppointment.dentist,
+        date: newDate,
+        time: rescheduleTime,
+        duration: 15, // Default duration, adjust if you have duration stored
+      }
+
+      const conflictCheck = checkBookingConflict(bookingToCheck, relevantBookings)
+      if (conflictCheck.hasConflict) {
+        showToast(conflictCheck.message, 'error')
+        return
+      }
+      
       await updateBooking(selectedAppointment.id, {
-        date: format(rescheduleDate, 'yyyy-MM-dd'),
+        date: newDate,
         time: rescheduleTime,
       })
       showToast(`Appointment rescheduled to ${format(rescheduleDate, 'MMM d, yyyy')} at ${rescheduleTime}`, 'success')
@@ -208,6 +252,26 @@ const Schedule = () => {
   }
 
   const timeSlots = rescheduleDate ? generateTimeSlots(rescheduleDate) : []
+  
+  // Check if a time slot is booked for rescheduling (excluding the current appointment)
+  const isRescheduleSlotBooked = useMemo(() => {
+    if (!rescheduleDate || !selectedAppointment) return () => false
+    
+    const dateStr = format(rescheduleDate, 'yyyy-MM-dd')
+    const bookedSlots = new Set(
+      bookings
+        .filter(b => 
+          b.id !== selectedAppointment.id && // Exclude the appointment being rescheduled
+          b.date === dateStr && 
+          b.dentist === selectedAppointment.dentist && 
+          b.status !== 'cancelled' &&
+          b.status !== 'no-show'
+        )
+        .map(b => b.time)
+    )
+    
+    return (time: string) => bookedSlots.has(time)
+  }, [rescheduleDate, selectedAppointment, bookings])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 pb-24 md:pb-8">
@@ -724,6 +788,11 @@ const Schedule = () => {
                         selected={rescheduleDate || undefined}
                         onSelect={(date) => {
                           if (date) {
+                            // Validate date is not in the past
+                            if (isPast(date)) {
+                              showToast('Cannot reschedule to a date in the past', 'error')
+                              return
+                            }
                             setRescheduleDate(date)
                             setRescheduleTime('')
                             setIsCalendarOpen(false)
@@ -731,7 +800,9 @@ const Schedule = () => {
                         }}
                         disabled={(date) => {
                           const day = date.getDay()
-                          return day === 0 || day === 6
+                          const isWeekend = day === 0 || day === 6
+                          const isPastDate = isPast(date)
+                          return isWeekend || isPastDate
                         }}
                         modifiersClassNames={{
                           selected: 'bg-gray-800 text-white rounded-full',
@@ -860,28 +931,37 @@ const Schedule = () => {
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">Select New Time *</label>
                     <div className="grid grid-cols-4 gap-3 max-h-48 overflow-y-auto p-1">
-                      {timeSlots.map((time) => (
-                        <motion.button
-                          key={time}
-                          onClick={() => setRescheduleTime(time)}
-                          whileHover={rescheduleTime !== time ? { scale: 1.05, y: -2 } : {}}
-                          whileTap={{ scale: 0.95 }}
-                          className={`p-3 rounded-lg border-2 text-center transition-all font-semibold ${
-                            rescheduleTime === time
-                              ? 'border-gray-800 dark:border-gray-600 bg-gray-800 dark:bg-gray-600 text-white shadow-md'
-                              : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:border-gray-500 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 shadow-sm'
-                          }`}
-                        >
-                          <span className="text-sm">{time}</span>
-                          {rescheduleTime === time && (
-                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-gray-800 dark:bg-gray-600 rounded-full flex items-center justify-center">
-                              <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            </div>
-                          )}
-                        </motion.button>
-                      ))}
+                      {timeSlots.map((time) => {
+                        const isBooked = isRescheduleSlotBooked(time)
+                        return (
+                          <motion.button
+                            key={time}
+                            onClick={() => !isBooked && setRescheduleTime(time)}
+                            disabled={isBooked}
+                            whileHover={rescheduleTime !== time && !isBooked ? { scale: 1.05, y: -2 } : {}}
+                            whileTap={{ scale: 0.95 }}
+                            className={`p-3 rounded-lg border-2 text-center transition-all font-semibold relative ${
+                              isBooked
+                                ? 'border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-50'
+                                : rescheduleTime === time
+                                ? 'border-gray-800 dark:border-gray-600 bg-gray-800 dark:bg-gray-600 text-white shadow-md'
+                                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:border-gray-500 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 shadow-sm'
+                            }`}
+                          >
+                            <span className="text-sm">{time}</span>
+                            {isBooked && (
+                              <span className="absolute top-0 right-0 text-xs text-red-500">×</span>
+                            )}
+                            {rescheduleTime === time && !isBooked && (
+                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gray-800 dark:bg-gray-600 rounded-full flex items-center justify-center">
+                                <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              </div>
+                            )}
+                          </motion.button>
+                        )
+                      })}
                     </div>
                   </div>
                 )}
@@ -1019,7 +1099,50 @@ const Schedule = () => {
         bookings={bookings}
         onSave={async (booking) => {
           try {
+            // Determine practiceId from dentist's branch
+            const dentist = DENTISTS.find(d => d.name === booking.dentist)
+            const practiceId = dentist?.branch === 'Weltevreden Park' ? 'weltevreden' :
+                              dentist?.branch === 'Ruimsig' ? 'ruimsig' :
+                              'weltevreden' // Default fallback
+
+            // Validate date is not in the past
+            if (isPastBooking(booking.date, booking.time)) {
+              showToast('Cannot create bookings in the past', 'error')
+              return
+            }
+            
+            // Check for conflicts before creating
+            const relevantBookings = bookings
+              .filter(b => 
+                b.date === booking.date && 
+                b.dentist === booking.dentist && 
+                b.status !== 'cancelled' &&
+                b.status !== 'no-show'
+              )
+              .map(b => ({
+                id: b.id,
+                dentist: b.dentist,
+                date: b.date,
+                time: b.time,
+                duration: b.duration || 15,
+              }))
+
+            const bookingToCheck = {
+              id: '',
+              dentist: booking.dentist,
+              date: booking.date,
+              time: booking.time,
+              duration: booking.duration || (booking.slotCount ? booking.slotCount * 15 : 15),
+            }
+
+            const conflictCheck = checkBookingConflict(bookingToCheck, relevantBookings)
+            if (conflictCheck.hasConflict) {
+              showToast(conflictCheck.message, 'error')
+              return
+            }
+
             await createBooking({
+              practiceId: practiceId, // REQUIRED: Maps from dentist's branch
               patient: booking.patient,
               email: booking.email,
               phone: booking.phone,
@@ -1028,8 +1151,10 @@ const Schedule = () => {
               date: booking.date,
               time: booking.time,
               status: 'confirmed',
+              source: 'walk-in', // Staff-created bookings are walk-ins
               deposit: booking.deposit,
               total: booking.total,
+              duration: booking.duration || (booking.slotCount ? booking.slotCount * 15 : 15),
             })
             showToast('Appointment created successfully!', 'success')
             setIsCreateBookingOpen(false)
@@ -1059,6 +1184,7 @@ const Schedule = () => {
         }}
         booking={selectedBookingDetail ? {
           id: selectedBookingDetail.id,
+          practiceId: selectedBookingDetail.practiceId,
           patient: selectedBookingDetail.patient,
           email: selectedBookingDetail.email || '',
           phone: selectedBookingDetail.phone || '',

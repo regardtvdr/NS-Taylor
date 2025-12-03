@@ -10,6 +10,8 @@ import { AnimatedCounter } from '../../components/ui/AnimatedCounter'
 import { useToast } from '../../contexts/ToastContext'
 import { useBookings } from '../../hooks/useBookings'
 import { BookingDetail } from '../../types'
+import { useFilteredDentists } from '../../hooks/useFilteredDentists'
+import { checkBookingConflict, isPastBooking } from '../../utils/conflictDetection'
 import 'react-day-picker/dist/style.css'
 
 const StaffDashboard = () => {
@@ -19,7 +21,8 @@ const StaffDashboard = () => {
   const [selectedBooking, setSelectedBooking] = useState<BookingDetail | null>(null)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const { showToast } = useToast()
-  const { bookings: allBookings, createBooking, updateBookingStatus } = useBookings()
+  const { bookings: allBookings, createBooking, updateBookingStatus } = useBookings({ filterByUserPractices: true })
+  const { dentists: DENTISTS } = useFilteredDentists()
 
   // Calculate metrics
   const todayBookings = useMemo(() => {
@@ -76,17 +79,64 @@ const StaffDashboard = () => {
 
   const handleCreateBooking = async (newBooking: any) => {
     try {
+      // Determine practiceId from dentist's branch
+      const dentist = DENTISTS.find(d => d.name === newBooking.dentist)
+      const practiceId = dentist?.branch === 'Weltevreden Park' ? 'weltevreden' :
+                        dentist?.branch === 'Ruimsig' ? 'ruimsig' :
+                        'weltevreden' // Default fallback
+
+      const finalDate = newBooking.date || format(new Date(), 'yyyy-MM-dd')
+      
+      // Validate date is not in the past
+      if (isPastBooking(finalDate, newBooking.time)) {
+        showToast('Cannot create bookings in the past', 'error')
+        return
+      }
+      
+      // Check for conflicts before creating
+      const relevantBookings = allBookings
+        .filter(b => 
+          b.date === finalDate && 
+          b.dentist === newBooking.dentist && 
+          b.status !== 'cancelled' &&
+          b.status !== 'no-show'
+        )
+        .map(b => ({
+          id: b.id,
+          dentist: b.dentist,
+          date: b.date,
+          time: b.time,
+          duration: b.duration || 15,
+        }))
+
+      const bookingToCheck = {
+        id: '',
+        dentist: newBooking.dentist,
+        date: finalDate,
+        time: newBooking.time,
+        duration: newBooking.duration || (newBooking.slotCount ? newBooking.slotCount * 15 : 15),
+      }
+
+      const conflictCheck = checkBookingConflict(bookingToCheck, relevantBookings)
+      if (conflictCheck.hasConflict) {
+        showToast(conflictCheck.message, 'error')
+        return
+      }
+
       await createBooking({
+        practiceId: practiceId, // REQUIRED: Maps from dentist's branch
         patient: newBooking.patient,
         email: newBooking.email,
         phone: newBooking.phone,
         service: newBooking.service,
         dentist: newBooking.dentist,
-        date: newBooking.date || format(new Date(), 'yyyy-MM-dd'),
+        date: finalDate,
         time: newBooking.time,
         status: (newBooking.status || 'confirmed') as BookingDetail['status'],
+        source: 'walk-in', // Staff-created bookings are walk-ins
         deposit: newBooking.deposit,
         total: newBooking.total,
+        duration: newBooking.duration || (newBooking.slotCount ? newBooking.slotCount * 15 : 15),
       })
     } catch (error) {
       console.error('Failed to create booking:', error)
@@ -515,6 +565,7 @@ const StaffDashboard = () => {
         }}
         booking={selectedBooking ? {
           id: selectedBooking.id,
+          practiceId: selectedBooking.practiceId,
           patient: selectedBooking.patient,
           email: selectedBooking.email || '',
           phone: selectedBooking.phone || '',

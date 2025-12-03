@@ -27,21 +27,45 @@ const DateTimeSelection = ({
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   const timeSlots = selectedDate ? generateTimeSlots(selectedDate) : []
 
-  // Check if a time slot is booked for the selected dentist and date
+  // Helper function to parse time to minutes
+  const parseTimeToMinutes = (time: string): number => {
+    const [hours, minutes] = time.split(':').map(Number)
+    return hours * 60 + minutes
+  }
+
+  // Helper function to format minutes to time
+  const formatMinutesToTime = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`
+  }
+
+  // Check if a time slot is booked for the selected dentist and date (considering duration)
   const isSlotBooked = useMemo(() => {
     if (!selectedDate || !selectedDentist) return () => false
     
     const dateStr = format(selectedDate, 'yyyy-MM-dd')
-    const bookedSlots = new Set(
-      bookings
-        .filter(b => 
-          b.date === dateStr && 
-          b.dentist === selectedDentist && 
-          b.status !== 'cancelled' &&
-          b.status !== 'no-show'
-        )
-        .map(b => b.time)
+    const relevantBookings = bookings.filter(b => 
+      b.date === dateStr && 
+      b.dentist === selectedDentist && 
+      b.status !== 'cancelled' &&
+      b.status !== 'no-show'
     )
+    
+    // Create a set of all booked time slots (including duration)
+    const bookedSlots = new Set<string>()
+    relevantBookings.forEach(booking => {
+      const startTime = booking.time
+      const duration = booking.duration || 15 // Default 15 minutes
+      const startMinutes = parseTimeToMinutes(startTime)
+      
+      // Add all slots that would be occupied by this booking
+      for (let i = 0; i < duration; i += 15) {
+        const slotMinutes = startMinutes + i
+        const slotTime = formatMinutesToTime(slotMinutes)
+        bookedSlots.add(slotTime)
+      }
+    })
     
     return (time: string) => bookedSlots.has(time)
   }, [selectedDate, selectedDentist, bookings])

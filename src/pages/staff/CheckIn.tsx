@@ -1,22 +1,37 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { CheckCircle, XCircle, Clock, User, Search, Calendar } from 'lucide-react'
-import { format } from 'date-fns'
+import { format, isToday, parseISO } from 'date-fns'
 import { useToast } from '../../contexts/ToastContext'
-import { DENTISTS } from '../../utils/constants'
 import { useBookings } from '../../hooks/useBookings'
+import { useFilteredDentists } from '../../hooks/useFilteredDentists'
 
 const CheckIn = () => {
   const { showToast } = useToast()
-  const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
+  const today = format(new Date(), 'yyyy-MM-dd')
+  const [selectedDate, setSelectedDate] = useState<string>(today)
+  
+  // Reset to today on mount to ensure we always show today's bookings
+  useEffect(() => {
+    const currentToday = format(new Date(), 'yyyy-MM-dd')
+    setSelectedDate(currentToday)
+  }, [])
   const [searchQuery, setSearchQuery] = useState('')
   const [filterDentist, setFilterDentist] = useState<string>('all')
-  const { bookings, updateBookingStatus } = useBookings()
+  const { bookings, updateBookingStatus } = useBookings({ filterByUserPractices: true })
+  const { dentists: DENTISTS } = useFilteredDentists()
   
-  // Convert bookings to appointments for the selected date
+  // Convert bookings to appointments - ONLY show appointments for today
   const appointments = useMemo(() => {
+    const todayStr = format(new Date(), 'yyyy-MM-dd')
+    
     return bookings
-      .filter(b => b.date === selectedDate && (b.status === 'confirmed' || b.status === 'pending' || b.status === 'arrived' || b.status === 'no-show'))
+      .filter(b => {
+        // Only show appointments that are happening TODAY
+        if (!b.date) return false
+        // Strict check - must be today's date
+        return b.date === todayStr && (b.status === 'confirmed' || b.status === 'pending' || b.status === 'arrived' || b.status === 'no-show')
+      })
       .map(b => ({
         id: b.id,
         time: b.time,
@@ -28,7 +43,7 @@ const CheckIn = () => {
         email: b.email,
         date: b.date,
       }))
-  }, [bookings, selectedDate])
+  }, [bookings])
 
   // Filter appointments by date, search query, and dentist
   const filteredAppointments = useMemo(() => {
@@ -57,7 +72,7 @@ const CheckIn = () => {
       grouped[dentist.name] = filteredAppointments.filter((apt) => apt.dentist === dentist.name)
     })
     return grouped
-  }, [filteredAppointments])
+  }, [filteredAppointments, DENTISTS])
 
   const handleMarkArrived = async (id: string) => {
     try {
@@ -119,7 +134,14 @@ const CheckIn = () => {
               <input
                 type="date"
                 value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
+                onChange={(e) => {
+                  // Handle empty value (when calendar clear button is clicked)
+                  if (!e.target.value) {
+                    setSelectedDate(today)
+                    return
+                  }
+                  setSelectedDate(e.target.value)
+                }}
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-teal-500 dark:focus:ring-teal-400 focus:border-transparent"
               />
             </div>
@@ -210,7 +232,11 @@ const CheckIn = () => {
             <p className="text-sm text-gray-500 dark:text-gray-500">
               {searchQuery || filterDentist !== 'all'
                 ? 'Try adjusting your search or filters'
-                : `No appointments scheduled for ${format(new Date(selectedDate), 'MMMM d, yyyy')}`}
+                : selectedDate && parseISO(selectedDate)
+                ? isToday(parseISO(selectedDate))
+                  ? `No appointments scheduled for today`
+                  : `Appointments are only visible on the day of the booking. Please select today's date.`
+                : `No appointments scheduled for today`}
             </p>
           </motion.div>
         ) : (

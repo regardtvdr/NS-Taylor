@@ -117,18 +117,18 @@ const Chatbot = () => {
       lowerMessage.includes('when can i')
     ) {
       if (lowerMessage.includes('recurring') || lowerMessage.includes('repeat') || lowerMessage.includes('regular') || lowerMessage.includes('every week') || lowerMessage.includes('every month') || lowerMessage.includes('regular appointment')) {
-        return "Yes! We offer recurring appointments for patients who need regular visits. When booking, you can set up appointments to repeat daily, weekly, monthly, or yearly. This is perfect for regular cleanings, orthodontic adjustments, or ongoing treatments. The system will automatically schedule your appointments based on your preference. Just let our staff know when you book, or call us at +27 11 123 4567 to set up recurring appointments."
+        return "Yes! We offer recurring appointments for patients who need regular visits. When booking, you can set up appointments to repeat daily, weekly, monthly, or yearly. This is perfect for regular cleanings, orthodontic adjustments, or ongoing treatments. The system will automatically schedule your appointments based on your preference. Just let our staff know when you book, or call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) to set up recurring appointments."
       }
       if (lowerMessage.includes('returning') || lowerMessage.includes('been here before') || lowerMessage.includes('previous patient') || lowerMessage.includes('regular patient')) {
-        return "Welcome back! If you've booked with us before, our staff can quickly find your information to make booking faster. When you call us at +27 11 123 4567, they can pull up your previous appointments and medical history to streamline the process. You can also book online again - just use the same contact information, and we'll have your details on file."
+        return "Welcome back! If you've booked with us before, our staff can quickly find your information to make booking faster. When you call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig), they can pull up your previous appointments and medical history to streamline the process. You can also book online again - just use the same contact information, and we'll have your details on file."
       }
       if (lowerMessage.includes('how') || lowerMessage.includes('where') || lowerMessage.includes('what do i')) {
-        return "Booking an appointment is easy! Here's how: 1) Click the 'Book Appointment' button at the top of the page, 2) Choose the service you need (like cleaning, consultation, etc.), 3) Select your preferred dentist, 4) Pick a date and time that works for you, 5) Fill in your name, email, and phone number. That's it! The whole process takes just a few minutes. Payment is made on the day of your visit. Would you like help with any specific step?"
+        return "Booking an appointment is easy! Here's how: 1) Click the 'Book Appointment' button at the top of the page, 2) Choose your practice location (Ruimsig or Weltevreden Park), 3) Choose the service you need (like cleaning, consultation, etc.), 4) Select your preferred dentist (they'll be filtered by your chosen location), 5) Pick a date and time that works for you, 6) Fill in your name, email, and phone number, 7) Pay the R50 deposit (via Ozow or Instant EFT). That's it! The whole process takes just a few minutes. The remaining balance is paid on the day of your visit. Would you like help with any specific step?"
       }
       if (lowerMessage.includes('online') || lowerMessage.includes('website') || lowerMessage.includes('internet')) {
-        return "Yes, you can book online right here on our website! Just click the 'Book Appointment' button in the top menu. If you're not comfortable with online booking, you can also call us at +27 11 123 4567 and we'll be happy to help you over the phone."
+        return "Yes, you can book online right here on our website! Just click the 'Book Appointment' button in the top menu. If you're not comfortable with online booking, you can also call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) and we'll be happy to help you over the phone."
       }
-      return "To book an appointment, simply click the 'Book Appointment' button at the top of this page. You'll go through a few easy steps: choose your service, pick your dentist, select a date and time, and provide your contact information. No payment is required upfront - you'll pay on the day of your appointment. Don't worry - it's very straightforward, and if you need help, you can always call us at +27 11 123 4567."
+      return "To book an appointment, simply click the 'Book Appointment' button at the top of this page. You'll go through a few easy steps: choose your practice location (Ruimsig or Weltevreden Park), choose your service, pick your dentist, select a date and time, and provide your contact information. A R50 deposit is required when booking (via Ozow or Instant EFT), and the remaining balance is paid on the day of your appointment. Don't worry - it's very straightforward, and if you need help, you can always call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig)."
     }
 
     // Pricing and Payment related (updated - no deposit required)
@@ -149,12 +149,12 @@ const Chatbot = () => {
         return "Our services range from R650 for Teeth Cleaning to R3500 for Root Canal Treatment. The exact price depends on the service you choose. You can see all service prices on our homepage or during the booking process. Payment is made on the day of your appointment - we accept cash, card, and medical aid."
       }
       if (lowerMessage.includes('when') || lowerMessage.includes('how to pay') || lowerMessage.includes('payment method')) {
-        return "Payment is made on the day of your appointment. We accept cash, card payments, and direct medical aid claims (subject to verification). There's no deposit required when booking - you simply pay when you come in for your visit."
+        return "A R50 deposit is required when booking (via Ozow or Instant EFT). The remaining balance is paid on the day of your appointment. We accept cash, card payments, and direct medical aid claims (subject to verification) for the balance."
       }
       if (lowerMessage.includes('deposit') || lowerMessage.includes('required')) {
-        return "No deposit is required to book an appointment. You simply pay for your service on the day of your visit. We accept cash, card, and medical aid payments."
+        return "A R50 deposit is required when booking an appointment. You can pay this via Ozow or Instant EFT during the booking process. The remaining balance is paid on the day of your visit. We accept cash, card, and medical aid payments for the balance."
       }
-      return "Payment is made on the day of your appointment. We accept cash, card payments, and medical aid. There's no deposit or upfront payment required when booking - you simply pay when you come in for your visit."
+      return "A R50 deposit is required when booking (payable via Ozow or Instant EFT). The remaining balance is paid on the day of your appointment. We accept cash, card payments, and medical aid for the balance."
     }
 
     // Services (expanded with more variations and explanations)
@@ -194,7 +194,7 @@ const Chatbot = () => {
         return "Yes, we perform Root Canal Treatment for R3500. This procedure saves your tooth when the nerve is damaged or infected. It takes about 2 hours and is much more comfortable than it used to be with modern techniques."
       }
       if (lowerMessage.includes('emergency') || lowerMessage.includes('pain') || lowerMessage.includes('urgent')) {
-        return "We offer Emergency Visits for R950. These 30-minute appointments are for urgent dental problems like severe pain, trauma, or infections. If you have a dental emergency, please call us at +27 11 123 4567."
+        return "We offer Emergency Visits for R950. These 30-minute appointments are for urgent dental problems like severe pain, trauma, or infections. If you have a dental emergency, please call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig)."
       }
       return "We offer a full range of dental services: Comprehensive Consultation (R850), Teeth Cleaning & Polish (R650), Teeth Whitening (R2500), Dental Implant Consultation (R1200), Root Canal Treatment (R3500), and Emergency Visits (R950). We also do fillings, crowns, extractions, and more. What specific treatment are you interested in?"
     }
@@ -211,9 +211,15 @@ const Chatbot = () => {
       lowerMessage.includes('which dentist')
     ) {
       if (lowerMessage.includes('best') || lowerMessage.includes('recommend') || lowerMessage.includes('which one')) {
-        return "All our dentists are highly qualified and experienced! Dr. Sarah Johnson specializes in general dentistry (12 years experience), Dr. Michael Chen is our expert in orthodontics and implants (15 years), and Dr. Emily Williams focuses on cosmetic and restorative work (10 years). During booking, you can see their specializations and choose who you'd like to see. They're all excellent!"
+        return "All our dentists are highly qualified and experienced! We have 6 dentists across our two locations: Ruimsig (Dr. Sarah Johnson - General Dentistry, Dr. Michael Chen - Orthodontics & Implants, Dr. Emily Williams - Cosmetic & Restorative) and Weltevreden Park (Dr. Amanda Nkosi - General Dentistry, Dr. David van der Berg - Endodontics, Dr. Thandi Mkhize - Pediatric Dentistry). During booking, you'll first choose your location, then see the dentists available at that practice. They're all excellent!"
       }
-      return "We have three wonderful, experienced dentists: Dr. Sarah Johnson specializes in General Dentistry with 12 years of experience, Dr. Michael Chen is our expert in Orthodontics & Implants with 15 years of experience, and Dr. Emily Williams focuses on Cosmetic & Restorative dentistry with 10 years of experience. You can choose your preferred dentist when you book your appointment. They're all highly qualified and caring professionals."
+      if (lowerMessage.includes('ruimsig') || lowerMessage.includes('weltevreden')) {
+        const branch = lowerMessage.includes('ruimsig') ? 'Ruimsig' : 'Weltevreden Park'
+        const dentists = DENTISTS.filter(d => d.branch === branch)
+        const dentistList = dentists.map(d => `${d.name} (${d.specialization}, ${d.experience} years)`).join(', ')
+        return `At our ${branch} location, we have ${dentists.length} excellent dentists: ${dentistList}. You can choose your preferred dentist when you book your appointment. They're all highly qualified and caring professionals.`
+      }
+      return "We have 6 wonderful, experienced dentists across our two locations. At Ruimsig: Dr. Sarah Johnson (General Dentistry, 12 years), Dr. Michael Chen (Orthodontics & Implants, 15 years), and Dr. Emily Williams (Cosmetic & Restorative, 10 years). At Weltevreden Park: Dr. Amanda Nkosi (General Dentistry, 8 years), Dr. David van der Berg (Endodontics, 11 years), and Dr. Thandi Mkhize (Pediatric Dentistry, 9 years). You'll choose your location first when booking, then select from the dentists at that practice."
     }
 
     // Location (expanded with directions and parking info)
@@ -230,12 +236,18 @@ const Chatbot = () => {
       lowerMessage.includes('located')
     ) {
       if (lowerMessage.includes('parking') || lowerMessage.includes('park')) {
-        return "Yes, we have secure parking available on-site! There's plenty of parking space, so you won't have to worry about finding a spot. The parking is free for our patients."
+        return "Yes, we have secure parking available at both locations! There's plenty of parking space, so you won't have to worry about finding a spot. The parking is free for our patients."
+      }
+      if (lowerMessage.includes('ruimsig')) {
+        return "Our Ruimsig practice is located at Unit 5, Ruimsig Country Office Park, 129 Hole In One St, Ruimsig, 1724. You can get directions by visiting our Location page - there's a Google Maps link that will give you turn-by-turn directions from your location."
+      }
+      if (lowerMessage.includes('weltevreden')) {
+        return "Our Weltevreden Park practice is located at The Gables Unit no.2, 879 Tennis Rd, Weltevreden Park Ext 25, 1709. You can get directions by visiting our Location page - there's a Google Maps link that will give you turn-by-turn directions from your location."
       }
       if (lowerMessage.includes('directions') || lowerMessage.includes('how to get') || lowerMessage.includes('drive')) {
-        return "We're located at 123 Medical Boulevard, Sandton, Johannesburg 2196. We're just off the M1 highway, making us easy to reach. You can get directions by visiting our Location page - there's a Google Maps link that will give you turn-by-turn directions from your location."
+        return "We have two convenient locations: Ruimsig (Unit 5, Ruimsig Country Office Park, 129 Hole In One St, Ruimsig, 1724) and Weltevreden Park (The Gables Unit no.2, 879 Tennis Rd, Weltevreden Park Ext 25, 1709). You can get directions by visiting our Location page - there are Google Maps links for both locations that will give you turn-by-turn directions."
       }
-      return "We're located at 123 Medical Boulevard, Sandton, Johannesburg 2196, South Africa. We have secure parking on-site. You can find us easily on Google Maps - just visit the 'Location' page in the top menu, and you'll see a map with directions. We're conveniently located just off the M1 highway."
+      return "We have two convenient locations to serve you: Ruimsig (Unit 5, Ruimsig Country Office Park, 129 Hole In One St, Ruimsig, 1724) and Weltevreden Park (The Gables Unit no.2, 879 Tennis Rd, Weltevreden Park Ext 25, 1709). Both locations have secure parking on-site. You can find us easily on Google Maps - just visit the 'Location' page in the top menu, and you'll see maps with directions for both practices."
     }
 
     // Hours (expanded with more variations)
@@ -254,12 +266,12 @@ const Chatbot = () => {
       lowerMessage.includes('friday')
     ) {
       if (lowerMessage.includes('weekend') || lowerMessage.includes('saturday') || lowerMessage.includes('sunday')) {
-        return "We're closed on weekends (Saturday and Sunday) to allow our team to rest and spend time with their families. However, for dental emergencies, you can call our emergency line at +27 11 123 4567, and we'll do our best to help."
+        return "We're closed on weekends (Saturday and Sunday) to allow our team to rest and spend time with their families. However, for dental emergencies, you can call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig), and we'll do our best to help."
       }
       if (lowerMessage.includes('today') || lowerMessage.includes('now')) {
-        return "We're open Monday to Friday from 8:00 AM to 5:00 PM. If you're calling outside these hours, please leave a message or call our emergency line at +27 11 123 4567 for urgent dental issues."
+        return "We're open Monday to Friday from 8:00 AM to 4:30 PM at both locations. If you're calling outside these hours, please leave a message or call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) for urgent dental issues."
       }
-      return "Our practice is open Monday to Friday from 8:00 AM to 5:00 PM. We're closed on weekends. For dental emergencies outside these hours, please call +27 11 123 4567 and we'll assist you."
+      return "Our practices are open Monday to Friday from 8:00 AM to 4:30 PM at both Ruimsig and Weltevreden Park locations. We're closed on weekends. For dental emergencies outside these hours, please call 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) and we'll assist you."
     }
 
     // Contact (expanded with more options)
@@ -275,20 +287,32 @@ const Chatbot = () => {
       lowerMessage.includes('get in touch')
     ) {
       if (lowerMessage.includes('phone') || lowerMessage.includes('call') || lowerMessage.includes('number')) {
-        return "Our phone number is +27 11 123 4567. You can call us Monday to Friday between 8:00 AM and 5:00 PM. If you call outside these hours, please leave a message and we'll get back to you. For emergencies, you can also call this number."
+        if (lowerMessage.includes('ruimsig')) {
+          return "Our Ruimsig practice phone number is 010 100 8410. You can call us Monday to Friday between 8:00 AM and 4:30 PM. If you call outside these hours, please leave a message and we'll get back to you. For emergencies, you can also call this number."
+        }
+        if (lowerMessage.includes('weltevreden')) {
+          return "Our Weltevreden Park practice phone number is 011 679 2961. You can call us Monday to Friday between 8:00 AM and 4:30 PM. If you call outside these hours, please leave a message and we'll get back to you. For emergencies, you can also call this number."
+        }
+        return "We have two locations with different phone numbers: Weltevreden Park - 011 679 2961, and Ruimsig - 010 100 8410. You can call us Monday to Friday between 8:00 AM and 4:30 PM. If you call outside these hours, please leave a message and we'll get back to you."
       }
       if (lowerMessage.includes('email') || lowerMessage.includes('e-mail')) {
-        return "Our email address is info@drnstaylor.co.za. You can send us an email anytime, and we'll respond within 24 hours during business days. You can also use the Contact page on our website to send us a message directly."
+        if (lowerMessage.includes('ruimsig')) {
+          return "For our Ruimsig practice, you can email: admin.ruimsig@dentaloffices.co.za, accounts.ruimsig@dentaloffices.co.za, or enquiries.ruimsig@dentaloffices.co.za. You can send us an email anytime, and we'll respond within 24 hours during business days."
+        }
+        if (lowerMessage.includes('weltevreden')) {
+          return "For our Weltevreden Park practice, you can email: admin@dentaloffices.co.za, accounts@dentaloffices.co.za, or enquiries@dentaloffices.co.za. You can send us an email anytime, and we'll respond within 24 hours during business days."
+        }
+        return "For Weltevreden Park: admin@dentaloffices.co.za, accounts@dentaloffices.co.za, or enquiries@dentaloffices.co.za. For Ruimsig: admin.ruimsig@dentaloffices.co.za, accounts.ruimsig@dentaloffices.co.za, or enquiries.ruimsig@dentaloffices.co.za. You can also use the Contact page on our website to send us a message directly."
       }
-      return "You can reach us in several ways: Phone us at +27 11 123 4567 (Monday-Friday, 8 AM - 5 PM), Email us at info@drnstaylor.co.za, or visit our Contact page to send us a message through the website. We're here to help!"
+      return "You can reach us in several ways: Phone us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) Monday-Friday, 8 AM - 4:30 PM. Email us at admin@dentaloffices.co.za (Weltevreden Park) or admin.ruimsig@dentaloffices.co.za (Ruimsig), or visit our Contact page to send us a message through the website. We're here to help!"
     }
 
     // Cancellation
     if (lowerMessage.includes('cancel') || lowerMessage.includes('reschedule') || lowerMessage.includes('change')) {
       if (lowerMessage.includes('policy') || lowerMessage.includes('billed') || lowerMessage.includes('charge')) {
-        return "Our cancellation policy requires that all cancellations be made at least 1 hour before your scheduled appointment time. If you cancel less than 1 hour before your appointment or fail to show up, you will be billed for the appointment. You can cancel using the link in your confirmation email or by calling us at +27 11 123 4567."
+        return "Our cancellation policy requires that all cancellations be made at least 1 hour before your scheduled appointment time. If you cancel less than 1 hour before your appointment or fail to show up, you will be billed for the appointment. You can cancel using the link in your confirmation email or by calling us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig)."
       }
-      return "To cancel or reschedule your appointment, you'll receive a cancellation link in your confirmation email. Click the link to access the cancellation portal where you can manage your appointment. Please note: cancellations must be made at least 1 hour before your appointment time, otherwise you will be billed."
+      return "To cancel or reschedule your appointment, you'll receive a cancellation link in your confirmation email. Click the link to access the cancellation portal where you can manage your appointment. Please note: cancellations must be made at least 1 hour before your appointment time, otherwise you will be billed. You can also call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) to cancel."
     }
 
     // Reminders
@@ -303,12 +327,12 @@ const Chatbot = () => {
 
     // Emergency
     if (lowerMessage.includes('emergency') || lowerMessage.includes('urgent') || lowerMessage.includes('pain') || lowerMessage.includes('hurt')) {
-      return "For dental emergencies, we offer Emergency Visit appointments (R950, 30 minutes). For urgent care outside business hours, please call +27 11 123 4567. We're here to help with dental pain and trauma."
+      return "For dental emergencies, we offer Emergency Visit appointments (R950, 30 minutes). For urgent care outside business hours, please call 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig). We're here to help with dental pain and trauma."
     }
 
     // Insurance
     if (lowerMessage.includes('insurance') || lowerMessage.includes('medical aid') || lowerMessage.includes('cover')) {
-      return "We accept most major medical aid schemes. Please bring your medical aid card to your appointment. You can contact us at +27 11 123 4567 to verify if your specific medical aid is accepted."
+      return "We accept most major medical aid schemes. Please bring your medical aid card to your appointment. You can contact us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) to verify if your specific medical aid is accepted."
     }
 
     // General help
@@ -366,7 +390,7 @@ const Chatbot = () => {
       lowerMessage.includes('complicated') ||
       lowerMessage.includes('confusing')
     ) {
-      return "I completely understand - technology can be confusing! Don't worry, you don't have to use the website if you're not comfortable. You can always call us directly at +27 11 123 4567, and our friendly staff will help you book an appointment over the phone. We're here Monday to Friday, 8 AM to 5 PM. Would you like our phone number?"
+      return "I completely understand - technology can be confusing! Don't worry, you don't have to use the website if you're not comfortable. You can always call us directly at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig), and our friendly staff will help you book an appointment over the phone. We're here Monday to Friday, 8 AM to 4:30 PM. Would you like our phone numbers?"
     }
 
     // About page / Practice information
@@ -379,9 +403,9 @@ const Chatbot = () => {
       lowerMessage.includes('what is premium dental')
     ) {
       if (lowerMessage.includes('mission') || lowerMessage.includes('values') || lowerMessage.includes('believe')) {
-        return "Our mission at Dr. NS Taylor and Associates Inc. is to provide exceptional dental services in a comfortable, modern environment while making the booking process as simple and convenient as possible. We believe everyone deserves access to world-class dental care. We've revolutionized the appointment booking experience with our innovative online platform, reducing no-shows by 42% and ensuring every patient receives the care they need when they need it."
+        return "DR NS Taylor & Associates Inc. is a family-oriented dental practice dedicated to providing compassionate, comprehensive dental care for patients of all ages. We offer a full range of services, from routine cleanings and exams to advanced procedures, including removable and fixed prosthodontic treatments - all in one convenient and safe location. Our experienced team is committed to creating a comfortable, welcoming environment where families feel at ease. Your smile is our priority!"
       }
-      return "Dr. NS Taylor and Associates Inc. is a premier dental practice in South Africa, dedicated to providing exceptional dental care with a focus on patient comfort and satisfaction. We're an award-winning practice with an expert team of highly qualified dentists. We use modern technology and state-of-the-art equipment to provide patient-centered care. You can learn more about us on our 'About Us' page in the top menu."
+      return "Dr. NS Taylor & Associates Inc. is a family-oriented dental practice with two convenient locations (Ruimsig and Weltevreden Park), dedicated to providing compassionate, comprehensive dental care for patients of all ages. We offer a full range of services, from routine cleanings and exams to advanced procedures, including removable and fixed prosthodontic treatments. Our experienced team of 6 dentists is committed to creating a comfortable, welcoming environment where families feel at ease. You can learn more about us on our 'About Us' page in the top menu."
     }
 
     // Team / Dentists - more specific questions
@@ -397,15 +421,24 @@ const Chatbot = () => {
       lowerMessage.includes('specialization')
     ) {
       if (lowerMessage.includes('sarah') || (lowerMessage.includes('johnson') && !lowerMessage.includes('michael'))) {
-        return "Dr. Sarah Johnson specializes in General Dentistry with 12 years of experience. She has a BDS and MDS degree and is specialized in preventive care and cosmetic dentistry. She has a 4.9 rating with 234 reviews. You can learn more about her and our other dentists on the 'Our Team' page."
+        return "Dr. Sarah Johnson specializes in General Dentistry with 12 years of experience. She practices at our Ruimsig location. She has a BDS and MDS degree and is specialized in preventive care and cosmetic dentistry. She has a 4.9 rating with 234 reviews. You can learn more about her and our other dentists on the 'Our Team' page."
       }
       if (lowerMessage.includes('michael') || lowerMessage.includes('chen')) {
-        return "Dr. Michael Chen is our expert in Orthodontics & Implants with 15 years of experience. He has a BDS, MDS, and PhD degree and is known for precision and patient care. He has a 4.8 rating with 189 reviews. You can learn more about him and our other dentists on the 'Our Team' page."
+        return "Dr. Michael Chen is our expert in Orthodontics & Implants with 15 years of experience. He practices at our Ruimsig location. He has a BDS, MDS, and PhD degree and is known for precision and patient care. He has a 4.8 rating with 189 reviews. You can learn more about him and our other dentists on the 'Our Team' page."
       }
       if (lowerMessage.includes('emily') || lowerMessage.includes('williams')) {
-        return "Dr. Emily Williams specializes in Cosmetic & Restorative dentistry with 10 years of experience. She has a BDS and MDS degree and is passionate about creating beautiful smiles through advanced cosmetic and restorative procedures. She has a 4.9 rating with 156 reviews. You can learn more about her and our other dentists on the 'Our Team' page."
+        return "Dr. Emily Williams specializes in Cosmetic & Restorative dentistry with 10 years of experience. She practices at our Ruimsig location. She has a BDS and MDS degree and is passionate about creating beautiful smiles through advanced cosmetic and restorative procedures. She has a 4.9 rating with 156 reviews. You can learn more about her and our other dentists on the 'Our Team' page."
       }
-      return `We have three excellent dentists: ${DENTISTS.map(d => `${d.name} (${d.specialization}, ${d.experience} years)`).join(', ')}. All are highly qualified and experienced. You can read more about each dentist, their qualifications, and patient reviews on the 'Our Team' page in the top menu.`
+      if (lowerMessage.includes('amanda') || lowerMessage.includes('nkosi')) {
+        return "Dr. Amanda Nkosi specializes in General Dentistry with 8 years of experience. She practices at our Weltevreden Park location. You can learn more about her and our other dentists on the 'Our Team' page."
+      }
+      if (lowerMessage.includes('david') || lowerMessage.includes('van der berg') || lowerMessage.includes('vanderberg')) {
+        return "Dr. David van der Berg specializes in Endodontics with 11 years of experience. He practices at our Weltevreden Park location. You can learn more about him and our other dentists on the 'Our Team' page."
+      }
+      if (lowerMessage.includes('thandi') || lowerMessage.includes('mkhize')) {
+        return "Dr. Thandi Mkhize specializes in Pediatric Dentistry with 9 years of experience. She practices at our Weltevreden Park location. You can learn more about her and our other dentists on the 'Our Team' page."
+      }
+      return `We have 6 excellent dentists across our two locations: ${DENTISTS.map(d => `${d.name} (${d.specialization}, ${d.branch})`).join(', ')}. All are highly qualified and experienced. You can read more about each dentist, their qualifications, and patient reviews on the 'Our Team' page in the top menu.`
     }
 
     // Reviews / Testimonials
@@ -427,7 +460,7 @@ const Chatbot = () => {
       lowerMessage.includes('contact form') ||
       lowerMessage.includes('get in touch')
     ) {
-      return "You can contact us in several ways: 1) Use the Contact page on our website to send us a message directly, 2) Call us at +27 11 123 4567 (Monday-Friday, 8 AM - 5 PM), 3) Email us at info@drnstaylor.co.za, or 4) Visit us at 123 Medical Boulevard, Sandton, Johannesburg. For emergencies outside business hours, call our emergency line at +27 11 123 4567."
+      return "You can contact us in several ways: 1) Use the Contact page on our website to send us a message directly, 2) Call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) Monday-Friday, 8 AM - 4:30 PM, 3) Email us at admin@dentaloffices.co.za (Weltevreden Park) or admin.ruimsig@dentaloffices.co.za (Ruimsig), or 4) Visit us at either location. For emergencies outside business hours, call the appropriate practice number."
     }
 
     // Location page / Directions
@@ -442,12 +475,12 @@ const Chatbot = () => {
       lowerMessage.includes('parking')
     ) {
       if (lowerMessage.includes('gautrain') || lowerMessage.includes('public transport') || lowerMessage.includes('train') || lowerMessage.includes('bus')) {
-        return "We're easily accessible via public transport! The practice is just 5 minutes walk from the Gautrain Sandton Station. Multiple bus routes also serve the area. Visit our Location page for more details and a map."
+        return "Both our locations are easily accessible! Visit our Location page for more details about public transport options and maps for both Ruimsig and Weltevreden Park locations."
       }
       if (lowerMessage.includes('car') || lowerMessage.includes('drive') || lowerMessage.includes('highway')) {
-        return "We're located on Medical Boulevard in Sandton, with easy access from the N1 and M1 highways. We have free parking available on-site for all patients. Visit our Location page for detailed directions and a Google Maps link."
+        return "We have two convenient locations: Ruimsig (Unit 5, Ruimsig Country Office Park, 129 Hole In One St) and Weltevreden Park (The Gables Unit no.2, 879 Tennis Rd). Both locations have free parking available on-site for all patients. Visit our Location page for detailed directions and Google Maps links."
       }
-      return "Visit our Location page in the top menu for detailed information about finding us, including a Google Maps link, directions by car and public transport, parking information, and our full address: 123 Medical Boulevard, Sandton, Johannesburg 2196, South Africa."
+      return "Visit our Location page in the top menu for detailed information about finding us, including Google Maps links, directions by car and public transport, parking information, and full addresses for both our Ruimsig and Weltevreden Park locations."
     }
 
     // Privacy Policy / Terms of Service
@@ -491,7 +524,7 @@ const Chatbot = () => {
       lowerMessage.includes('recovery') ||
       lowerMessage.includes('post treatment')
     ) {
-      return "After your treatment, we'll provide you with detailed after-care instructions. Depending on your procedure, you may need a follow-up appointment. We'll schedule this before you leave. If you have any questions or concerns after your visit, don't hesitate to call us at +27 11 123 4567."
+      return "After your treatment, we'll provide you with detailed after-care instructions. Depending on your procedure, you may need a follow-up appointment. We'll schedule this before you leave. If you have any questions or concerns after your visit, don't hesitate to call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig)."
     }
 
     // Payment methods - more detailed
@@ -504,7 +537,7 @@ const Chatbot = () => {
       lowerMessage.includes('eft') ||
       lowerMessage.includes('cash')
     ) {
-      return "Payment is made on the day of your appointment. We accept cash, card payments (credit and debit), and direct medical aid claims (subject to verification). There's no deposit or upfront payment required when booking - you simply pay when you come in for your visit."
+      return "A R50 deposit is required when booking (via Ozow or Instant EFT). The remaining balance is paid on the day of your appointment. We accept cash, card payments (credit and debit), and direct medical aid claims (subject to verification) for the balance."
     }
 
     // Website navigation / Pages
@@ -531,7 +564,7 @@ const Chatbot = () => {
       lowerMessage.includes('special needs') ||
       lowerMessage.includes('accommodation')
     ) {
-      return "We're committed to making our practice accessible to everyone. Our facility is wheelchair accessible, and we have parking close to the entrance. If you have specific accessibility needs, please let us know when booking, and we'll make sure everything is arranged for your comfort. Call us at +27 11 123 4567 to discuss any special requirements."
+      return "We're committed to making our practices accessible to everyone. Both our Ruimsig and Weltevreden Park facilities are wheelchair accessible, and we have parking close to the entrance. If you have specific accessibility needs, please let us know when booking, and we'll make sure everything is arranged for your comfort. Call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) to discuss any special requirements."
     }
 
     // Booking process - more detailed steps
@@ -542,9 +575,9 @@ const Chatbot = () => {
       lowerMessage.includes('walkthrough')
     ) {
       if (lowerMessage.includes('recurring') || lowerMessage.includes('repeat')) {
-        return "For recurring appointments, the process is: 1) Choose your service, 2) Select your dentist, 3) Pick your first appointment date and time, 4) Choose how often you want to repeat (daily, weekly, monthly, or yearly), 5) Set when the recurring appointments should end (never, on a specific date, or after a certain number of visits), 6) Enter your contact details. That's it! The system will automatically schedule all your future appointments based on your preferences. Payment is made on the day of each appointment."
+        return "For recurring appointments, the process is: 1) Choose your practice location (Ruimsig or Weltevreden Park), 2) Choose your service, 3) Select your dentist (filtered by location), 4) Pick your first appointment date and time, 5) Choose how often you want to repeat (daily, weekly, monthly, or yearly), 6) Set when the recurring appointments should end (never, on a specific date, or after a certain number of visits), 7) Enter your contact details, 8) Pay the R50 deposit (via Ozow or Instant EFT). That's it! The system will automatically schedule all your future appointments based on your preferences. The balance is paid on the day of each appointment."
       }
-      return "The booking process has 4 simple steps: 1) Choose your service (cleaning, consultation, etc.), 2) Select your preferred dentist (or we can assign one), 3) Pick a date and time from available slots, 4) Enter your contact details (name, email, phone). That's it! You'll receive a confirmation email with all the details. Payment is made on the day of your appointment - no deposit required. The whole process takes just a few minutes! For regular visits, you can also set up recurring appointments."
+      return "The booking process has several simple steps: 1) Choose your practice location (Ruimsig or Weltevreden Park), 2) Choose your service (cleaning, consultation, etc.), 3) Select your preferred dentist (they'll be filtered by your chosen location), 4) Pick a date and time from available slots, 5) Enter your contact details (name, email, phone), 6) Pay the R50 deposit (via Ozow or Instant EFT). That's it! You'll receive a confirmation email with all the details. The remaining balance is paid on the day of your appointment. The whole process takes just a few minutes! For regular visits, you can also set up recurring appointments."
     }
 
     // Specific service questions
@@ -581,9 +614,9 @@ const Chatbot = () => {
       lowerMessage.includes('no show')
     ) {
       if (lowerMessage.includes('recurring') || lowerMessage.includes('repeat')) {
-        return "For recurring appointments, you can cancel individual appointments or the entire series. All cancellations must be made at least 1 hour before the scheduled appointment time, otherwise you will be billed. To cancel a recurring series, contact us at +27 11 123 4567 at least 1 hour before the next scheduled appointment."
+        return "For recurring appointments, you can cancel individual appointments or the entire series. All cancellations must be made at least 1 hour before the scheduled appointment time, otherwise you will be billed. To cancel a recurring series, contact us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) at least 1 hour before the next scheduled appointment."
       }
-      return "Our cancellation policy: All cancellations must be made at least 1 hour before your scheduled appointment time. If you cancel less than 1 hour before your appointment or fail to show up, you will be billed for the appointment. You can reschedule free of charge if done at least 1 hour in advance. Use the cancellation link in your confirmation email to manage your appointment, or call us at +27 11 123 4567."
+      return "Our cancellation policy: All cancellations must be made at least 1 hour before your scheduled appointment time. If you cancel less than 1 hour before your appointment or fail to show up, you will be billed for the appointment. You can reschedule free of charge if done at least 1 hour in advance. Use the cancellation link in your confirmation email to manage your appointment, or call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig)."
     }
 
     // Default response (more helpful and conversational)
