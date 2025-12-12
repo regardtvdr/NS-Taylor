@@ -9,20 +9,16 @@ const Hero = () => {
       aria-label="Welcome to Dr. NS Taylor and Associates dental practice"
       role="banner"
     >
-      {/* Background */}
+      {/* Parallax Background */}
       <div className="absolute inset-0 z-0">
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #1a1a2e 100%)',
+            backgroundImage: 'url(/background.jpg)',
           }}
         />
-        {/* Decorative elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-400 rounded-full blur-3xl" />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/75 to-black/90" />
+        <div className="absolute inset-0 backdrop-blur-[2px]" />
       </div>
 
       {/* Content */}
