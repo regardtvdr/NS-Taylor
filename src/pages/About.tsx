@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import { Award, Users, Heart, Shield } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { InteractiveHoverButton } from '../components/ui/InteractiveHoverButton'
@@ -7,8 +6,6 @@ import { AnimatedGridPattern } from '../components/ui/animated-grid-pattern'
 import { cn } from '../lib/utils'
 
 const About = () => {
-  const { ref, isInView } = useScrollAnimation()
-
   const features = [
     {
       icon: Award,
@@ -83,7 +80,7 @@ const About = () => {
       </section>
 
       {/* Features Grid */}
-      <section ref={ref} className="py-20 bg-gray-50 relative overflow-hidden">
+      <section className="py-20 bg-gray-50 relative overflow-hidden">
         <AnimatedGridPattern
           numSquares={30}
           maxOpacity={0.6}
@@ -97,7 +94,8 @@ const About = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
@@ -113,7 +111,8 @@ const About = () => {
                 <motion.div
                   key={feature.title}
                   initial={{ opacity: 0, y: 30 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
                   transition={{ delay: index * 0.1, duration: 0.6 }}
                   className="card p-6 text-center border-2"
                   style={{ borderColor: '#4E4D50' }}
