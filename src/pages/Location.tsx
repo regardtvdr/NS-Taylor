@@ -8,8 +8,8 @@ const Location = () => {
       address: 'Unit 5, Ruimsig Country Office Park',
       street: '129 Hole In One St, Ruimsig',
       postalCode: '1724',
-      phone: '+27 11 123 4567',
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3580.5!2d27.8727!3d-26.0833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDA1JzAwLjAiUyAyN8KwNTInMjEuNyJF!5e0!3m2!1sen!2sza!4v1234567890123!5m2!1sen!2sza',
+      phone: '010 100 8410',
+      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6426.050403646808!2d27.8469630138852!3d-26.06941680072393!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e959c1df954ffd5%3A0xf7ec8f21ad3ad17b!2sRuimsig%20Country%20Office%20Park!5e1!3m2!1sen!2sza!4v1765577948362!5m2!1sen!2sza',
       directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=Ruimsig+Country+Office+Park+129+Hole+In+One+St+Ruimsig',
     },
     {
@@ -17,8 +17,8 @@ const Location = () => {
       address: 'The Gables Unit no.2',
       street: '879 Tennis Rd, Weltevreden Park Ext 25',
       postalCode: '1709',
-      phone: '+27 11 123 4567',
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3580.5!2d27.9167!3d-26.1333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDA4JzAwLjAiUyAyN8KwNTUnMDAuMCJF!5e0!3m2!1sen!2sza!4v1234567890123!5m2!1sen!2sza',
+      phone: '011 679 2961',
+      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4411.802853736976!2d27.922803296789553!3d-26.142136299999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e950b082c07a0c5%3A0x16f349b73fe22bec!2sGables%20Office%20Estate!5e1!3m2!1sen!2sza!4v1765578022166!5m2!1sen!2sza',
       directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=The+Gables+879+Tennis+Rd+Weltevreden+Park',
     },
   ]
