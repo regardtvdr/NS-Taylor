@@ -1,4 +1,4 @@
-import { useInView, useScroll, useTransform, MotionValue } from 'framer-motion'
+import { useInView, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 
 export const useScrollAnimation = (options?: {
