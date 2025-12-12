@@ -1,29 +1,13 @@
-import { Routes, Route, useLocation, Navigate, Outlet } from 'react-router-dom'
+import { Routes, Route, useLocation, Outlet } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import Layout from './components/Layout'
-import StaffLayout from './components/staff/StaffLayout'
-import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
-import Booking from './pages/Booking'
-import BookingConfirmation from './pages/BookingConfirmation'
-import CancellationPortal from './pages/CancellationPortal'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Location from './pages/Location'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
 import Team from './pages/Team'
-import Login from './pages/staff/Login'
-import StaffDashboard from './pages/staff/StaffDashboard'
-import Today from './pages/staff/Today'
-import CheckIn from './pages/staff/CheckIn'
-import Calendar from './pages/staff/Calendar'
-import Schedule from './pages/staff/Schedule'
-import Analytics from './pages/staff/Analytics'
-import HelpME from './pages/staff/HelpME'
-import InitializePractices from './pages/staff/InitializePractices'
-import InitializeStaff from './pages/staff/InitializeStaff'
-import TestFirebase from './pages/TestFirebase'
 
 function App() {
   const location = useLocation()
@@ -31,47 +15,6 @@ function App() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* Staff Login */}
-        <Route
-          path="/staff/login"
-          element={
-            <Layout>
-              <Login />
-            </Layout>
-          }
-        />
-
-        {/* Staff Protected Routes */}
-        <Route
-          element={
-            <ProtectedRoute>
-              <StaffLayout>
-                <Outlet />
-              </StaffLayout>
-            </ProtectedRoute>
-          }
-        >
-          <Route path="/staff" element={<Navigate to="/staff/dashboard" replace />} />
-          <Route path="/staff/dashboard" element={<StaffDashboard />} />
-          <Route path="/staff/today" element={<Today />} />
-          <Route path="/staff/checkin" element={<CheckIn />} />
-          <Route path="/staff/calendar" element={<Calendar />} />
-          <Route path="/staff/schedule" element={<Schedule />} />
-          <Route path="/staff/analytics" element={<Analytics />} />
-          <Route path="/staff/help" element={<HelpME />} />
-          <Route path="/staff/initialize" element={<InitializePractices />} />
-        </Route>
-
-        {/* Initialize Staff - accessible without full auth (for setup) */}
-        <Route
-          path="/staff/initialize-staff"
-          element={
-            <Layout>
-              <InitializeStaff />
-            </Layout>
-          }
-        />
-
         {/* Public Routes */}
         <Route
           element={
@@ -81,17 +24,12 @@ function App() {
           }
         >
           <Route path="/" element={<Home />} />
-          <Route path="/booking" element={<Booking />} />
-          <Route path="/booking/confirm" element={<BookingConfirmation />} />
-          <Route path="/booking/:token" element={<CancellationPortal />} />
           <Route path="/about" element={<About />} />
           <Route path="/team" element={<Team />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/location" element={<Location />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
-          <Route path="/test-firebase" element={<TestFirebase />} />
-          <Route path="/dashboard" element={<Navigate to="/staff/login" replace />} />
         </Route>
       </Routes>
     </AnimatePresence>

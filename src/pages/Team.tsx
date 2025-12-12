@@ -84,9 +84,9 @@ const Team = () => {
         {dentist.bio}
       </p>
 
-      <Link to="/booking" className="inline-block w-full">
+      <Link to="/contact" className="inline-block w-full">
         <InteractiveHoverButton 
-          text={`Book with ${dentist.name.split(' ')[1]}`}
+          text={`Contact to Book`}
           variant="primary"
           className="w-full"
           as="div"
@@ -112,9 +112,9 @@ const Team = () => {
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
               Our experienced dental professionals across both practices are dedicated to providing you with the highest quality care and personalized treatment.
             </p>
-            <Link to="/booking" className="inline-block">
+            <Link to="/contact" className="inline-block">
               <InteractiveHoverButton 
-                text="Book an Appointment" 
+                text="Contact Us" 
                 variant="primary"
                 className="text-lg px-8 py-4 w-auto min-w-[220px]"
                 as="div"
@@ -227,13 +227,13 @@ const Team = () => {
               Ready to Meet Your Perfect Dentist?
             </h2>
             <p className="text-gray-300 text-lg mb-8">
-              Book an appointment with one of our expert dental professionals today. 
+              Contact us to schedule an appointment with one of our expert dental professionals today. 
               Experience personalized care in a comfortable, modern environment.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/booking" className="inline-block">
+              <Link to="/contact" className="inline-block">
                 <InteractiveHoverButton 
-                  text="Book Appointment" 
+                  text="Contact Us" 
                   variant="secondary"
                   className="px-8 py-4 w-auto min-w-[200px]"
                   as="div"

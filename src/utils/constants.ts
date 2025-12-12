@@ -80,7 +80,7 @@ export const REVIEWS: Review[] = [
     id: '4',
     name: 'Michael Brown',
     rating: 5,
-    comment: 'From booking to treatment, everything was perfect. The deposit system ensures appointments are kept, which is great for everyone.',
+    comment: 'From consultation to treatment, everything was perfect. The professional service and care are exceptional.',
     date: '2023-12-28',
     avatar: 'https://i.pravatar.cc/150?img=20',
   },
@@ -88,7 +88,7 @@ export const REVIEWS: Review[] = [
     id: '5',
     name: 'Lisa Anderson',
     rating: 5,
-    comment: 'I was nervous about dental work, but the team put me at ease. The booking portal is user-friendly and the whole experience was top-notch.',
+    comment: 'I was nervous about dental work, but the team put me at ease. The whole experience was top-notch and professional.',
     date: '2023-12-20',
     avatar: 'https://i.pravatar.cc/150?img=45',
   },
@@ -171,11 +171,10 @@ export const DENTISTS: Dentist[] = [
   },
 ]
 
-export const DEPOSIT_AMOUNT = 50
 export const TRUST_BADGES = [
   'SSL Secured',
-  'Powered by Google Firebase',
-  '42% fewer no-shows',
-  'R50 deposit secures your appointment',
+  'Professional Service',
+  'Modern Technology',
+  'Patient-Centered Care',
 ]
 

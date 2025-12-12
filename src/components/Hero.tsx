@@ -1,8 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { Shield, Clock, Star } from 'lucide-react'
-import { DEPOSIT_AMOUNT } from '../utils/constants'
-import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
+import { Shield, Star } from 'lucide-react'
 
 const Hero = () => {
   return (
@@ -48,7 +46,7 @@ const Hero = () => {
             transition={{ delay: 0.4, duration: 0.8 }}
           >
             Experience world-class dental treatment with our state-of-the-art facilities
-            and expert team. Book your appointment in minutes.
+            and expert team. Contact us today to schedule your appointment.
           </motion.p>
 
           <motion.div
@@ -63,13 +61,19 @@ const Hero = () => {
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
               className="w-full sm:w-auto"
             >
-              <Link to="/booking" className="inline-block w-full sm:w-auto">
-                <InteractiveHoverButton 
-                  text="Book Appointment" 
-                  variant="primary"
-                  className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto min-w-[200px]"
-                  as="div"
+              <Link 
+                to="/contact" 
+                className="btn-secondary text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 relative overflow-hidden group w-full sm:w-auto text-center block"
+                aria-label="Contact Dr. NS Taylor and Associates dental practice"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gray-100"
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileHover={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                  aria-hidden="true"
                 />
+                <span className="relative z-10">Contact Us</span>
               </Link>
             </motion.div>
             <motion.div
@@ -105,10 +109,6 @@ const Hero = () => {
             <div className="flex items-center space-x-1.5 sm:space-x-2">
               <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-gray-300 flex-shrink-0" />
               <span className="text-xs sm:text-sm font-medium">SSL Secured</span>
-            </div>
-            <div className="flex items-center space-x-1.5 sm:space-x-2">
-              <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-gray-300 flex-shrink-0" />
-              <span className="text-xs sm:text-sm font-medium">R{DEPOSIT_AMOUNT} Deposit</span>
             </div>
             <div className="flex items-center space-x-1.5 sm:space-x-2">
               <Star className="w-3 h-3 sm:w-4 sm:h-4 text-gray-300 flex-shrink-0" />

@@ -145,11 +145,11 @@ const About = () => {
               Ready to Experience Premium Care?
             </h2>
             <p className="text-xl mb-8 text-gray-100">
-              Book your appointment today and join thousands of satisfied patients
+              Contact us today to schedule your appointment and join thousands of satisfied patients
             </p>
-            <Link to="/booking" className="inline-block">
+            <Link to="/contact" className="inline-block">
               <InteractiveHoverButton 
-                text="Book Appointment" 
+                text="Contact Us" 
                 variant="secondary"
                 className="px-8 py-4 w-auto min-w-[200px]"
                 as="div"

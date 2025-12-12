@@ -1,18 +1,175 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Send, CheckCircle, Clock } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, CheckCircle, Clock, AlertCircle } from 'lucide-react'
 import { AnimatedGridPattern } from '../components/ui/animated-grid-pattern'
 import { cn } from '../lib/utils'
+
+// Load reCAPTCHA script
+declare global {
+  interface Window {
+    grecaptcha: {
+      ready: (callback: () => void) => void
+      execute: (siteKey: string, options: { action: string }) => Promise<string>
+    }
+  }
+}
+
+const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || ''
 
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
     message: '',
-    practice: 'weltevreden',
   })
+  const [honeypot, setHoneypot] = useState('') // Honeypot field
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const formStartTime = useRef<number>(Date.now())
+  const formRef = useRef<HTMLFormElement>(null)
+
+  // Load reCAPTCHA script
+  useEffect(() => {
+    if (RECAPTCHA_SITE_KEY) {
+      const script = document.createElement('script')
+      script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`
+      script.async = true
+      script.defer = true
+      document.head.appendChild(script)
+
+      return () => {
+        const existingScript = document.querySelector(`script[src*="recaptcha"]`)
+        if (existingScript) {
+          existingScript.remove()
+        }
+      }
+    }
+  }, [])
+
+  // Client-side validation
+  const validateForm = (): boolean => {
+    // Trim inputs
+    const trimmedName = formData.name.trim()
+    const trimmedEmail = formData.email.trim()
+    const trimmedMessage = formData.message.trim()
+
+    // Check if empty
+    if (!trimmedName || !trimmedEmail || !trimmedMessage) {
+      setError('All fields are required.')
+      return false
+    }
+
+    // Name validation: max 100 chars, letters, spaces, hyphens, apostrophes only
+    if (trimmedName.length > 100) {
+      setError('Name must be 100 characters or less.')
+      return false
+    }
+    if (!/^[a-zA-Z\s\-']+$/.test(trimmedName)) {
+      setError('Name can only contain letters, spaces, hyphens, and apostrophes.')
+      return false
+    }
+
+    // Email validation: strict regex + max 254 chars
+    if (trimmedEmail.length > 254) {
+      setError('Email must be 254 characters or less.')
+      return false
+    }
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+    if (!emailRegex.test(trimmedEmail)) {
+      setError('Please enter a valid email address.')
+      return false
+    }
+
+    // Message validation: max 2000 chars
+    if (trimmedMessage.length > 2000) {
+      setError('Message must be 2000 characters or less.')
+      return false
+    }
+
+    return true
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+
+    // Check honeypot (if filled, it's a bot)
+    if (honeypot) {
+      // Silently fail - don't show error to bot
+      return
+    }
+
+    // Check timing (form must take >5 seconds to submit)
+    const timeSpent = (Date.now() - formStartTime.current) / 1000
+    if (timeSpent < 5) {
+      setError('Please take your time filling out the form.')
+      return
+    }
+
+    // Client-side validation
+    if (!validateForm()) {
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      // Get reCAPTCHA token
+      let recaptchaToken = ''
+      if (RECAPTCHA_SITE_KEY && window.grecaptcha) {
+        await window.grecaptcha.ready(() => {
+          return window.grecaptcha
+            .execute(RECAPTCHA_SITE_KEY, { action: 'submit' })
+            .then((token) => {
+              recaptchaToken = token
+            })
+        })
+      }
+
+      // Submit to serverless function
+      // For Vercel: /api/contact
+      // For Netlify: /.netlify/functions/contact
+      const apiEndpoint = import.meta.env.VITE_API_ENDPOINT || '/api/contact'
+      const response = await fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          message: formData.message.trim(),
+          recaptchaToken,
+          timeSpent,
+        }),
+      })
+
+      if (!response.ok) {
+        // Generic error message - never leak details
+        setError('Something went wrong. Please try again later.')
+        return
+      }
+
+      // Parse response (data.message should be "Thank you!")
+      await response.json()
+
+      // Success
+      setSubmitted(true)
+      setFormData({ name: '', email: '', message: '' })
+      formStartTime.current = Date.now() // Reset timer
+
+      // Reset after 5 seconds
+      setTimeout(() => {
+        setSubmitted(false)
+      }, 5000)
+    } catch (err) {
+      // Generic error message
+      setError('Something went wrong. Please try again later.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   const practices = [
     {
@@ -40,16 +197,6 @@ const Contact = () => {
       practiceNo: 'TBC',
     },
   ]
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Simulate form submission
-    setSubmitted(true)
-    setTimeout(() => {
-      setSubmitted(false)
-      setFormData({ name: '', email: '', phone: '', message: '', practice: 'weltevreden' })
-    }, 3000)
-  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -104,7 +251,7 @@ const Contact = () => {
                     <div>
                       <h3 className="font-semibold text-gray-800 mb-1">Phone</h3>
                       <p className="text-gray-600">{practice.phone}</p>
-                      <p className="text-sm text-gray-500">Mon-Fri: 8:00 AM - 5:00 PM</p>
+                      <p className="text-sm text-gray-500">Mon-Fri: 8:00 AM - 4:30 PM</p>
                     </div>
                   </div>
 
@@ -210,57 +357,46 @@ const Contact = () => {
                 >
                   <CheckCircle className="w-12 h-12 mx-auto mb-4" style={{ color: '#4E4D50' }} />
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    Message Sent!
+                    Thank you!
                   </h3>
                   <p className="text-gray-600">
                     We'll get back to you as soon as possible.
                   </p>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Practice Selection */}
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+                  {/* Honeypot field - hidden from users but visible to bots */}
+                  <input
+                    type="text"
+                    name="website"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none' }}
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                  />
+
+                  {error && (
+                    <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 flex items-start space-x-3">
+                      <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                      <p className="text-sm text-red-800">{error}</p>
+                    </div>
+                  )}
+
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Which practice are you contacting? *
+                      Full Name *
                     </label>
-                    <select
+                    <input
+                      type="text"
                       required
-                      value={formData.practice}
-                      onChange={(e) => setFormData({ ...formData, practice: e.target.value })}
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="input-field bg-white"
-                    >
-                      <option value="weltevreden">Weltevreden Park</option>
-                      <option value="ruimsig">Ruimsig</option>
-                    </select>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-800 mb-2">
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="input-field bg-white"
-                        placeholder="John Doe"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-800 mb-2">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="input-field bg-white"
-                        placeholder="011 123 4567"
-                      />
-                    </div>
+                      placeholder="John Doe"
+                      maxLength={100}
+                    />
                   </div>
 
                   <div>
@@ -274,6 +410,7 @@ const Contact = () => {
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="input-field bg-white"
                       placeholder="john@example.com"
+                      maxLength={254}
                     />
                   </div>
 
@@ -288,16 +425,30 @@ const Contact = () => {
                       rows={5}
                       className="input-field bg-white resize-none"
                       placeholder="Tell us how we can help..."
+                      maxLength={2000}
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formData.message.length} / 2000 characters
+                    </p>
                   </div>
 
                   <button 
                     type="submit" 
-                    className="w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-lg text-white font-semibold transition-all hover:opacity-90"
+                    disabled={isSubmitting}
+                    className="w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-lg text-white font-semibold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ backgroundColor: '#4E4D50' }}
                   >
-                    <Send className="w-5 h-5" />
-                    <span>Send Message</span>
+                    {isSubmitting ? (
+                      <>
+                        <Clock className="w-5 h-5 animate-spin" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        <span>Send Message</span>
+                      </>
+                    )}
                   </button>
                 </form>
               )}

@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Shield, Clock, CheckCircle } from 'lucide-react'
-import { DEPOSIT_AMOUNT } from '../utils/constants'
 import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
 
 const CTA = () => {
@@ -19,8 +18,7 @@ const CTA = () => {
             Ready to Transform Your Smile?
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-gray-100 mb-8 md:mb-12 font-light leading-relaxed max-w-3xl mx-auto px-4">
-            Book your appointment today and experience premium dental care.
-            Secure your slot with just a R{DEPOSIT_AMOUNT} deposit.
+            Contact us today to schedule your appointment and experience premium dental care.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
@@ -44,8 +42,8 @@ const CTA = () => {
               className="bg-white/10 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/20"
             >
               <Clock className="w-5 h-5 md:w-6 md:h-6 text-gray-300 mx-auto mb-2 md:mb-3" />
-              <h3 className="font-semibold mb-1 md:mb-2 text-xs md:text-sm text-white">Quick Booking</h3>
-              <p className="text-xs text-gray-200">Book in under 2 minutes</p>
+              <h3 className="font-semibold mb-1 md:mb-2 text-xs md:text-sm text-white">Expert Care</h3>
+              <p className="text-xs text-gray-200">Experienced professionals</p>
             </motion.div>
 
             <motion.div
@@ -66,9 +64,9 @@ const CTA = () => {
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            <Link to="/booking" className="inline-block w-full sm:w-auto">
+            <Link to="/contact" className="inline-block w-full sm:w-auto">
               <InteractiveHoverButton 
-                text="Book Your Appointment Now" 
+                text="Contact Us Today" 
                 variant="primary"
                 className="px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto min-w-[280px] text-base sm:text-lg"
                 as="div"
@@ -77,7 +75,7 @@ const CTA = () => {
           </motion.div>
 
           <p className="mt-4 md:mt-6 text-xs sm:text-sm text-gray-300 px-4">
-            No credit card required • Instant confirmation • Cancel anytime
+            Call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig)
           </p>
         </motion.div>
       </div>

@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, LogIn } from 'lucide-react'
-import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
+import { Menu, X } from 'lucide-react'
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -59,21 +58,6 @@ const Header = () => {
                 )}
               </Link>
             ))}
-            <Link to="/booking" className="inline-block">
-              <InteractiveHoverButton 
-                text="Book Appointment" 
-                variant="primary"
-                className="text-sm py-2 px-5 w-auto min-w-[160px]"
-                as="div"
-              />
-            </Link>
-            <Link
-              to="/staff/login"
-              className="flex items-center space-x-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors px-3 py-2 rounded-lg hover:bg-gray-50"
-            >
-              <LogIn className="w-4 h-4" />
-              <span>Staff Login</span>
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -119,28 +103,6 @@ const Header = () => {
                     {item.label}
                   </Link>
                 ))}
-                <div className="mx-4 space-y-3">
-                  <Link 
-                    to="/booking" 
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="inline-block w-full"
-                  >
-                    <InteractiveHoverButton 
-                      text="Book Appointment" 
-                      variant="primary"
-                      className="w-full min-w-[200px]"
-                      as="div"
-                    />
-                  </Link>
-                  <Link
-                    to="/staff/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center space-x-2 px-4 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-50 border border-gray-200 transition-colors"
-                  >
-                    <LogIn className="w-4 h-4" />
-                    <span>Staff Login</span>
-                  </Link>
-                </div>
               </div>
             </motion.div>
           )}
