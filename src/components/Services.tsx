@@ -170,7 +170,7 @@ const Services = () => {
                   }
                 }}
                 className="border-2 border-gray-900 rounded-lg p-4 md:p-6 group cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300"
-                style={{ backgroundColor: '#e5e7eb' }}
+                style={{ backgroundColor: '#A9A9A9' }}
               >
                 <div>
                   <motion.div 
