@@ -7,9 +7,7 @@ import {
   Sun, 
   Activity, 
   Syringe, 
-  AlertCircle,
-  Clock,
-  ArrowRight 
+  AlertCircle 
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
@@ -171,7 +169,7 @@ const Services = () => {
                     damping: 17,
                   }
                 }}
-                className="bg-white border-2 border-gray-900 rounded-lg p-4 md:p-6 group cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden"
+                className="bg-gray-50 border-2 border-gray-900 rounded-lg p-4 md:p-6 group cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden"
               >
                 {/* Animated background gradient on hover */}
                 <motion.div
@@ -208,33 +206,9 @@ const Services = () => {
                     {service.name}
                   </motion.h3>
                   
-                  <p className="text-gray-600 mb-3 md:mb-4 text-xs md:text-sm leading-relaxed">
+                  <p className="text-gray-600 text-xs md:text-sm leading-relaxed">
                     {service.description}
                   </p>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <motion.div 
-                        className="flex items-center space-x-1"
-                        whileHover={{ scale: 1.1 }}
-                      >
-                        <Clock className="w-4 h-4" />
-                        <span>{service.duration} min</span>
-                      </motion.div>
-                      <motion.div 
-                        className="text-gray-700 font-semibold"
-                        whileHover={{ scale: 1.1 }}
-                      >
-                        R{service.price}
-                      </motion.div>
-                    </div>
-                    <motion.div
-                      whileHover={{ x: 4 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                    >
-                      <ArrowRight className="w-5 h-5 text-gray-600" />
-                    </motion.div>
-                  </div>
                 </div>
               </motion.div>
             )
