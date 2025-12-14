@@ -169,21 +169,10 @@ const Services = () => {
                     damping: 17,
                   }
                 }}
-                className="bg-gray-50 border-2 border-gray-900 rounded-lg p-4 md:p-6 group cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden"
+                className="border-2 border-gray-900 rounded-lg p-4 md:p-6 group cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300"
+                style={{ backgroundColor: '#f3f4f6' }}
               >
-                {/* Animated background gradient on hover */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  initial={false}
-                />
-                
-                {/* Shine effect on hover */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"
-                  initial={false}
-                />
-
-                <div className="relative z-10">
+                <div>
                   <motion.div 
                     className="w-10 h-10 md:w-12 md:h-12 bg-gray-50 border-2 border-gray-900 rounded-lg flex items-center justify-center mb-3 md:mb-4 group-hover:bg-gray-100 transition-colors duration-300"
                     whileHover={{ 
