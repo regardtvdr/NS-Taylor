@@ -26,7 +26,7 @@ const InteractiveHoverButton = React.forwardRef<
         {text}
       </span>
       <div className="absolute top-0 z-10 flex h-full w-full translate-x-12 items-center justify-center gap-2 opacity-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:-translate-x-1 group-hover:opacity-100">
-        <span className="text-gray-800">Book</span>
+        <span className="text-gray-800">Let's Go</span>
         <ArrowRight className="w-4 h-4 text-gray-800 transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-x-1" />
       </div>
       <div className="absolute left-[20%] top-[40%] h-2 w-2 scale-[1] rounded-lg bg-gray-200 opacity-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:left-[0%] group-hover:top-[0%] group-hover:h-full group-hover:w-full group-hover:scale-[1.8] group-hover:bg-gray-200 group-hover:opacity-100"></div>

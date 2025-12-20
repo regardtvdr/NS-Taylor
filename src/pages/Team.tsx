@@ -230,22 +230,14 @@ const Team = () => {
               Contact us to schedule an appointment with one of our expert dental professionals today. 
               Experience personalized care in a comfortable, modern environment.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/contact" className="inline-block">
-                <InteractiveHoverButton 
-                  text="Contact Us" 
-                  variant="secondary"
-                  className="px-8 py-4 w-auto min-w-[200px]"
-                  as="div"
-                />
-              </Link>
-              <Link
-                to="/contact"
-                className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-gray-800 transition-colors"
-              >
-                Contact Us
-              </Link>
-            </div>
+            <Link to="/contact" className="inline-block">
+              <InteractiveHoverButton 
+                text="Contact Us" 
+                variant="secondary"
+                className="px-8 py-4 w-auto min-w-[200px]"
+                as="div"
+              />
+            </Link>
           </motion.div>
         </div>
       </section>
