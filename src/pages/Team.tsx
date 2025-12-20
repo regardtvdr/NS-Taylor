@@ -14,10 +14,10 @@ const Team = () => {
 
   // Convert dentists to testimonials format for the animated component
   const dentistTestimonials = DENTISTS.map((dentist) => ({
-    quote: dentist.bio || `With over ${dentist.experience} years of experience in ${dentist.specialization}, ${dentist.name.split(' ')[1]} is dedicated to providing exceptional dental care.`,
+    quote: dentist.bio || `With over ${dentist.experience} years of experience in ${dentist.specialization}, dedicated to providing exceptional dental care.`,
     name: dentist.name,
     designation: `${dentist.specialization} • ${dentist.branch}`,
-    src: dentist.avatar || `https://i.pravatar.cc/150?img=${dentist.id}`,
+    src: '',
   }))
 
   const DentistCard = ({ dentist, index }: { dentist: typeof DENTISTS[0], index: number }) => (

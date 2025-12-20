@@ -65,14 +65,22 @@ export const AnimatedTestimonials = ({
                     {testimonial.quote}
                   </p>
                   <div className="flex items-center gap-4">
-                    <img
-                      src={testimonial.src}
-                      alt={testimonial.name}
-                      className="h-16 w-16 rounded-full object-cover"
-                      loading="lazy"
-                      width="64"
-                      height="64"
-                    />
+                    {testimonial.src ? (
+                      <img
+                        src={testimonial.src}
+                        alt={testimonial.name}
+                        className="h-16 w-16 rounded-full object-cover"
+                        loading="lazy"
+                        width="64"
+                        height="64"
+                      />
+                    ) : (
+                      <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span className="text-2xl font-bold text-gray-600">
+                          {testimonial.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
                     <div>
                       <p className="font-semibold text-gray-800">
                         {testimonial.name}
