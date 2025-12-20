@@ -125,6 +125,7 @@ async function sendEmail(data: {
   name: string
   email: string
   message: string
+  branch: string
   ip: string
   timestamp: string
 }): Promise<boolean> {
@@ -143,6 +144,7 @@ async function sendEmail(data: {
 
   const emailBody = `New Contact Form Submission
 
+Branch: ${data.branch}
 Name: ${sanitizedName}
 Email: ${data.email}
 Message: ${sanitizedMessage}
@@ -243,7 +245,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { name, email, message, recaptchaToken, timeSpent } = req.body
+    const { name, email, message, branch, recaptchaToken, timeSpent } = req.body
 
     // Check timing (form must take >5 seconds)
     if (!timeSpent || timeSpent < 5) {
@@ -288,6 +290,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       name: name.trim(),
       email: email.trim(),
       message: message.trim(),
+      branch: branch || 'Weltevreden Park',
       ip: clientIP,
       timestamp: new Date().toISOString(),
     })

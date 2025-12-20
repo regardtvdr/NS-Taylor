@@ -21,6 +21,7 @@ const Contact = () => {
     name: '',
     email: '',
     message: '',
+    branch: 'Weltevreden Park',
   })
   const [honeypot, setHoneypot] = useState('') // Honeypot field
   const [submitted, setSubmitted] = useState(false)
@@ -140,6 +141,7 @@ const Contact = () => {
           name: formData.name.trim(),
           email: formData.email.trim(),
           message: formData.message.trim(),
+          branch: formData.branch,
           recaptchaToken,
           timeSpent,
         }),
@@ -156,7 +158,7 @@ const Contact = () => {
 
       // Success
       setSubmitted(true)
-      setFormData({ name: '', email: '', message: '' })
+      setFormData({ name: '', email: '', message: '', branch: 'Weltevreden Park' })
       formStartTime.current = Date.now() // Reset timer
 
       // Reset after 5 seconds
@@ -383,6 +385,21 @@ const Contact = () => {
                       <p className="text-sm text-red-800">{error}</p>
                     </div>
                   )}
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">
+                      Select Branch *
+                    </label>
+                    <select
+                      required
+                      value={formData.branch}
+                      onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                      className="input-field bg-white"
+                    >
+                      <option value="Weltevreden Park">Weltevreden Park</option>
+                      <option value="Ruimsig">Ruimsig</option>
+                    </select>
+                  </div>
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-2">
