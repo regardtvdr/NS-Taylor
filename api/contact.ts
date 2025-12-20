@@ -179,7 +179,7 @@ Timestamp: ${data.timestamp}
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Contact Form <noreply@yourdomain.com>',
+          from: 'Dr NS Taylor Contact Form <onboarding@resend.dev>',
           to: [toEmail],
           subject: `[${data.branch}] ${sanitizedSubject}`,
           text: emailBody,
