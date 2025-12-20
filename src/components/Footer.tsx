@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Mail, Phone, Facebook, Instagram, Twitter } from 'lucide-react'
+import { Mail, Phone, Facebook, Instagram, Twitter, Star } from 'lucide-react'
 
 const Footer = () => {
   return (
@@ -20,6 +20,15 @@ const Footer = () => {
               height="96"
               loading="lazy"
             />
+            <a 
+              href="https://g.page/r/CWgCwEdWHGcgEBM/review" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 bg-white text-gray-800 px-4 py-2 rounded-lg font-semibold text-sm hover:bg-gray-100 transition-colors"
+            >
+              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+              Leave a Review
+            </a>
           </div>
 
           {/* Quick Links */}
