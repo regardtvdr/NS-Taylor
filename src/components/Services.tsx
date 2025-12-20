@@ -9,8 +9,6 @@ import {
   Syringe, 
   AlertCircle 
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
-import { Button as MovingBorderButton } from './ui/moving-border'
 import { AnimatedGridPattern } from './ui/animated-grid-pattern'
 import { cn } from '../lib/utils'
 
@@ -204,35 +202,6 @@ const Services = () => {
           })}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.95 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ 
-            delay: 0.8,
-            type: "spring",
-            stiffness: 100,
-            damping: 20,
-          }}
-          className="text-center mt-12"
-        >
-          <motion.div
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          >
-            <Link to="/contact" className="inline-block">
-              <MovingBorderButton
-                borderRadius="0.75rem"
-                containerClassName="h-14 w-auto min-w-[240px]"
-                className="px-8 bg-white text-gray-800 border-gray-200"
-                as="div"
-              >
-                View All Services
-              </MovingBorderButton>
-            </Link>
-          </motion.div>
-        </motion.div>
       </motion.div>
     </section>
   )

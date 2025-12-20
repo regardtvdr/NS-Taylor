@@ -54,8 +54,8 @@ const CTA = () => {
               className="bg-white/10 backdrop-blur-sm rounded-lg p-4 md:p-6 border border-white/20"
             >
               <CheckCircle className="w-5 h-5 md:w-6 md:h-6 text-gray-300 mx-auto mb-2 md:mb-3" />
-              <h3 className="font-semibold mb-1 md:mb-2 text-xs md:text-sm text-white">42% Fewer No-Shows</h3>
-              <p className="text-xs text-gray-200">Deposit system works</p>
+              <h3 className="font-semibold mb-1 md:mb-2 text-xs md:text-sm text-white">Quality Care</h3>
+              <p className="text-xs text-gray-200">Patient-centered approach</p>
             </motion.div>
           </div>
 
