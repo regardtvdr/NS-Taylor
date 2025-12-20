@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Star, Award, Clock, GraduationCap, MapPin } from 'lucide-react'
+import { Award, Clock, GraduationCap, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { DENTISTS } from '../utils/constants'
 import { AnimatedTestimonials } from '../components/ui/AnimatedTestimonials'
@@ -56,18 +56,9 @@ const Team = () => {
         <h3 className="text-2xl font-display font-bold text-gray-800 mb-2">
           {dentist.name}
         </h3>
-        <p className="text-gray-600 font-medium mb-3">
+        <p className="text-gray-600 font-medium mb-4">
           {dentist.specialization}
         </p>
-        <div className="flex items-center justify-center gap-1 mb-4">
-          <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-          <span className="text-lg font-semibold text-gray-800">
-            {dentist.rating}
-          </span>
-          <span className="text-gray-500 text-sm">
-            ({dentist.reviews} reviews)
-          </span>
-        </div>
       </div>
 
       <div className="space-y-4 mb-6">
