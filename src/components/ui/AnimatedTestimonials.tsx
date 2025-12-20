@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { Star, Quote } from "lucide-react"
+import { Quote } from "lucide-react"
 
 type Testimonial = {
   quote: string
@@ -53,14 +53,6 @@ export const AnimatedTestimonials = ({
               <div className="relative overflow-hidden rounded-2xl border-2 border-gray-800 bg-white p-8 shadow-lg">
                 <Quote className="absolute -top-4 -left-4 h-24 w-24 text-gray-100" />
                 <div className="relative">
-                  <div className="mb-4 flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="h-5 w-5 fill-yellow-400 text-yellow-400"
-                      />
-                    ))}
-                  </div>
                   <p className="mb-6 text-lg text-gray-700">
                     {testimonial.quote}
                   </p>
