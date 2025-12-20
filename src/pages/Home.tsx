@@ -1,5 +1,6 @@
 import Hero from '../components/Hero'
 import Services from '../components/Services'
+import GoogleReviews from '../components/GoogleReviews'
 import CTA from '../components/CTA'
 
 const Home = () => {
@@ -7,6 +8,7 @@ const Home = () => {
     <>
       <Hero />
       <Services />
+      <GoogleReviews />
       <CTA />
     </>
   )
