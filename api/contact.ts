@@ -124,6 +124,8 @@ async function verifyRecaptcha(token: string): Promise<boolean> {
 async function sendEmail(data: {
   name: string
   email: string
+  phone: string
+  subject: string
   message: string
   branch: string
   ip: string
@@ -149,12 +151,19 @@ async function sendEmail(data: {
   const sanitizedName = sanitizeText(data.name)
   const sanitizedMessage = sanitizeText(data.message)
 
+  const sanitizedSubject = sanitizeText(data.subject)
+  const sanitizedPhone = data.phone ? sanitizeText(data.phone) : 'Not provided'
+
   const emailBody = `New Contact Form Submission
 
 Branch: ${data.branch}
 Name: ${sanitizedName}
 Email: ${data.email}
-Message: ${sanitizedMessage}
+Phone: ${sanitizedPhone}
+Subject: ${sanitizedSubject}
+
+Message:
+${sanitizedMessage}
 
 ---
 IP Address: ${data.ip}
@@ -172,7 +181,7 @@ Timestamp: ${data.timestamp}
         body: JSON.stringify({
           from: 'Contact Form <noreply@yourdomain.com>',
           to: [toEmail],
-          subject: `Contact Form: ${sanitizedName}`,
+          subject: `[${data.branch}] ${sanitizedSubject}`,
           text: emailBody,
         }),
       })
@@ -189,7 +198,7 @@ Timestamp: ${data.timestamp}
           personalizations: [
             {
               to: [{ email: toEmail }],
-              subject: `Contact Form: ${sanitizedName}`,
+              subject: `[${data.branch}] ${sanitizedSubject}`,
             },
           ],
           from: { email: 'noreply@yourdomain.com', name: 'Contact Form' },
@@ -228,31 +237,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set security headers
   setSecurityHeaders(res)
 
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+
+  // Handle preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    res.status(200).end()
+    return
+  }
+
   // Only allow POST
   if (req.method !== 'POST') {
     res.status(405).json({ message: 'Method not allowed' })
     return
   }
 
-  // CORS headers (adjust origin to your domain)
-  const allowedOrigin = process.env.ALLOWED_ORIGIN || 'https://yourdomain.com'
-  const origin = req.headers.origin || req.headers.referer
-
-  if (origin && origin.startsWith(allowedOrigin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin)
-    res.setHeader('Access-Control-Allow-Credentials', 'true')
-    res.setHeader('Access-Control-Allow-Methods', 'POST')
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-  }
-
-  // Handle preflight
-  if (req.method === 'OPTIONS') {
-    res.status(200).end()
-    return
-  }
-
   try {
-    const { name, email, message, branch, recaptchaToken, timeSpent } = req.body
+    const { name, email, phone, subject, message, branch, recaptchaToken, timeSpent } = req.body
 
     // Check timing (form must take >5 seconds)
     if (!timeSpent || timeSpent < 5) {
@@ -296,6 +299,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const emailSent = await sendEmail({
       name: name.trim(),
       email: email.trim(),
+      phone: phone ? phone.trim() : '',
+      subject: subject ? subject.trim() : 'No subject',
       message: message.trim(),
       branch: branch || 'Weltevreden Park',
       ip: clientIP,

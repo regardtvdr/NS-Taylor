@@ -20,6 +20,8 @@ const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
+    subject: '',
     message: '',
     branch: 'Weltevreden Park',
   })
@@ -140,6 +142,8 @@ const Contact = () => {
         body: JSON.stringify({
           name: formData.name.trim(),
           email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          subject: formData.subject.trim(),
           message: formData.message.trim(),
           branch: formData.branch,
           recaptchaToken,
@@ -158,7 +162,7 @@ const Contact = () => {
 
       // Success
       setSubmitted(true)
-      setFormData({ name: '', email: '', message: '', branch: 'Weltevreden Park' })
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '', branch: 'Weltevreden Park' })
       formStartTime.current = Date.now() // Reset timer
 
       // Reset after 5 seconds
@@ -346,9 +350,12 @@ const Contact = () => {
               className="bg-white rounded-lg border-2 p-6 md:p-8"
               style={{ borderColor: '#4E4D50' }}
             >
-              <h2 className="text-xl md:text-2xl font-display font-bold text-gray-800 mb-6 text-center">
+              <h2 className="text-xl md:text-2xl font-display font-bold text-gray-800 mb-2 text-center">
                 Send us a Message
               </h2>
+              <p className="text-sm text-gray-600 mb-6 text-center">
+                Fill out the form below and we'll get back to you as soon as possible.
+              </p>
 
               {submitted ? (
                 <motion.div
@@ -428,6 +435,35 @@ const Contact = () => {
                       className="input-field bg-white"
                       placeholder="john@example.com"
                       maxLength={254}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">
+                      Phone <span className="text-gray-400 font-normal">(Optional)</span>
+                    </label>
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="input-field bg-white"
+                      placeholder="012 345 6789"
+                      maxLength={20}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">
+                      Subject *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.subject}
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      className="input-field bg-white"
+                      placeholder="How can we help you?"
+                      maxLength={200}
                     />
                   </div>
 
