@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Award, Users, Heart, Shield } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { InteractiveHoverButton } from '../components/ui/InteractiveHoverButton'
+import { Button as MovingBorderButton } from '../components/ui/moving-border'
 import { AnimatedGridPattern } from '../components/ui/animated-grid-pattern'
 import { cn } from '../lib/utils'
 
@@ -147,12 +147,14 @@ const About = () => {
               Contact us today to schedule your appointment and join thousands of satisfied patients
             </p>
             <Link to="/contact" className="inline-block">
-              <InteractiveHoverButton 
-                text="Contact Us" 
-                variant="secondary"
-                className="px-8 py-4 w-auto min-w-[200px]"
+              <MovingBorderButton
+                borderRadius="0.75rem"
+                containerClassName="h-14 w-auto min-w-[200px]"
+                className="px-8 bg-white text-gray-800 border-gray-200"
                 as="div"
-              />
+              >
+                Contact Us
+              </MovingBorderButton>
             </Link>
           </motion.div>
         </div>

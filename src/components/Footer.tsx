@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Mail, Phone, Facebook, Instagram, Twitter, Star } from 'lucide-react'
+import { Mail, Phone, Facebook, Instagram, Twitter } from 'lucide-react'
+import { Button as MovingBorderButton } from './ui/moving-border'
 
 const Footer = () => {
   return (
@@ -24,10 +25,16 @@ const Footer = () => {
               href="https://g.page/r/CWgCwEdWHGcgEBM/review" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 bg-white text-gray-800 px-4 py-2 rounded-lg font-semibold text-sm hover:bg-gray-100 transition-colors"
+              className="mt-4 inline-block"
             >
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              Leave a Review
+              <MovingBorderButton
+                borderRadius="0.75rem"
+                containerClassName="h-10 w-auto"
+                className="px-4 bg-white text-gray-800 border-gray-200"
+                as="div"
+              >
+                Leave a Review
+              </MovingBorderButton>
             </a>
           </div>
 

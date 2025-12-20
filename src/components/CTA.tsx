@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Shield, Clock, CheckCircle } from 'lucide-react'
-import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
+import { Button as MovingBorderButton } from './ui/moving-border'
 
 const CTA = () => {
   return (
@@ -65,12 +65,14 @@ const CTA = () => {
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
             <Link to="/contact" className="inline-block w-full sm:w-auto">
-              <InteractiveHoverButton 
-                text="Contact Us Today" 
-                variant="primary"
-                className="px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto min-w-[280px] text-base sm:text-lg"
+              <MovingBorderButton
+                borderRadius="0.75rem"
+                containerClassName="h-14 w-full sm:w-auto min-w-[280px]"
+                className="px-8 bg-white text-gray-800 border-gray-200 text-base sm:text-lg"
                 as="div"
-              />
+              >
+                Contact Us Today
+              </MovingBorderButton>
             </Link>
           </motion.div>
 

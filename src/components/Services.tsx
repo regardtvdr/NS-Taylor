@@ -10,7 +10,7 @@ import {
   AlertCircle 
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { InteractiveHoverButton } from './ui/InteractiveHoverButton'
+import { Button as MovingBorderButton } from './ui/moving-border'
 import { AnimatedGridPattern } from './ui/animated-grid-pattern'
 import { cn } from '../lib/utils'
 
@@ -222,12 +222,14 @@ const Services = () => {
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
             <Link to="/contact" className="inline-block">
-              <InteractiveHoverButton 
-                text="View All Services" 
-                variant="primary"
-                className="px-8 py-4 w-auto min-w-[240px]"
+              <MovingBorderButton
+                borderRadius="0.75rem"
+                containerClassName="h-14 w-auto min-w-[240px]"
+                className="px-8 bg-white text-gray-800 border-gray-200"
                 as="div"
-              />
+              >
+                View All Services
+              </MovingBorderButton>
             </Link>
           </motion.div>
         </motion.div>

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { DENTISTS } from '../utils/constants'
 import { AnimatedTestimonials } from '../components/ui/AnimatedTestimonials'
 import { InteractiveHoverButton } from '../components/ui/InteractiveHoverButton'
+import { Button as MovingBorderButton } from '../components/ui/moving-border'
 import { AnimatedGridPattern } from '../components/ui/animated-grid-pattern'
 import { cn } from '../lib/utils'
 
@@ -113,12 +114,14 @@ const Team = () => {
               Our experienced dental professionals across both practices are dedicated to providing you with the highest quality care and personalized treatment.
             </p>
             <Link to="/contact" className="inline-block">
-              <InteractiveHoverButton 
-                text="Contact Us" 
-                variant="primary"
-                className="text-lg px-8 py-4 w-auto min-w-[220px]"
+              <MovingBorderButton
+                borderRadius="0.75rem"
+                containerClassName="h-14 w-auto min-w-[220px]"
+                className="px-8 bg-white text-gray-800 border-gray-200 text-lg"
                 as="div"
-              />
+              >
+                Contact Us
+              </MovingBorderButton>
             </Link>
           </motion.div>
         </div>
@@ -231,12 +234,14 @@ const Team = () => {
               Experience personalized care in a comfortable, modern environment.
             </p>
             <Link to="/contact" className="inline-block">
-              <InteractiveHoverButton 
-                text="Contact Us" 
-                variant="secondary"
-                className="px-8 py-4 w-auto min-w-[200px]"
+              <MovingBorderButton
+                borderRadius="0.75rem"
+                containerClassName="h-14 w-auto min-w-[200px]"
+                className="px-8 bg-white text-gray-800 border-gray-200"
                 as="div"
-              />
+              >
+                Contact Us
+              </MovingBorderButton>
             </Link>
           </motion.div>
         </div>

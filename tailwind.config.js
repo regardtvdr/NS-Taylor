@@ -1,3 +1,16 @@
+import flattenColorPalette from 'tailwindcss/lib/util/flattenColorPalette';
+
+// Plugin to add Tailwind colors as CSS variables
+function addVariablesForColors({ addBase, theme }) {
+  let allColors = flattenColorPalette(theme("colors"));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+  addBase({
+    ":root": newVars,
+  });
+}
+
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
@@ -84,6 +97,7 @@ export default {
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
+    addVariablesForColors,
   ],
 }
 
