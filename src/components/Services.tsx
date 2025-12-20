@@ -168,11 +168,11 @@ const Services = () => {
                   }
                 }}
                 className="border-2 border-gray-900 rounded-lg p-4 md:p-6 group cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300"
-                style={{ backgroundColor: '#D3D3D3' }}
+                style={{ background: 'linear-gradient(135deg, #959595 0%, #2d2d2d 100%)' }}
               >
                 <div>
                   <motion.div 
-                    className="w-10 h-10 md:w-12 md:h-12 bg-gray-50 border-2 border-gray-900 rounded-lg flex items-center justify-center mb-3 md:mb-4 group-hover:bg-gray-100 transition-colors duration-300"
+                    className="w-10 h-10 md:w-12 md:h-12 bg-white/90 border-2 border-white/30 rounded-lg flex items-center justify-center mb-3 md:mb-4 group-hover:bg-white transition-colors duration-300"
                     whileHover={{ 
                       rotate: [0, -10, 10, -10, 0],
                       scale: [1, 1.1, 1],
@@ -182,18 +182,18 @@ const Services = () => {
                       ease: "easeInOut"
                     }}
                   >
-                    <Icon className="w-5 h-5 md:w-6 md:h-6 text-gray-900" />
+                    <Icon className="w-5 h-5 md:w-6 md:h-6 text-gray-800" />
                   </motion.div>
                   
                   <motion.h3 
-                    className="text-base md:text-lg font-semibold text-gray-800 mb-2 tracking-tight"
+                    className="text-base md:text-lg font-semibold text-white mb-2 tracking-tight"
                     whileHover={{ x: 4 }}
                     transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   >
                     {service.name}
                   </motion.h3>
                   
-                  <p className="text-gray-600 text-xs md:text-sm leading-relaxed">
+                  <p className="text-gray-200 text-xs md:text-sm leading-relaxed">
                     {service.description}
                   </p>
                 </div>
