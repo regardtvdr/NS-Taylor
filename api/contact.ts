@@ -131,7 +131,14 @@ async function sendEmail(data: {
 }): Promise<boolean> {
   const emailService = process.env.EMAIL_SERVICE || 'resend'
   const apiKey = process.env.EMAIL_API_KEY
-  const toEmail = process.env.CONTACT_EMAIL || 'contact@example.com'
+  
+  // Route to correct branch email
+  let toEmail = process.env.CONTACT_EMAIL || 'contact@example.com'
+  if (data.branch === 'Ruimsig') {
+    toEmail = process.env.CONTACT_EMAIL_RUIMSIG || process.env.CONTACT_EMAIL || 'contact@example.com'
+  } else if (data.branch === 'Weltevreden Park') {
+    toEmail = process.env.CONTACT_EMAIL_WELTEVREDEN || process.env.CONTACT_EMAIL || 'contact@example.com'
+  }
 
   if (!apiKey) {
     console.error('Email API key not configured')
