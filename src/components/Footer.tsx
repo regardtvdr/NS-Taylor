@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from 'lucide-react'
+import { Mail, Phone, Facebook, Instagram, Twitter } from 'lucide-react'
 
 const Footer = () => {
   return (
@@ -70,20 +70,16 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-white mb-4">Contact</h4>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-center space-x-2">
-                <Phone className="w-4 h-4 text-gray-200" />
-                <span className="text-gray-200">+27 11 123 4567</span>
+              <li className="flex items-start space-x-2">
+                <Phone className="w-4 h-4 text-gray-200 mt-0.5" />
+                <span className="text-gray-200">
+                  011 679 2961 (Weltevreden Park)<br />
+                  010 100 8410 (Ruimsig)
+                </span>
               </li>
               <li className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-gray-200" />
-                <span className="text-gray-200">info@drnstaylor.co.za</span>
-              </li>
-              <li className="flex items-start space-x-2">
-                <MapPin className="w-4 h-4 text-gray-200 mt-1" />
-                <span className="text-gray-200">
-                  123 Medical Boulevard<br />
-                  Sandton, Johannesburg 2196
-                </span>
+                <span className="text-gray-200">admin@dentaloffices.co.za</span>
               </li>
             </ul>
             <div className="flex space-x-4 mt-4">
