@@ -80,7 +80,7 @@ const About = () => {
       </section>
 
       {/* Features Grid */}
-      <section className="py-20 bg-gray-50 relative overflow-hidden">
+      <section className="py-20 bg-white relative overflow-hidden">
         <AnimatedGridPattern
           numSquares={30}
           maxOpacity={0.6}
