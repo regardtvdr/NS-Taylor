@@ -167,8 +167,11 @@ const Services = () => {
                     damping: 17,
                   }
                 }}
-                className="border-2 border-gray-900 rounded-lg p-4 md:p-6 group cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300"
-                style={{ background: 'linear-gradient(135deg, #959595 0%, #2d2d2d 100%)' }}
+                className="border-2 border-gray-900 rounded-lg p-4 md:p-6 group cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 animate-gradient"
+                style={{ 
+                  background: 'linear-gradient(135deg, #959595, #2d2d2d, #959595, #2d2d2d)',
+                  backgroundSize: '300% 300%',
+                }}
               >
                 <div>
                   <motion.div 
