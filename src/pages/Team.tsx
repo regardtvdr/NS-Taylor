@@ -6,7 +6,6 @@ import { AnimatedTestimonials } from '../components/ui/AnimatedTestimonials'
 import { InteractiveHoverButton } from '../components/ui/InteractiveHoverButton'
 import { Button as MovingBorderButton } from '../components/ui/moving-border'
 import { AnimatedGridPattern } from '../components/ui/animated-grid-pattern'
-import { AuroraBackground } from '../components/ui/aurora-background'
 import { cn } from '../lib/utils'
 
 const Team = () => {
@@ -151,8 +150,8 @@ const Team = () => {
       </section>
 
       {/* Weltevreden Park Team */}
-      <AuroraBackground className="py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -177,11 +176,11 @@ const Team = () => {
             ))}
           </div>
         </div>
-      </AuroraBackground>
+      </section>
 
       {/* Ruimsig Team */}
-      <AuroraBackground className="py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -206,7 +205,7 @@ const Team = () => {
             ))}
           </div>
         </div>
-      </AuroraBackground>
+      </section>
 
       {/* CTA Section */}
       <section className="py-16 text-white" style={{ backgroundColor: '#434448' }}>
