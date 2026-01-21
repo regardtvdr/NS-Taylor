@@ -26,7 +26,7 @@ const Header = () => {
             <img 
               src="/logo.jpg" 
               alt="Dr. NS Taylor and Associates Inc." 
-              className="h-12 w-12 object-contain"
+              className="h-12 w-12 object-cover rounded-full"
               width="48"
               height="48"
               loading="eager"
