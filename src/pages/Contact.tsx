@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Send, CheckCircle, Clock, AlertCircle } from 'lucide-react'
+import { Mail, Phone, MapPin, Clock } from 'lucide-react'
 
 // WhatsApp Icon Component
 const WhatsAppIcon = ({ className }: { className?: string }) => (
@@ -8,182 +7,8 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
   </svg>
 )
-import { AnimatedGridPattern } from '../components/ui/animated-grid-pattern'
-import { cn } from '../lib/utils'
-
-// Load reCAPTCHA script
-declare global {
-  interface Window {
-    grecaptcha: {
-      ready: (callback: () => void) => void
-      execute: (siteKey: string, options: { action: string }) => Promise<string>
-    }
-  }
-}
-
-const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || ''
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-    branch: 'Weltevreden Park',
-  })
-  const [honeypot, setHoneypot] = useState('') // Honeypot field
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const formStartTime = useRef<number>(Date.now())
-  const formRef = useRef<HTMLFormElement>(null)
-
-  // Load reCAPTCHA script
-  useEffect(() => {
-    if (RECAPTCHA_SITE_KEY) {
-      const script = document.createElement('script')
-      script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`
-      script.async = true
-      script.defer = true
-      document.head.appendChild(script)
-
-      return () => {
-        const existingScript = document.querySelector(`script[src*="recaptcha"]`)
-        if (existingScript) {
-          existingScript.remove()
-        }
-      }
-    }
-  }, [])
-
-  // Client-side validation
-  const validateForm = (): boolean => {
-    // Trim inputs
-    const trimmedName = formData.name.trim()
-    const trimmedEmail = formData.email.trim()
-    const trimmedMessage = formData.message.trim()
-
-    // Check if empty
-    if (!trimmedName || !trimmedEmail || !trimmedMessage) {
-      setError('All fields are required.')
-      return false
-    }
-
-    // Name validation: max 100 chars, letters, spaces, hyphens, apostrophes only
-    if (trimmedName.length > 100) {
-      setError('Name must be 100 characters or less.')
-      return false
-    }
-    if (!/^[a-zA-Z\s\-']+$/.test(trimmedName)) {
-      setError('Name can only contain letters, spaces, hyphens, and apostrophes.')
-      return false
-    }
-
-    // Email validation: strict regex + max 254 chars
-    if (trimmedEmail.length > 254) {
-      setError('Email must be 254 characters or less.')
-      return false
-    }
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-    if (!emailRegex.test(trimmedEmail)) {
-      setError('Please enter a valid email address.')
-      return false
-    }
-
-    // Message validation: max 2000 chars
-    if (trimmedMessage.length > 2000) {
-      setError('Message must be 2000 characters or less.')
-      return false
-    }
-
-    return true
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-
-    // Check honeypot (if filled, it's a bot)
-    if (honeypot) {
-      // Silently fail - don't show error to bot
-      return
-    }
-
-    // Check timing (form must take >5 seconds to submit)
-    const timeSpent = (Date.now() - formStartTime.current) / 1000
-    if (timeSpent < 5) {
-      setError('Please take your time filling out the form.')
-      return
-    }
-
-    // Client-side validation
-    if (!validateForm()) {
-      return
-    }
-
-    setIsSubmitting(true)
-
-    try {
-      // Get reCAPTCHA token
-      let recaptchaToken = ''
-      if (RECAPTCHA_SITE_KEY && window.grecaptcha) {
-        await window.grecaptcha.ready(() => {
-          return window.grecaptcha
-            .execute(RECAPTCHA_SITE_KEY, { action: 'submit' })
-            .then((token) => {
-              recaptchaToken = token
-            })
-        })
-      }
-
-      // Submit to serverless function
-      // For Vercel: /api/contact
-      // For Netlify: /.netlify/functions/contact
-      const apiEndpoint = import.meta.env.VITE_API_ENDPOINT || '/api/contact'
-      const response = await fetch(apiEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          phone: formData.phone.trim(),
-          subject: formData.subject.trim(),
-          message: formData.message.trim(),
-          branch: formData.branch,
-          recaptchaToken,
-          timeSpent,
-        }),
-      })
-
-      if (!response.ok) {
-        // Generic error message - never leak details
-        setError('Something went wrong. Please try again later.')
-        return
-      }
-
-      // Parse response (data.message should be "Thank you!")
-      await response.json()
-
-      // Success
-      setSubmitted(true)
-      setFormData({ name: '', email: '', phone: '', subject: '', message: '', branch: 'Weltevreden Park' })
-      formStartTime.current = Date.now() // Reset timer
-
-      // Reset after 5 seconds
-      setTimeout(() => {
-        setSubmitted(false)
-      }, 5000)
-    } catch (err) {
-      // Generic error message
-      setError('Something went wrong. Please try again later.')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
   const practices = [
     {
       name: 'Weltevreden Park',
@@ -361,209 +186,31 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Contact Form Section */}
-      <section className="relative py-8 md:py-12 pb-16 md:pb-20 bg-gray-50 z-10 overflow-hidden">
-        <AnimatedGridPattern
-          numSquares={30}
-          maxOpacity={0.6}
-          duration={3}
-          repeatDelay={1}
-          className={cn(
-            "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
-            "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
-          )}
-        />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-2xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="bg-white rounded-lg border-2 p-6 md:p-8"
-              style={{ borderColor: '#4E4D50' }}
-            >
-              <h2 className="text-xl md:text-2xl font-display font-bold text-gray-800 mb-2 text-center">
-                Send us a Message
-              </h2>
-              <p className="text-sm text-gray-600 mb-6 text-center">
-                Fill out the form below and we'll get back to you as soon as possible.
-              </p>
-
-              {submitted ? (
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="bg-gray-50 border-2 border-gray-200 rounded-lg p-6 text-center"
-                >
-                  <CheckCircle className="w-12 h-12 mx-auto mb-4" style={{ color: '#4E4D50' }} />
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    Thank you!
-                  </h3>
-                  <p className="text-gray-600">
-                    We'll get back to you as soon as possible.
-                  </p>
-                </motion.div>
-              ) : (
-                <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
-                  {/* Honeypot field - hidden from users but visible to bots */}
-                  <input
-                    type="text"
-                    name="website"
-                    value={honeypot}
-                    onChange={(e) => setHoneypot(e.target.value)}
-                    style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none' }}
-                    tabIndex={-1}
-                    autoComplete="off"
-                    aria-hidden="true"
-                  />
-
-                  {error && (
-                    <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 flex items-start space-x-3">
-                      <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-red-800">{error}</p>
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Select Branch *
-                    </label>
-                    <select
-                      required
-                      value={formData.branch}
-                      onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                      className="input-field bg-white"
-                    >
-                      <option value="Weltevreden Park">Weltevreden Park</option>
-                      <option value="Ruimsig">Ruimsig</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="input-field bg-white"
-                      placeholder="John Doe"
-                      maxLength={100}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="input-field bg-white"
-                      placeholder="john@example.com"
-                      maxLength={254}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Phone <span className="text-gray-400 font-normal">(Optional)</span>
-                    </label>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="input-field bg-white"
-                      placeholder="012 345 6789"
-                      maxLength={20}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Subject *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      className="input-field bg-white"
-                      placeholder="How can we help you?"
-                      maxLength={200}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Message *
-                    </label>
-                    <textarea
-                      required
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      rows={5}
-                      className="input-field bg-white resize-none"
-                      placeholder="Tell us how we can help..."
-                      maxLength={2000}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      {formData.message.length} / 2000 characters
-                    </p>
-                  </div>
-
-                  <button 
-                    type="submit" 
-                    disabled={isSubmitting}
-                    className="w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-lg text-white font-semibold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ backgroundColor: '#4E4D50' }}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Clock className="w-5 h-5 animate-spin" />
-                        <span>Sending...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-5 h-5" />
-                        <span>Send Message</span>
-                      </>
-                    )}
-                  </button>
-                </form>
-              )}
-            </motion.div>
-
-            {/* Emergency Contact */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-red-50 rounded-lg border-2 border-red-500 p-4 md:p-6 mt-8"
-            >
-              <h3 className="text-sm md:text-base font-semibold text-gray-800 mb-2 md:mb-3">Emergency Contact</h3>
-              <p className="text-xs md:text-sm text-gray-600 mb-3">
-                For dental emergencies outside business hours, please call:
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <p className="text-xs text-gray-500 uppercase font-medium">Weltevreden Park</p>
-                  <p className="text-lg font-bold text-gray-700">011 679 2961</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase font-medium">Ruimsig</p>
-                  <p className="text-lg font-bold text-gray-700">010 100 8410</p>
-                </div>
+      {/* Emergency Contact */}
+      <section className="py-8 pb-16 bg-white z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-2xl mx-auto bg-red-50 rounded-lg border-2 border-red-500 p-4 md:p-6"
+          >
+            <h3 className="text-sm md:text-base font-semibold text-gray-800 mb-2 md:mb-3">Emergency Contact</h3>
+            <p className="text-xs md:text-sm text-gray-600 mb-3">
+              For dental emergencies outside business hours, please call:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <p className="text-xs text-gray-500 uppercase font-medium">Weltevreden Park</p>
+                <p className="text-lg font-bold text-gray-700">011 679 2961</p>
               </div>
-            </motion.div>
-          </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase font-medium">Ruimsig</p>
+                <p className="text-lg font-bold text-gray-700">010 100 8410</p>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
     </div>
