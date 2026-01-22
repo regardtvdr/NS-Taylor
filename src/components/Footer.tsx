@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Mail, Phone, Facebook, Instagram, Twitter } from 'lucide-react'
+import { Mail, Phone, Facebook } from 'lucide-react'
 import { Button as MovingBorderButton } from './ui/moving-border'
 
 // WhatsApp Icon Component
@@ -105,28 +105,30 @@ const Footer = () => {
                 <span className="text-gray-200">admin@dentaloffices.co.za</span>
               </li>
             </ul>
-            <div className="flex space-x-4 mt-4">
-              <a href="#" className="text-gray-200 hover:text-white transition-colors p-2 -m-2" aria-label="Visit our Facebook page">
-                <Facebook className="w-5 h-5" aria-hidden="true" />
+            <div className="flex flex-col gap-3 mt-4">
+              {/* Facebook Button */}
+              <a
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-lg px-3 py-2 transition-all hover:scale-[1.02] text-sm w-fit"
+                aria-label="Visit our Facebook page"
+              >
+                <Facebook className="w-4 h-4" aria-hidden="true" />
+                <span className="font-medium">Facebook</span>
               </a>
-              <a href="#" className="text-gray-200 hover:text-white transition-colors p-2 -m-2" aria-label="Visit our Instagram page">
-                <Instagram className="w-5 h-5" aria-hidden="true" />
-              </a>
-              <a href="#" className="text-gray-200 hover:text-white transition-colors p-2 -m-2" aria-label="Visit our Twitter page">
-                <Twitter className="w-5 h-5" aria-hidden="true" />
+              {/* WhatsApp Button */}
+              <a
+                href="https://wa.me/27798639823"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-lg px-3 py-2 transition-all hover:scale-[1.02] text-sm w-fit"
+                aria-label="Chat with us on WhatsApp"
+              >
+                <WhatsAppIcon className="w-4 h-4" />
+                <span className="font-medium">+27 (79) 863-9823</span>
               </a>
             </div>
-            {/* WhatsApp Button */}
-            <a
-              href="https://wa.me/27798639823"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-lg px-3 py-2 mt-4 transition-all hover:scale-[1.02] text-sm w-fit"
-              aria-label="Chat with us on WhatsApp"
-            >
-              <WhatsAppIcon className="w-4 h-4" />
-              <span className="font-medium">+27 (79) 863-9823</span>
-            </a>
           </div>
         </div>
 
