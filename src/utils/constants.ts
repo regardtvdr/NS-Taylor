@@ -95,7 +95,7 @@ export const REVIEWS: Review[] = [
 ]
 
 export const DENTISTS: Dentist[] = [
-  // Ruimsig Branch
+  // Weltevreden Park Branch
   {
     id: '1',
     name: 'Dr Stefan Victor',
@@ -105,7 +105,7 @@ export const DENTISTS: Dentist[] = [
     reviews: 234,
     qualifications: 'BDS, MDS',
     bio: 'Dr Stefan Victor is an experienced dentist, passionate about fixed prosthodontics and restorative care—turning smiles back to life, one tooth at a time. He practices at both our Ruimsig and Weltevreden Park locations.',
-    branch: 'Both',
+    branch: 'Weltevreden Park',
   },
   {
     id: '2',
@@ -116,7 +116,7 @@ export const DENTISTS: Dentist[] = [
     reviews: 189,
     qualifications: 'BDS, MDS',
     bio: 'Dr Rivesh Singh has a keen interest in oral surgery and a strong passion for providing great quality treatment without compromising patient care. He practices at both our Ruimsig and Weltevreden Park locations.',
-    branch: 'Both',
+    branch: 'Weltevreden Park',
   },
   {
     id: '3',
@@ -127,7 +127,41 @@ export const DENTISTS: Dentist[] = [
     reviews: 156,
     qualifications: 'BDS, MDS',
     bio: 'Dr Ritesh Singh is an experienced practitioner with experience in crown and bridge work, dentures, fillings, and root canal treatments. He is passionate about helping patients achieve confident smiles and a better quality of life through attentive, high-quality care. He practices at both our Ruimsig and Weltevreden Park locations.',
-    branch: 'Both',
+    branch: 'Weltevreden Park',
+  },
+  // Ruimsig Branch
+  {
+    id: '4',
+    name: 'Dr Stefan Victor',
+    specialization: 'Fixed Prosthodontics & Restorative Care',
+    experience: 12,
+    rating: 4.9,
+    reviews: 234,
+    qualifications: 'BDS, MDS',
+    bio: 'Dr Stefan Victor is an experienced dentist, passionate about fixed prosthodontics and restorative care—turning smiles back to life, one tooth at a time. He practices at both our Ruimsig and Weltevreden Park locations.',
+    branch: 'Ruimsig',
+  },
+  {
+    id: '5',
+    name: 'Dr Rivesh Singh',
+    specialization: 'Oral Surgery',
+    experience: 15,
+    rating: 4.8,
+    reviews: 189,
+    qualifications: 'BDS, MDS',
+    bio: 'Dr Rivesh Singh has a keen interest in oral surgery and a strong passion for providing great quality treatment without compromising patient care. He practices at both our Ruimsig and Weltevreden Park locations.',
+    branch: 'Ruimsig',
+  },
+  {
+    id: '6',
+    name: 'Dr Ritesh Singh',
+    specialization: 'General & Restorative Dentistry',
+    experience: 10,
+    rating: 4.9,
+    reviews: 156,
+    qualifications: 'BDS, MDS',
+    bio: 'Dr Ritesh Singh is an experienced practitioner with experience in crown and bridge work, dentures, fillings, and root canal treatments. He is passionate about helping patients achieve confident smiles and a better quality of life through attentive, high-quality care. He practices at both our Ruimsig and Weltevreden Park locations.',
+    branch: 'Ruimsig',
   },
 ]
 
