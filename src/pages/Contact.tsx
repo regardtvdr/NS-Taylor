@@ -13,6 +13,7 @@ const Contact = () => {
     {
       name: 'Weltevreden Park',
       phone: '011 679 2961',
+      cell: '+27 79 863 9823',
       emails: [
         { type: 'Admin', address: 'admin@dentaloffices.co.za' },
         { type: 'Accounts', address: 'accounts@dentaloffices.co.za' },
@@ -25,6 +26,7 @@ const Contact = () => {
     {
       name: 'Ruimsig',
       phone: '010 100 8410',
+      cell: '+27 79 863 9823',
       emails: [
         { type: 'Admin', address: 'admin.ruimsig@dentaloffices.co.za' },
         { type: 'Accounts', address: 'accounts.ruimsig@dentaloffices.co.za' },
@@ -89,6 +91,7 @@ const Contact = () => {
                     <div>
                       <h3 className="font-semibold text-gray-800 mb-1">Phone</h3>
                       <p className="text-gray-600">{practice.phone}</p>
+                      <p className="text-gray-600">Cell: {practice.cell}</p>
                       <p className="text-sm text-gray-500">Mon-Fri: 8:00 AM - 4:30 PM</p>
                     </div>
                   </div>
