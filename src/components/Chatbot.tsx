@@ -266,12 +266,12 @@ const Chatbot = () => {
       lowerMessage.includes('friday')
     ) {
       if (lowerMessage.includes('weekend') || lowerMessage.includes('saturday') || lowerMessage.includes('sunday')) {
-        return "We're closed on weekends (Saturday and Sunday) to allow our team to rest and spend time with their families. However, for dental emergencies, you can call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig), and we'll do our best to help."
+        return "We're open on Saturdays from 8:00 AM to 12:00 PM, and closed on Sundays. For dental emergencies outside business hours, you can call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig), and we'll do our best to help."
       }
       if (lowerMessage.includes('today') || lowerMessage.includes('now')) {
-        return "We're open Monday to Friday from 8:00 AM to 4:30 PM at both locations. If you're calling outside these hours, please leave a message or call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) for urgent dental issues."
+        return "We're open Monday to Friday from 8:00 AM to 4:30 PM, and Saturdays from 8:00 AM to 12:00 PM at both locations. If you're calling outside these hours, please leave a message or call us at 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) for urgent dental issues."
       }
-      return "Our practices are open Monday to Friday from 8:00 AM to 4:30 PM at both Ruimsig and Weltevreden Park locations. We're closed on weekends. For dental emergencies outside these hours, please call 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) and we'll assist you."
+      return "Our practices are open Monday to Friday from 8:00 AM to 4:30 PM, and Saturdays from 8:00 AM to 12:00 PM at both Ruimsig and Weltevreden Park locations. We're closed on Sundays. For dental emergencies outside these hours, please call 011 679 2961 (Weltevreden Park) or 010 100 8410 (Ruimsig) and we'll assist you."
     }
 
     // Contact (expanded with more options)
