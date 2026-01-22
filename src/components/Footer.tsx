@@ -92,19 +92,32 @@ const Footer = () => {
           {/* Contact Info */}
           <div>
             <h4 className="font-semibold text-white mb-4">Contact</h4>
-            <ul className="space-y-3 text-sm">
-              <li className="flex items-start space-x-2">
-                <Phone className="w-4 h-4 text-gray-200 mt-0.5" />
-                <span className="text-gray-200">
-                  011 679 2961 (Weltevreden Park)<br />
-                  010 100 8410 (Ruimsig)
-                </span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <Mail className="w-4 h-4 text-gray-200" />
-                <span className="text-gray-200">admin@dentaloffices.co.za</span>
-              </li>
-            </ul>
+            <div className="space-y-4 text-sm">
+              {/* Ruimsig */}
+              <div>
+                <p className="font-medium text-white mb-1">Ruimsig</p>
+                <div className="flex items-center space-x-2 mb-1">
+                  <Phone className="w-4 h-4 text-gray-200" />
+                  <span className="text-gray-200">010 100 8410</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Mail className="w-4 h-4 text-gray-200" />
+                  <span className="text-gray-200">enquiries@dentalrooms.co.za</span>
+                </div>
+              </div>
+              {/* Weltevreden Park */}
+              <div>
+                <p className="font-medium text-white mb-1">Weltevreden Park</p>
+                <div className="flex items-center space-x-2 mb-1">
+                  <Phone className="w-4 h-4 text-gray-200" />
+                  <span className="text-gray-200">011 679 2961</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Mail className="w-4 h-4 text-gray-200" />
+                  <span className="text-gray-200">enquiries@dentaloffices.co.za</span>
+                </div>
+              </div>
+            </div>
             <div className="flex flex-col gap-3 mt-4">
               {/* Facebook Button */}
               <a
