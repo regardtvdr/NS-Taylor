@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Award, GraduationCap, MapPin } from 'lucide-react'
+import { Award, GraduationCap } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { DENTISTS } from '../utils/constants'
 import { AnimatedTestimonials } from '../components/ui/AnimatedTestimonials'
@@ -9,15 +9,11 @@ import { AnimatedGridPattern } from '../components/ui/animated-grid-pattern'
 import { cn } from '../lib/utils'
 
 const Team = () => {
-  // Organize dentists by branch
-  const weltevredenDentists = DENTISTS.filter(d => d.branch === 'Weltevreden Park')
-  const ruimsigDentists = DENTISTS.filter(d => d.branch === 'Ruimsig')
-
   // Convert dentists to testimonials format for the animated component
   const dentistTestimonials = DENTISTS.map((dentist) => ({
     quote: dentist.bio || `Specializing in ${dentist.specialization}, dedicated to providing exceptional dental care.`,
     name: dentist.name,
-    designation: `${dentist.specialization} • ${dentist.branch}`,
+    designation: `${dentist.specialization} • Ruimsig & Weltevreden Park`,
     src: '',
   }))
 
@@ -145,7 +141,7 @@ const Team = () => {
         </div>
       </section>
 
-      {/* Weltevreden Park Team */}
+      {/* Our Dental Professionals - Cards */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -155,48 +151,16 @@ const Team = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <MapPin className="w-6 h-6" style={{ color: '#4E4D50' }} />
-              <h2 className="text-4xl font-display font-bold text-gray-800">
-                Weltevreden Park Team
-              </h2>
-            </div>
+            <h2 className="text-4xl font-display font-bold text-gray-800 mb-4">
+              Our Dental Professionals
+            </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Meet our dedicated professionals at The Gables, 879 Tennis Rd
+              Our dentists practice at both our Ruimsig and Weltevreden Park locations
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {weltevredenDentists.map((dentist, index) => (
-              <DentistCard key={dentist.id} dentist={dentist} index={index} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Ruimsig Team */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <MapPin className="w-6 h-6" style={{ color: '#4E4D50' }} />
-              <h2 className="text-4xl font-display font-bold text-gray-800">
-                Ruimsig Team
-              </h2>
-            </div>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Meet our dedicated professionals at Ruimsig Country Office Park
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {ruimsigDentists.map((dentist, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {DENTISTS.map((dentist, index) => (
               <DentistCard key={dentist.id} dentist={dentist} index={index} />
             ))}
           </div>
