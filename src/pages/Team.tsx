@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Award, Clock, GraduationCap, MapPin } from 'lucide-react'
+import { Award, GraduationCap, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { DENTISTS } from '../utils/constants'
 import { AnimatedTestimonials } from '../components/ui/AnimatedTestimonials'
@@ -15,7 +15,7 @@ const Team = () => {
 
   // Convert dentists to testimonials format for the animated component
   const dentistTestimonials = DENTISTS.map((dentist) => ({
-    quote: dentist.bio || `With over ${dentist.experience} years of experience in ${dentist.specialization}, dedicated to providing exceptional dental care.`,
+    quote: dentist.bio || `Specializing in ${dentist.specialization}, dedicated to providing exceptional dental care.`,
     name: dentist.name,
     designation: `${dentist.specialization} • ${dentist.branch}`,
     src: '',
@@ -65,10 +65,6 @@ const Team = () => {
         <div className="flex items-center space-x-3 text-gray-700">
           <GraduationCap className="w-5 h-5 text-gray-600" />
           <span className="text-sm font-medium">{dentist.qualifications}</span>
-        </div>
-        <div className="flex items-center space-x-3 text-gray-700">
-          <Clock className="w-5 h-5 text-gray-600" />
-          <span className="text-sm">{dentist.experience} years of experience</span>
         </div>
       </div>
 
