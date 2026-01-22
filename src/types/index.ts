@@ -26,6 +26,15 @@ export interface Dentist {
   branch?: string
 }
 
+export interface Staff {
+  id: string
+  name: string
+  role: string
+  bio: string
+  avatar?: string
+  branch: string
+}
+
 export interface BookingData {
   service: Service | null
   dentist: Dentist | null

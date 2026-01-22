@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion'
-import { Award, GraduationCap } from 'lucide-react'
+import { Award, GraduationCap, MapPin, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { DENTISTS } from '../utils/constants'
+import { DENTISTS, RUIMSIG_STAFF } from '../utils/constants'
+import { Staff } from '../types'
 import { AnimatedTestimonials } from '../components/ui/AnimatedTestimonials'
 import { InteractiveHoverButton } from '../components/ui/InteractiveHoverButton'
 import { Button as MovingBorderButton } from '../components/ui/moving-border'
@@ -76,6 +77,41 @@ const Team = () => {
           as="div"
         />
       </Link>
+    </motion.div>
+  )
+
+  const StaffCard = ({ staff, index }: { staff: Staff, index: number }) => (
+    <motion.div
+      key={staff.id}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      className="card p-6 hover:shadow-xl transition-shadow duration-300 border-2"
+      style={{ borderColor: '#4E4D50' }}
+    >
+      <div className="text-center mb-4">
+        <div className="relative inline-block mb-4">
+          <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center mx-auto border-4 border-gray-200">
+            <span className="text-3xl font-bold text-gray-600">
+              {staff.name.charAt(0)}
+            </span>
+          </div>
+          <div className="absolute bottom-0 right-0 rounded-full p-2 border-4 border-white" style={{ backgroundColor: '#4E4D50' }}>
+            <Users className="w-3 h-3 text-white" />
+          </div>
+        </div>
+        <h3 className="text-xl font-display font-bold text-gray-800 mb-1">
+          {staff.name}
+        </h3>
+        <p className="text-gray-600 font-medium text-sm">
+          {staff.role}
+        </p>
+      </div>
+
+      <p className="text-gray-600 text-sm leading-relaxed text-center">
+        {staff.bio}
+      </p>
     </motion.div>
   )
 
@@ -162,6 +198,35 @@ const Team = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {DENTISTS.map((dentist, index) => (
               <DentistCard key={dentist.id} dentist={dentist} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Ruimsig Team */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <MapPin className="w-6 h-6" style={{ color: '#4E4D50' }} />
+              <h2 className="text-4xl font-display font-bold text-gray-800">
+                Ruimsig Team
+              </h2>
+            </div>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Meet our dedicated support staff at Ruimsig Country Office Park
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {RUIMSIG_STAFF.map((staff, index) => (
+              <StaffCard key={staff.id} staff={staff} index={index} />
             ))}
           </div>
         </div>

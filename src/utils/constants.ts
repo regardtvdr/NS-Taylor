@@ -1,4 +1,4 @@
-import { Service, Review, Dentist } from '../types'
+import { Service, Review, Dentist, Staff } from '../types'
 
 export const SERVICES: Service[] = [
   {
@@ -128,6 +128,30 @@ export const DENTISTS: Dentist[] = [
     qualifications: 'BDS, MDS',
     bio: 'Dr Ritesh Singh is an experienced practitioner with experience in crown and bridge work, dentures, fillings, and root canal treatments. He is passionate about helping patients achieve confident smiles and a better quality of life through attentive, high-quality care. He practices at both our Ruimsig and Weltevreden Park locations.',
     branch: 'Both',
+  },
+]
+
+export const RUIMSIG_STAFF: Staff[] = [
+  {
+    id: '1',
+    name: 'Leneach',
+    role: 'Reception & Administration',
+    bio: 'Leneach is committed to ensuring that all our patients receive a warm welcome, whilst attending to all our bookings and general enquiries, making sure every patient is well cared for.',
+    branch: 'Ruimsig',
+  },
+  {
+    id: '2',
+    name: 'Zanele',
+    role: 'Dental Assistant',
+    bio: "Zanele's steady hands help our docs sail through treatments effortlessly whilst ensuring maximum patient comfort.",
+    branch: 'Ruimsig',
+  },
+  {
+    id: '3',
+    name: 'Rose',
+    role: 'Cleaner & CSSD Manager',
+    bio: 'Rose keeps our space spotless, so smiles stay bright!',
+    branch: 'Ruimsig',
   },
 ]
 
