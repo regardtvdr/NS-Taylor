@@ -129,6 +129,17 @@ export const DENTISTS: Dentist[] = [
     bio: 'Dr Ritesh Singh is an experienced practitioner with experience in crown and bridge work, dentures, fillings, and root canal treatments. He is passionate about helping patients achieve confident smiles and a better quality of life through attentive, high-quality care. He practices at both our Ruimsig and Weltevreden Park locations.',
     branch: 'Weltevreden Park',
   },
+  {
+    id: '7',
+    name: 'Dr MA Kriek',
+    specialization: 'Paediatric & Family Dentistry',
+    experience: 38,
+    rating: 4.9,
+    reviews: 210,
+    qualifications: 'BChD',
+    bio: 'Dr MA Kriek is a caring family dentist with nearly 38 years of experience in private practice. She is committed to delivering high-quality, patient-centred dental care. Dr Kriek is passionate about paediatric dentistry and treating patients with gentle care and attention to detail.',
+    branch: 'Weltevreden Park',
+  },
   // Ruimsig Branch
   {
     id: '4',
@@ -168,24 +179,41 @@ export const DENTISTS: Dentist[] = [
 export const RUIMSIG_STAFF: Staff[] = [
   {
     id: '1',
+    name: 'Nicoleen',
+    role: 'Dental Assistant',
+    bio: 'With over 36 years of experience, Nicoleen has prepped, assisted and comforted patients through every kind of smile fix. From fillings and cleanings to full makeovers, and everything in between. Nicoleen\'s passion is contagious!',
+    branch: 'Ruimsig',
+  },
+  {
+    id: '2',
+    name: 'Debbie',
+    role: 'Practice Coordinator & Accounts',
+    bio: 'Debbie handles all accounts, while managing patient calls and emails. Steps in for reception tasks like booking and check-ins when needed. Keeps finances tidy, answers queries fast and stays organised all day to ensure our patients have a seamless experience!',
+    branch: 'Ruimsig',
+  },
+]
+
+export const WELTEVREDEN_STAFF: Staff[] = [
+  {
+    id: '1',
     name: 'Leneach',
     role: 'Reception & Administration',
     bio: 'Leneach is committed to ensuring that all our patients receive a warm welcome, whilst attending to all our bookings and general enquiries, making sure every patient is well cared for.',
-    branch: 'Ruimsig',
+    branch: 'Weltevreden Park',
   },
   {
     id: '2',
     name: 'Zanele',
     role: 'Dental Assistant',
     bio: "Zanele's steady hands help our docs sail through treatments effortlessly whilst ensuring maximum patient comfort.",
-    branch: 'Ruimsig',
+    branch: 'Weltevreden Park',
   },
   {
     id: '3',
     name: 'Rose',
     role: 'Cleaner & CSSD Manager',
     bio: 'Rose keeps our space spotless, so smiles stay bright!',
-    branch: 'Ruimsig',
+    branch: 'Weltevreden Park',
   },
 ]
 

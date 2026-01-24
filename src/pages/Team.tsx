@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Award, GraduationCap, MapPin, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { DENTISTS, RUIMSIG_STAFF } from '../utils/constants'
+import { DENTISTS, RUIMSIG_STAFF, WELTEVREDEN_STAFF } from '../utils/constants'
 import { Staff } from '../types'
 import { AnimatedTestimonials } from '../components/ui/AnimatedTestimonials'
 import { InteractiveHoverButton } from '../components/ui/InteractiveHoverButton'
@@ -202,9 +202,28 @@ const Team = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Dentists */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             {weltevredenDentists.map((dentist, index) => (
               <DentistCard key={dentist.id} dentist={dentist} index={index} />
+            ))}
+          </div>
+
+          {/* Support Staff */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-8"
+          >
+            <h3 className="text-2xl font-display font-bold text-gray-800 mb-2">
+              Support Staff
+            </h3>
+          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {WELTEVREDEN_STAFF.map((staff, index) => (
+              <StaffCard key={staff.id} staff={staff} index={index} />
             ))}
           </div>
         </div>
