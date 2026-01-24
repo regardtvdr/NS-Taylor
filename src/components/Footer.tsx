@@ -121,7 +121,7 @@ const Footer = () => {
             <div className="flex flex-col gap-3 mt-4">
               {/* Facebook Button */}
               <a
-                href="#"
+                href="https://www.facebook.com/share/p/1JRmjqmwnX/?mibextid=wwXIfr"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-lg px-3 py-2 transition-all hover:scale-[1.02] text-sm w-fit"
