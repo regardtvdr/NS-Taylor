@@ -28,9 +28,9 @@ const Contact = () => {
       phone: '010 100 8410',
       cell: '+27 79 863 9823',
       emails: [
-        { type: 'Admin', address: 'admin.ruimsig@dentaloffices.co.za' },
-        { type: 'Accounts', address: 'accounts.ruimsig@dentaloffices.co.za' },
-        { type: 'Enquiries', address: 'enquiries.ruimsig@dentaloffices.co.za' },
+        { type: 'Admin', address: 'admin@dentalrooms.co.za' },
+        { type: 'Accounts', address: 'accounts@dentalrooms.co.za' },
+        { type: 'Enquiries', address: 'enquiries@dentalrooms.co.za' },
       ],
       address: 'Unit 5, Ruimsig Country Office Park\n129 Hole In One St, Ruimsig\n1724',
       regNo: 'TBC',
