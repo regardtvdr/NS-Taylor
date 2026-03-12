@@ -49,6 +49,67 @@ const Location = () => {
         </div>
       </section>
 
+      {/* Dentist Near Krugersdorp / Ruimsig / Roodepoort – Content Page 4 */}
+      <section className="relative py-12 md:py-16 bg-white z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-800 mb-6">
+                Dentist Near Krugersdorp – DR NS Taylor & Associates Inc.
+              </h2>
+              <h3 className="text-xl font-display font-semibold text-gray-800 mb-4">
+                Your Trusted Ruimsig Dentist
+              </h3>
+              <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                Looking for a reliable dentist near Krugersdorp? DR NS Taylor & Associates Inc. provides comprehensive dental care for families and individuals in Ruimsig and surrounding areas. Our experienced team ensures top-quality treatment, from routine check-ups to advanced procedures, in a comfortable and welcoming environment.
+              </p>
+              <h3 className="text-xl font-display font-semibold text-gray-800 mb-4">
+                Comprehensive Dental Services in Ruimsig
+              </h3>
+              <p className="text-lg text-gray-600 leading-relaxed mb-4">
+                Our clinic offers a wide range of dental services tailored to your needs. Whether you need preventive care, cosmetic dentistry, or restorative treatments, our Ruimsig dentist services include:
+              </p>
+              <ul className="list-disc list-inside text-gray-600 space-y-2 mb-6 ml-2">
+                <li>General dentistry and routine check-ups</li>
+                <li>Professional teeth cleaning and whitening</li>
+                <li>Tooth extractions and fillings</li>
+                <li>Crowns, bridges, and dental implants</li>
+                <li>Emergency dental care</li>
+              </ul>
+              <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                We prioritize your oral health and work with modern technology to deliver safe and effective treatments.
+              </p>
+              <h3 className="text-xl font-display font-semibold text-gray-800 mb-4">
+                Convenient Dentist in Roodepoort Location
+              </h3>
+              <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                Located conveniently for residents of Roodepoort and nearby suburbs, our clinic makes dental care accessible and stress-free. From your first consultation to follow-up appointments, our team ensures personalized attention to every patient. We are your trusted dentist in Roodepoort, committed to improving your smile and oral health.
+              </p>
+              <h3 className="text-xl font-display font-semibold text-gray-800 mb-4">
+                Why Choose DR NS Taylor & Associates Inc.?
+              </h3>
+              <p className="text-lg text-gray-600 leading-relaxed mb-4">
+                Choosing the right dentist is important for long-term oral health. At DR NS Taylor & Associates Inc., we combine experience, expertise, and compassionate care. Our focus is on:
+              </p>
+              <ul className="list-disc list-inside text-gray-600 space-y-2 mb-6 ml-2">
+                <li>Professional and friendly dental care</li>
+                <li>State-of-the-art equipment and techniques</li>
+                <li>Affordable dental services without compromising quality</li>
+                <li>Flexible appointments to suit your schedule</li>
+              </ul>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Experience the difference of a dental practice that truly cares about your smile. Book your appointment today and discover why patients in Ruimsig and Roodepoort trust us as their go-to dental clinic.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Locations Section */}
       <section className="relative py-12 md:py-16 bg-white z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

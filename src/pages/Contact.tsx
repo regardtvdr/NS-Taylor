@@ -190,28 +190,63 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Emergency Contact */}
-      <section className="py-8 pb-16 bg-white z-10">
+      {/* Emergency Dentist – Content Page 5 */}
+      <section className="py-12 pb-16 bg-white z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="max-w-2xl mx-auto bg-red-50 rounded-lg border-2 border-red-500 p-4 md:p-6"
+            className="max-w-4xl mx-auto"
           >
-            <h3 className="text-sm md:text-base font-semibold text-gray-800 mb-2 md:mb-3">Emergency Contact</h3>
-            <p className="text-xs md:text-sm text-gray-600 mb-3">
-              For dental emergencies outside business hours, please call:
+            <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-800 mb-6">
+              Emergency Dentist Available Today | DR NS Taylor & Associates Inc.
+            </h2>
+            <p className="text-lg text-gray-600 leading-relaxed mb-6">
+              At DR NS Taylor & Associates Inc., we understand that dental emergencies can happen at any time. That's why our clinic provides fast and reliable care when you need it most. Whether you are experiencing severe tooth pain, a broken tooth, or a dental injury, we are here to help.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <p className="text-xs text-gray-500 uppercase font-medium">Weltevreden Park</p>
-                <p className="text-lg font-bold text-gray-700">011 679 2961</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 uppercase font-medium">Ruimsig</p>
-                <p className="text-lg font-bold text-gray-700">010 100 8410</p>
+            <h3 className="text-xl font-display font-semibold text-gray-800 mb-4">
+              Dentist Open Today
+            </h3>
+            <p className="text-lg text-gray-600 leading-relaxed mb-6">
+              Our team is committed to being available for urgent dental care. With convenient hours and flexible scheduling, you don't have to wait until tomorrow to get relief. Searching for a dentist open today has never been easier — simply contact us, and we'll ensure you receive prompt attention.
+            </p>
+            <h3 className="text-xl font-display font-semibold text-gray-800 mb-4">
+              After Hours Dentist Services
+            </h3>
+            <p className="text-lg text-gray-600 leading-relaxed mb-6">
+              Dental emergencies don't stick to regular office hours. Our after hours dentist service allows you to reach a qualified professional outside normal clinic times. From late evenings to weekends, we provide the expertise and care you need to manage pain and prevent further complications.
+            </p>
+            <h3 className="text-xl font-display font-semibold text-gray-800 mb-4">
+              Same Day Dentist Appointment
+            </h3>
+            <p className="text-lg text-gray-600 leading-relaxed mb-6">
+              Avoid long waits with our same day dentist appointment options. Our streamlined booking process ensures you can see a dentist quickly and efficiently. We prioritize emergency cases to ensure that each patient receives timely treatment and leaves with comfort and confidence.
+            </p>
+            <h3 className="text-xl font-display font-semibold text-gray-800 mb-4">
+              Why Choose Us
+            </h3>
+            <p className="text-lg text-gray-600 leading-relaxed mb-6">
+              At DR NS Taylor & Associates Inc., your oral health and safety are our top priorities. Our experienced dentists use state-of-the-art equipment to diagnose and treat dental emergencies efficiently. We provide comprehensive care for adults and children, offering services that include emergency fillings, extractions, root canal therapy, and more.
+            </p>
+            <p className="text-lg text-gray-600 leading-relaxed mb-8">
+              If you are in need of urgent dental care, don't wait. Call or book online today to connect with a trusted emergency dentist near you. Our dedicated staff ensures that every patient receives personalized, professional attention. Experience rapid relief and quality care at DR NS Taylor & Associates Inc.
+            </p>
+            <div className="bg-red-50 rounded-lg border-2 border-red-500 p-4 md:p-6">
+              <h3 className="text-sm md:text-base font-semibold text-gray-800 mb-2 md:mb-3">Emergency Contact</h3>
+              <p className="text-xs md:text-sm text-gray-600 mb-3">
+                For dental emergencies, please call:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <p className="text-xs text-gray-500 uppercase font-medium">Weltevreden Park</p>
+                  <p className="text-lg font-bold text-gray-700">011 679 2961</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 uppercase font-medium">Ruimsig</p>
+                  <p className="text-lg font-bold text-gray-700">010 100 8410</p>
+                </div>
               </div>
             </div>
           </motion.div>
