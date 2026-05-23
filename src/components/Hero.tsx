@@ -45,8 +45,9 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.8 }}
           >
-            Experience world-class dental treatment with our state-of-the-art facilities
-            and expert team. Contact us today to schedule your appointment.
+            Looking for a reliable dentist near you in Roodepoort? We provide professional,
+            family-friendly dental care at our Ruimsig and Weltevreden Park branches—with a
+            focus on your comfort, oral health, and long-term smile confidence.
           </motion.p>
 
           <motion.div

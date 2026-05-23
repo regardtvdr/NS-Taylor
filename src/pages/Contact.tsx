@@ -33,8 +33,8 @@ const Contact = () => {
         { type: 'Enquiries', address: 'enquiries@dentalrooms.co.za' },
       ],
       address: 'Unit 5, Ruimsig Country Office Park\n129 Hole In One St, Ruimsig\n1724',
-      regNo: 'TBC',
-      practiceNo: 'TBC',
+      regNo: '1995/0136',
+      practiceNo: '5446899',
     },
   ]
 
