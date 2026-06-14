@@ -7,7 +7,7 @@ function canonicalUrl(path: string): string {
   return path === '/' ? `${SITE_URL}/` : `${SITE_URL}${path}`
 }
 
-const PageSEO = ({ title, description, path }: PageSEOProps) => {
+const PageSEO = ({ title, description, path, keywords, jsonLd }: PageSEOProps) => {
   const url = canonicalUrl(path)
 
   return (
@@ -16,6 +16,7 @@ const PageSEO = ({ title, description, path }: PageSEOProps) => {
       <title>{title}</title>
       <meta name="title" content={title} />
       <meta name="description" content={description} />
+      {keywords && <meta name="keywords" content={keywords} />}
       <link rel="canonical" href={url} />
 
       <meta property="og:type" content="website" />
@@ -32,6 +33,9 @@ const PageSEO = ({ title, description, path }: PageSEOProps) => {
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={OG_IMAGE} />
+      {jsonLd && (
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      )}
     </Helmet>
   )
 }

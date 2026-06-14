@@ -8,6 +8,7 @@ import Location from './pages/Location'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
 import Team from './pages/Team'
+import DentistKrugersdorp from './pages/DentistKrugersdorp'
 
 function App() {
   const location = useLocation()
@@ -28,6 +29,7 @@ function App() {
           <Route path="/team" element={<Team />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/location" element={<Location />} />
+          <Route path="/dentist-krugersdorp" element={<DentistKrugersdorp />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
         </Route>

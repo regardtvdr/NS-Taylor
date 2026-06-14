@@ -6,6 +6,8 @@ export interface PageSEOConfig {
   title: string
   description: string
   path: string
+  keywords?: string
+  jsonLd?: Record<string, unknown>
 }
 
 const DEFAULT: PageSEOConfig = {
@@ -52,6 +54,30 @@ const PAGE_SEO: Record<string, PageSEOConfig> = {
     description:
       'Terms of service for using the Dr. NS Taylor & Associates Inc. website and appointment booking services.',
     path: '/terms',
+  },
+  '/dentist-krugersdorp': {
+    title: `Dentist Krugersdorp – Trusted Dental Care | DR NS Taylor & Associates Inc`,
+    description:
+      'Trusted dentist in Krugersdorp offering general, cosmetic and restorative dental care. Patient-focused treatment at Dr. NS Taylor & Associates Inc. Book your appointment today.',
+    path: '/dentist-krugersdorp',
+    keywords:
+      'dentist Krugersdorp, dentist near me Krugersdorp, dental practice Krugersdorp, cosmetic dentist Krugersdorp, general dentistry Krugersdorp, teeth whitening Krugersdorp, root canal Krugersdorp, Dr NS Taylor',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      '@id': `${SITE_URL}/dentist-krugersdorp#webpage`,
+      url: `${SITE_URL}/dentist-krugersdorp`,
+      name: 'Dentist Krugersdorp – Trusted Dental Care at Dr. NS Taylor & Associates Inc.',
+      description:
+        'Trusted dentist in Krugersdorp offering general, cosmetic and restorative dental care for individuals and families across Krugersdorp and surrounding areas.',
+      inLanguage: 'en-ZA',
+      isPartOf: { '@id': `${SITE_URL}/#organization` },
+      about: {
+        '@type': 'Dentist',
+        name: SITE_NAME,
+        areaServed: { '@type': 'City', name: 'Krugersdorp' },
+      },
+    },
   },
 }
 
